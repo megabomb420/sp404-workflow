@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (tsc strict + vite)
+        run: npm run build
+
+      - name: Install Playwright chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Serve production build + run audits
+        run: |
+          npm run preview -- --port 4173 --strictPort &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:4173/ >/dev/null && break
+            sleep 1
+          done
+          node scripts/audit.mjs
+          node scripts/offline-test.mjs
+          node scripts/explorer-test.mjs
