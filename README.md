@@ -103,4 +103,4 @@ Treść dodaje się w `src/data/*` — nowe skróty, sekcje i workflow bez zmian
 
 ## 📜 Licencja
 
-© 2026 Przemysław Fall — **Wszelkie prawa zastrzeżone.** Kod jest publiczny do wglądu i nauki. Nazwy funkcji, skróty i parametry SP-404MKII pochodzą z manuala Roland i należą do Roland Corporation.
+© 2026 myby — **Wszelkie prawa zastrzeżone.** Kod jest publiczny do wglądu i nauki. Nazwy funkcji, skróty i parametry SP-404MKII pochodzą z manuala Roland i należą do Roland Corporation.
