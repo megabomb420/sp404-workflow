@@ -1,0 +1,7 @@
+node_modules
+dist
+*.local
+.DS_Store
+
+# Lokalne materiały źródłowe (manual Roland — prawa autorskie) + artefakty testów
+reference/

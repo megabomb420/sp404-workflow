@@ -1,0 +1,113 @@
+import { Section } from '../types'
+
+export const section: Section = {
+  id: 'resample',
+  pad: 5,
+  title: 'RESAMPLING',
+  short: 'grasz → łapiesz → przetwarzasz → warstwujesz',
+  body: [
+    {
+      kind: 'intro',
+      text: 'Resampling to serce workflow SP: nagrywasz to, co już gra — z efektami, warstwami, na nowy pad. Potem powtarzasz. To nie bug, to metoda.',
+    },
+    {
+      kind: 'diagram',
+      steps: [
+        { label: 'PLAY', sub: 'pady / pattern', tone: 'source' },
+        { label: 'CAPTURE', sub: 'RESAMPLE', tone: 'bus' },
+        { label: 'PROCESS', sub: 'FX i edycja', tone: 'bus' },
+        { label: 'RESAMPLE', sub: 'nowy pad', tone: 'target' },
+        { label: 'LAYER', sub: 'nałóż kolejne', tone: 'bus' },
+        { label: 'NEW SAMPLE', tone: 'master' },
+      ],
+    },
+    {
+      kind: 'steps',
+      title: 'RESAMPLE',
+      steps: [
+        {
+          id: 'r1',
+          title: 'ARMUJ',
+          action: 'Wciśnij RESAMPLE.',
+          buttons: ['RESAMPLE'],
+          expectedResult: 'Tryb resamplingu — puste pady migają, ekran pokazuje długość.',
+          commonMistake: 'Resample to nie REC — łapie to, co już gra, nie wejście.',
+          source: { manual: 'RM5.50', page: 36 },
+          kind: 'verified',
+        },
+        {
+          id: 'r2',
+          title: 'DŁUGOŚĆ',
+          action: 'CTRL 2 — długość w taktach (1–32).',
+          expectedResult: 'Ustawiona liczba taktów do nagrania.',
+          commonMistake: 'Długość to takty, nie sekundy — przy szybkim BPM 32 takty to długi czas.',
+          source: { manual: 'RM5.50', page: 36 },
+          kind: 'verified',
+        },
+        {
+          id: 'r3',
+          title: 'ROUTING',
+          action: 'RECORD SETTING → ROUTING: Mix (playback + wejście) lub ExtIn (tylko wejście).',
+          buttons: ['RECORD SETTING'],
+          expectedResult: 'Wybrane, co wejdzie do sampla: wszystko (Mix) albo tylko zewnętrzne wejście (ExtIn).',
+          commonMistake: 'Zapomniałeś ustawić ROUTING Mix — nagrałeś tylko wejście.',
+          source: { manual: 'RM5.50', page: 37 },
+          kind: 'verified',
+        },
+        {
+          id: 'r4',
+          title: 'PAD',
+          action: 'Wciśnij pusty pad ("Press Pad to START").',
+          expectedResult: 'Ekran pokazuje "Press Pad to START" — resample czeka na start.',
+          commonMistake: 'Celuj w pusty pad — zajęty nie wejdzie w tryb.',
+          source: { manual: 'RM5.50', page: 36 },
+          kind: 'verified',
+        },
+        {
+          id: 'r5',
+          title: 'START',
+          action: 'Zagraj lub wciśnij REC, by zacząć.',
+          expectedResult: 'Nagrywa się to, co gra: sample, pattern, efekty — wszystko.',
+          commonMistake: 'Najpierw przygotuj podkład — REC zacznie nagrywanie od razu.',
+          source: { manual: 'RM5.50', page: 36 },
+          kind: 'verified',
+        },
+        {
+          id: 'r6',
+          title: 'STOP',
+          action: 'Zatrzymaj padami albo REC — sample zapisany.',
+          expectedResult: 'Nowy sample na padzie — z efektami, warstwami i całą obróbką.',
+          commonMistake: 'Resample nadpisuje stary sample na tym padzie — zapisz źródło przed bounce.',
+          source: { manual: 'RM5.50', page: 36 },
+          kind: 'verified',
+        },
+      ],
+    },
+    {
+      kind: 'note',
+      text: 'ROUTING ExtIn: nagrywasz tylko wejście zewnętrzne, a sample grają jako podkład — granie na żywo do nowego sampla.',
+      source: { manual: 'RM5.50', page: 37 },
+    },
+    { kind: 'h', title: 'Kiedy resampling > patterny' },
+    {
+      kind: 'pros',
+      items: [
+        'Efekty wchodzą w dźwięk NA STAŁE — konsolidujesz brzmienie',
+        'Nieskończona liczba warstw — nagrywasz bounce na bounce',
+        'Uwalnia polyphony i miejsce w patternie',
+        'Klasyczny SP flow: graj → procesuj → zamrażaj',
+        'Każda generacja to nowa „wersja" — trzymasz warianty',
+      ],
+    },
+    {
+      kind: 'tip',
+      text: 'Resampling jest niszczący: po nagraniu na nowy pad nie masz już edytowalnych warstw. Zapisuj źródłowe pady przed bounce.',
+    },
+    {
+      kind: 'note',
+      text: 'BOUNCE (pattern → sample) nie gra na głos, przetwarza offline i WYŁĄCZA efekty BUS 1–4 przy konwersji.',
+      source: { manual: 'RM5.50', page: 66 },
+    },
+    { kind: 'link', title: 'WORKFLOW: RESAMPLE WITH FX', route: '/workflow/resample-with-fx' },
+  ],
+}

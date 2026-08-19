@@ -1,0 +1,142 @@
+/* ============================================================
+   base — reset, typography, layout primitives
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--bg-chassis);
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink);
+  background:
+    var(--noise),
+    linear-gradient(180deg, #16171a 0%, var(--bg-chassis) 100%);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- typography helpers ---------- */
+
+.u-label {
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-stretch: 78%;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.u-label-wide {
+  font-family: var(--font-label);
+  font-weight: 700;
+  font-stretch: 125%;
+  letter-spacing: 0.02em;
+}
+
+.u-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.u-dim { color: var(--ink-dim); }
+.u-faint { color: var(--ink-faint); }
+
+/* ---------- a11y ---------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html.rm-reduce *,
+html.rm-reduce *::before,
+html.rm-reduce *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ---------- texture overlay for panels ---------- */
+
+.panel-surface {
+  background:
+    var(--noise),
+    linear-gradient(180deg, var(--bg-panel-raised), var(--bg-panel));
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-m);
+}
+
+/* ---------- scrollbar ---------- */
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #2d2f35; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3d44; }
+::-webkit-scrollbar-track { background: transparent; }

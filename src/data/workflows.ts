@@ -1,0 +1,582 @@
+import { Workflow } from './types'
+
+export const workflows: Workflow[] = [
+  /* ============================ BUILD A BEAT ============================ */
+
+  {
+    id: 'build-a-beat',
+    title: 'BUILD A BEAT',
+    category: 'BUILD A BEAT',
+    difficulty: 'hard',
+    minutes: 20,
+    blurb: 'Pełny bit od zera: sample → chop → drums → pattern → FX → sidechain → resample → bounce.',
+    steps: [
+      {
+        id: 'usb-sample',
+        title: 'USB-C SAMPLE',
+        buttons: ['EXT SOURCE'],
+        action: 'Podłącz telefon/komputer po USB, wciśnij EXT SOURCE i nagraj sample na pad [REC].',
+        explanation:
+          'USB AUDIO traktuje telefon/komputer jak każde zewnętrzne źródło — po wciśnięciu EXT SOURCE sygnał wchodzi do SP-404MK2 i możesz go samplować jak zwykły input.',
+        expectedResult: 'Wpadka z USB jest w EXT SOURCE — nagrywasz ją na pad jak każdy zewnętrzny sygnał.',
+        commonMistake:
+          'Zapominasz ustawić w systemie "Speakers SP-404MKII-G" jako domyślne urządzenie wyjściowe — wtedy z USB nic nie leci.',
+        source: { manual: 'RM5.50', page: 94 },
+        kind: 'verified',
+      },
+      {
+        id: 'chop',
+        title: 'CHOP',
+        buttons: ['SHIFT', 'START/END'],
+        path: ['ASSIGN TO PAD'],
+        action: 'Wstaw markery (MARK) i pokrój sample na pady przez ASSIGN TO PAD.',
+        explanation:
+          'Markery dzielą sample na fragmenty, a ASSIGN TO PAD rozkłada je na sąsiednie pady — gotowe do trigerowania.',
+        expectedResult: 'Sample jest pokrojony na kilka padów — każdy gra inny fragment.',
+        commonMistake:
+          'Nie słychać cięć, bo ASSIGN TO PAD wykonuje się dopiero po zatwierdzeniu [VALUE] na końcu.',
+        source: { manual: 'RM5.50', page: 48 },
+        kind: 'verified',
+      },
+      {
+        id: 'drums',
+        title: 'DRUMS',
+        action: 'Złóż bębny na padach — kick, snare, haty (z biblioteki, z USB albo nasamplowane).',
+        explanation:
+          'Ułóż zestaw tak, żeby kick/snare/haty były pod kciukiem — to fundament pod pattern.',
+        expectedResult: 'Masz kit perkusyjny na padach, gotowy do nagrania patternu.',
+        commonMistake:
+          'Haty i kick na przypadkowych padach — potem ciężko nagrać pattern bez pomyłek.',
+        kind: 'tip',
+      },
+      {
+        id: 'bass',
+        title: 'BASS',
+        action: 'Nagraj lub przegraj bass na pad (samplowanie z REC albo SOUND GENERATOR).',
+        explanation:
+          'Niski koniec daje groove; gdy bass jest na osobnym padzie, łatwo ustawisz na nim sidechain.',
+        expectedResult: 'Masz osobny pad z bassem.',
+        commonMistake:
+          'Bass pływa w głośności — użyj FIXED VELOCITY, żeby każde uderzenie było równe.',
+        source: { manual: 'RM5.50', page: 43 },
+        kind: 'verified',
+      },
+      {
+        id: 'pattern',
+        title: 'PATTERN',
+        buttons: ['PATTERN SELECT', 'REC'],
+        action: 'Nagraj pattern w TR-REC albo real-time.',
+        explanation:
+          'TR-REC ustawia stopy na osi czasu (dobre do bębnów), real-time pozwala zagrać groove z ręki.',
+        expectedResult: 'Twój bit gra jako pattern na padzie PATTERN.',
+        commonMistake:
+          'Zapominasz wcisnąć [REMAIN], żeby przełączyć na TR-REC — nagrywasz wtedy real-time.',
+        source: { manual: 'RM5.50', page: 60 },
+        kind: 'verified',
+      },
+      {
+        id: 'effects',
+        title: 'EFFECTS',
+        buttons: ['BUS FX'],
+        action: 'Przypisz efekty do BUS 1/2 (per sample) i dodaj master FX na BUS 3/4.',
+        explanation:
+          'BUS 1/2 to efekty dla wybranych sampli (np. kompresja bębnów), BUS 3/4 łapie całość przed wyjściem.',
+        expectedResult: 'Kick i snare mają swój efekt, a cały miks leci przez master na BUS 3/4.',
+        commonMistake:
+          'Efekt na BUS-ie, ale sample gra na sucho — sprawdź, czy pad jest routowany na ten BUS ([REMAIN] + pad).',
+        source: { manual: 'RM5.50', page: 27 },
+        kind: 'verified',
+      },
+      {
+        id: 'sidechain',
+        title: 'SIDECHAIN',
+        buttons: ['SHIFT', 'PAD 16'],
+        path: ['EFX SET', 'SIDE CHAIN'],
+        action: 'Ustaw ducking kick→bass (TARGET na bass, SOURCE na kick).',
+        explanation:
+          'Sidechain obniża głośność bassu w rytm kicka — klasyczne "pompowanie" robi przestrzeń w miksie.',
+        expectedResult: 'Bass "schodzi" pod kickiem przy każdym uderzeniu.',
+        commonMistake:
+          'TARGET zostaje OFF — sidechain nic nie robi, bo nie wybrałeś sygnału, który ma być tłumiony.',
+        source: { manual: 'RM5.50', section: 'SIDE CHAIN' },
+        kind: 'verified',
+      },
+      {
+        id: 'resample',
+        title: 'RESAMPLE',
+        buttons: ['RESAMPLE'],
+        action: 'Zresampluj pattern z FX na nowy pad (ROUTING Mix).',
+        explanation:
+          'Resample zamraża cały miks z efektami do jednego audio — odciąża CPU i pozwala potem edytować destruktrywnie.',
+        expectedResult: 'Nowy pad gra cały pattern jako jeden sample z nałożonymi FX.',
+        commonMistake:
+          'ROUTING zostaje ExtIn — resample łapie tylko wejście, a nie sample + efekty.',
+        source: { manual: 'RM5.50', page: 37 },
+        kind: 'verified',
+      },
+      {
+        id: 'variation',
+        title: 'VARIATION',
+        buttons: ['PATTERN SELECT', 'PATTERN EDIT'],
+        path: ['DUPLICATE'],
+        action: 'Zduplikuj pattern i zmień elementy na wariant (np. inny hat, brak bassu w refrenie).',
+        explanation:
+          'DUPLICATE kopiuje pattern i dokleja go do końca — dostajesz bazę do wariantu bez ruszania oryginału.',
+        expectedResult: 'Pattern jest 2x dłuższy; w drugiej połowie masz zmienione elementy.',
+        commonMistake:
+          'Edytujesz oryginał zamiast duplikatu — najpierw DUPLICATE, potem zmiany.',
+        source: { manual: 'RM5.50', page: 73 },
+        kind: 'verified',
+      },
+      {
+        id: 'arrangement',
+        title: 'ARRANGEMENT',
+        buttons: ['PATTERN SELECT', 'HOLD'],
+        action: 'Połącz patterny w chain (PATTERN CHAIN), np. intro → A → B → A.',
+        explanation:
+          'PATTERN CHAIN gra patterny po kolei — budujesz strukturę utworu bez przerywania zabawy.',
+        expectedResult: 'Układ patternów gra jak plan utworu.',
+        commonMistake:
+          'Za długi chain — limit to 16 patternów; trzymaj sekcje zwarte.',
+        source: { manual: 'RM5.50', page: 67 },
+        kind: 'verified',
+      },
+      {
+        id: 'final-bounce',
+        title: 'FINAL BOUNCE',
+        buttons: ['PATTERN SELECT'],
+        path: ['BOUNCE'],
+        action: 'Zbounceuj finalny układ na jeden sample.',
+        explanation:
+          'BOUNCE konwertuje pattern do jednego sampla — idealne do udostępnienia albo dalszej obróbki.',
+        expectedResult: 'Cały bit jest na jednym padzie jako audio.',
+        commonMistake:
+          'BOUNCE nadpisuje sample na padzie docelowym — wybierz pusty pad.',
+        source: { manual: 'RM5.50', page: 66 },
+        kind: 'verified',
+      },
+    ],
+  },
+
+  /* ============================ 8-BAR PATTERN ============================ */
+
+  {
+    id: '8-bar-pattern',
+    title: '8-BAR PATTERN',
+    category: 'PATTERN',
+    difficulty: 'medium',
+    minutes: 10,
+    blurb: 'Zbuduj 8-taktowy pattern TR-REC krok po kroku.',
+    steps: [
+      {
+        id: 'tempo',
+        title: 'TEMPO',
+        buttons: ['SHIFT', 'PAD 11'],
+        action: 'Ustaw tempo (TEMPO SEL) na docelowe BPM.',
+        explanation: 'Najpierw tempo, potem pattern — długość liczysz w taktach względem BPM.',
+        expectedResult: 'Ekran TEMPO SEL; BPM ustawiony dla projektu/banku.',
+        commonMistake:
+          'Ustawiasz tempo po nagraniu — potem przeliczenie patternu wymaga BPM SYNC.',
+        source: { manual: 'RM5.50', page: 83 },
+        kind: 'verified',
+      },
+      {
+        id: 'length',
+        title: 'LENGTH',
+        buttons: ['PATTERN SELECT', 'REC', 'RECORD SETTING'],
+        action: 'Wybierz pad docelowy i ustaw LENGTH na 8 taktów.',
+        explanation:
+          'TR-REC pozwala ustawić długość 1–64 taktów; 8 to klasyczny "bar", w którym mieści się zwrotka.',
+        expectedResult: 'Pattern ma 8 taktów; na ekranie RECORD SETTING widać LENGTH.',
+        commonMistake:
+          'Zostawiasz domyślne 1–2 takty — pattern zapętla się za szybko i potem trudno go przedłużyć.',
+        source: { manual: 'RM5.50', page: 60 },
+        kind: 'verified',
+      },
+      {
+        id: 'tr-rec-drums',
+        title: 'TR-REC DRUMS',
+        buttons: ['SUB PAD', 'REC'],
+        action: 'Wybierz sample (SUB PAD + pad) i rozstaw stopy krok po kroku na padach 1–16.',
+        explanation: 'TR-REC wstawia sample w wybrane stopy — precyzyjny rytm bez grania na czas.',
+        expectedResult:
+          'Kick/snare/haty mają swoje stopy na osi; pady świecą tam, gdzie grają.',
+        commonMistake:
+          'Wciskasz pady bez SUB PAD — wybierasz wtedy stopy, a nie sample do wstawienia.',
+        source: { manual: 'RM5.50', page: 60 },
+        kind: 'verified',
+      },
+      {
+        id: 'bass-substep',
+        title: 'BASS & SUBSTEP',
+        buttons: ['SUB PAD'],
+        action: 'Dodaj bass i drobniejsze stopy — SUBSTEP dzieli krok na sub-stopy dla 16/32.',
+        explanation:
+          'SUBSTEP rozbija krok na mniejsze jednostki — potrzebny do szesnastek przy bassie czy ghost notach.',
+        expectedResult: 'Bass gra 16-tki, a haty dostają sub-stopy.',
+        commonMistake:
+          'MODE jest TRIG, a chcesz długie nuty — przełącz na HOLD STEP albo ustaw dłuższy HOLD STEP.',
+        source: { manual: 'RM5.50', page: 63 },
+        kind: 'verified',
+      },
+      {
+        id: 'quantize',
+        title: 'QUANTIZE',
+        buttons: ['PATTERN SELECT', 'PATTERN EDIT', 'RECORD SETTING'],
+        action: 'Wyrównaj timing — QTZ (np. GRID 16) + STR (siła).',
+        explanation:
+          'Quantize przyciąga nuty do siatki; GRID 16 daje szesnastki, SHUFFLE dodaje swing.',
+        expectedResult: 'Nuty "wsiadają" w siatkę; z SHUFFLE 8 rytm dostaje swing.',
+        commonMistake:
+          'STR na 100% potrafi zabić groove — zostaw 50–80%.',
+        source: { manual: 'RM5.50', page: 74 },
+        kind: 'verified',
+      },
+      {
+        id: 'duplicate',
+        title: 'DUPLICATE',
+        buttons: ['PATTERN SELECT', 'PATTERN EDIT'],
+        path: ['DUPLICATE'],
+        action: 'Zduplikuj pattern, żeby zrobić 2. bar wariacji.',
+        explanation:
+          'DUPLICATE kopiuje pattern i dokleja go — od razu masz 16 taktów z drugim barem do edycji.',
+        expectedResult: 'Pattern jest 2x dłuższy; druga połowa to kopia pierwszej.',
+        commonMistake:
+          'Edycja "na żywo" bez duplikatu — wariant znika przy ponownym nagraniu.',
+        source: { manual: 'RM5.50', page: 73 },
+        kind: 'verified',
+      },
+      {
+        id: 'bounce-optional',
+        title: 'BOUNCE (OPCJA)',
+        buttons: ['PATTERN SELECT'],
+        action: 'Opcjonalnie zbounceuj pattern na sample, żeby mieć audio do dalszej obróbki.',
+        explanation: 'Jeśli pattern gra i chcesz go "zamrozić" do audio — użyj BOUNCE lub RESAMPLE.',
+        expectedResult: 'Pattern jako sample na padzie.',
+        commonMistake:
+          'Bounce zbyt wcześnie — po zamrożeniu edytujesz już tylko audio, nie kroki.',
+        source: { manual: 'RM5.50', page: 66 },
+        kind: 'verified',
+      },
+    ],
+  },
+
+  /* ============================ QUICK ============================ */
+
+  {
+    id: 'sample-something',
+    title: 'SAMPLE SOMETHING',
+    category: 'QUICK',
+    difficulty: 'easy',
+    minutes: 2,
+    blurb: 'Najprostszy sampling: REC → pad → REC (p.34).',
+    steps: [
+      {
+        id: 'rec-standby',
+        title: 'REC',
+        buttons: ['REC'],
+        action: 'Wciśnij [REC] — puste pady zaczną mrugać.',
+        explanation: 'Sampling zaczyna się od wejścia w tryb nagrywania.',
+        expectedResult: 'Puste pady mrugają na czerwono.',
+        source: { manual: 'RM5.50', page: 34 },
+        kind: 'verified',
+      },
+      {
+        id: 'pick-pad',
+        title: 'PAD',
+        action: 'Wybierz pad, na który chcesz nagrać.',
+        expectedResult: 'Pad wybrany jako miejsce zapisu sampla.',
+        source: { manual: 'RM5.50', page: 34 },
+        kind: 'verified',
+      },
+      {
+        id: 'record',
+        title: 'REC',
+        buttons: ['REC'],
+        action: 'Wciśnij [REC], żeby zacząć, i [REC] ponownie, żeby zakończyć.',
+        explanation: 'REC startuje i zatrzymuje nagrywanie; drugi raz [REC] zapisuje sample.',
+        expectedResult: 'Sample jest na padzie.',
+        commonMistake: 'Po zakończeniu wciskasz [EXIT] zamiast [REC] — nagranie nie zapisze się.',
+        source: { manual: 'RM5.50', page: 34 },
+        kind: 'verified',
+      },
+    ],
+  },
+
+  {
+    id: 'chop-a-loop',
+    title: 'CHOP A LOOP',
+    category: 'QUICK',
+    difficulty: 'easy',
+    minutes: 3,
+    blurb: 'Pokrój loop na pady: SHIFT+START/END → MARK → ASSIGN TO PAD (p.45–48).',
+    steps: [
+      {
+        id: 'marker-screen',
+        title: 'MARKER SCREEN',
+        buttons: ['SHIFT', 'START/END'],
+        action: 'Otwórz marker setting screen dla loopa.',
+        explanation: 'Tu dodajesz punkty cięcia na waveformie.',
+        expectedResult: 'Ekran markerów; widać przebieg sampla.',
+        source: { manual: 'RM5.50', page: 45 },
+        kind: 'verified',
+      },
+      {
+        id: 'add-markers',
+        title: 'MARK',
+        buttons: ['MARK'],
+        action: 'Ustaw markery tam, gdzie ma być cięcie.',
+        explanation: '[CTRL 1] przesuwa kursor, [MARK] wstawia marker.',
+        expectedResult: 'Markery na wybranych miejscach sampla.',
+        source: { manual: 'RM5.50', page: 45 },
+        kind: 'verified',
+      },
+      {
+        id: 'assign-to-pad',
+        title: 'ASSIGN TO PAD',
+        buttons: ['VALUE'],
+        path: ['ASSIGN TO PAD'],
+        action: 'Wybierz ASSIGN TO PAD i pokrój fragmenty na pady.',
+        explanation: 'ASSIGN TO PAD rozkłada sample na wybrane pady, zaczynając od pierwszego markera.',
+        expectedResult: 'Loop rozłożony na pady — każdy gra inny fragment.',
+        commonMistake: 'Bez potwierdzenia [VALUE] na końcu sample nie zostanie przypisany.',
+        source: { manual: 'RM5.50', page: 48 },
+        kind: 'verified',
+      },
+    ],
+  },
+
+  {
+    id: 'make-drums',
+    title: 'MAKE DRUMS',
+    category: 'QUICK',
+    difficulty: 'easy',
+    minutes: 3,
+    blurb: 'Złóż kit na padach, ustaw MUTE GROUP i nagraj pattern.',
+    steps: [
+      {
+        id: 'build-kit',
+        title: 'KIT',
+        action: 'Zbuduj kit na padach — kick, snare, hata na osobnych padach.',
+        explanation: 'Sensowny układ padów przyspiesza nagrywanie patternu.',
+        expectedResult: 'Kit perkusyjny na padach.',
+        kind: 'tip',
+      },
+      {
+        id: 'mute-group',
+        title: 'MUTE GROUP',
+        buttons: ['SHIFT', 'PAD 8'],
+        action: 'Ustaw MUTE GROUP, żeby bębny nie grały warstwowo.',
+        explanation:
+          'MUTE GROUP gasi poprzedni sample w grupie, gdy startuje nowy — kick nie nakłada się na snare.',
+        expectedResult: 'Ekran MUTE GROUP; pady w grupie gaszą się nawzajem.',
+        source: { manual: 'RM5.50', page: 25 },
+        kind: 'verified',
+      },
+      {
+        id: 'drum-pattern',
+        title: 'PATTERN',
+        buttons: ['PATTERN SELECT', 'REC'],
+        action: 'Nagraj pattern z kitu.',
+        explanation: 'Real-time albo TR-REC — zależnie od tego, czy wolisz groove czy stopy.',
+        expectedResult: 'Pattern gra twój kit.',
+        source: { manual: 'RM5.50', page: 58 },
+        kind: 'verified',
+      },
+    ],
+  },
+
+  {
+    id: 'resample-with-fx',
+    title: 'RESAMPLE WITH FX',
+    category: 'QUICK',
+    difficulty: 'easy',
+    minutes: 3,
+    blurb: 'RESAMPLE → ROUTING Mix → REC (p.37) — zamroź sample z efektami.',
+    steps: [
+      {
+        id: 'resample-on',
+        title: 'RESAMPLE',
+        buttons: ['RESAMPLE'],
+        action: 'Wciśnij [RESAMPLE] i wybierz długość sampla.',
+        explanation: 'Resample łapie to, co leci z wyjścia — łącznie z efektami.',
+        expectedResult: 'Tryb resamplowania; ustawiona długość.',
+        source: { manual: 'RM5.50', page: 37 },
+        kind: 'verified',
+      },
+      {
+        id: 'routing-mix',
+        title: 'ROUTING Mix',
+        buttons: ['RECORD SETTING'],
+        path: ['ROUTING'],
+        action: 'Ustaw ROUTING na Mix.',
+        explanation: 'Mix łapie sample + efekty; ExtIn tylko zewnętrzne wejście.',
+        expectedResult: 'ROUTING ustawione na Mix.',
+        commonMistake: 'ROUTING zostaje ExtIn — resample nie zawiera grywanych sampli.',
+        source: { manual: 'RM5.50', page: 37 },
+        kind: 'verified',
+      },
+      {
+        id: 'resample-record',
+        title: 'REC',
+        buttons: ['REC'],
+        action: 'Wybierz pad i nagraj resample.',
+        explanation: 'Nagranie startuje [REC], koniec to kolejny [REC].',
+        expectedResult: 'Nowy sample z nałożonymi efektami na padzie.',
+        source: { manual: 'RM5.50', page: 37 },
+        kind: 'verified',
+      },
+    ],
+  },
+
+  {
+    id: 'add-sidechain',
+    title: 'ADD SIDECHAIN',
+    category: 'QUICK',
+    difficulty: 'easy',
+    minutes: 2,
+    blurb: 'SHIFT+PAD 16 → EFX SET → SIDE CHAIN (5.50) — ducking w 3 krokach.',
+    steps: [
+      {
+        id: 'open-sidechain',
+        title: 'SIDE CHAIN',
+        buttons: ['SHIFT', 'PAD 16'],
+        path: ['EFX SET', 'SIDE CHAIN'],
+        action: 'Otwórz SIDE CHAIN.',
+        explanation: 'SHIFT+PAD 16 otwiera UTILITY → EFX SET; SIDE CHAIN to funkcja dodana w 5.50.',
+        expectedResult: 'Ekran SIDE CHAIN.',
+        source: { manual: 'RM5.50', section: 'SIDE CHAIN' },
+        kind: 'verified',
+      },
+      {
+        id: 'set-target',
+        title: 'TARGET',
+        action: 'Ustaw SOURCE (np. kick) i TARGET (np. bass).',
+        explanation: 'TARGET to sygnał tłumiony, SOURCE to ten, który go wyzwala.',
+        expectedResult: 'Sidechain reaguje na SOURCE.',
+        commonMistake: 'TARGET = OFF — ducking w ogóle nie działa.',
+        source: { manual: 'RM5.50', section: 'SIDE CHAIN' },
+        kind: 'verified',
+      },
+      {
+        id: 'tune-threshold',
+        title: 'THRESHOLD / RELEASE',
+        action: 'Sprawdź, że TARGET ≠ OFF, i dopnij THRESHOLD/RELEASE.',
+        explanation: 'THRESHOLD decyduje, kiedy ducking startuje, RELEASE jak szybko bass wraca.',
+        expectedResult: 'Bass "oddycha" pod kickiem.',
+        source: { manual: 'RM5.50', section: 'SIDE CHAIN' },
+        kind: 'verified',
+      },
+    ],
+  },
+
+  {
+    id: 'capture-skip-back',
+    title: 'CAPTURE SKIP BACK',
+    category: 'QUICK',
+    difficulty: 'easy',
+    minutes: 2,
+    blurb: 'Graj bez REC, potem MARK → REC → pad — złap to, co już zagrałeś (p.38).',
+    steps: [
+      {
+        id: 'play-to-buffer',
+        title: 'GRAJ',
+        buttons: ['EXT SOURCE'],
+        action: 'Graj lub odtwarzaj bez REC, żeby skip-back pisał do pamięci.',
+        explanation: 'Skip-back buforuje ostatnie ~25 s nawet bez nagrywania.',
+        expectedResult: 'MARK mruga — skip-back nagrywa w tle.',
+        source: { manual: 'RM5.50', page: 38 },
+        kind: 'verified',
+      },
+      {
+        id: 'mark-capture',
+        title: 'MARK',
+        buttons: ['MARK'],
+        action: 'Wciśnij [MARK] po genialnym przejściu.',
+        explanation: 'MARK otwiera bufor skip-back jako podgląd waveformu.',
+        expectedResult: 'Ekran "SKIP BACK..." z waveformem.',
+        source: { manual: 'RM5.50', page: 38 },
+        kind: 'verified',
+      },
+      {
+        id: 'save-skip-back',
+        title: 'REC → PAD',
+        buttons: ['REC'],
+        action: 'Wciśnij [REC] i zapisz na pad.',
+        explanation: 'Bez przypisania do pada bufor skip-back przepadnie po EXIT.',
+        expectedResult: 'Fragment z skip-back jest na padzie.',
+        source: { manual: 'RM5.50', page: 38 },
+        kind: 'verified',
+      },
+    ],
+  },
+
+  {
+    id: 'build-variation',
+    title: 'BUILD VARIATION',
+    category: 'QUICK',
+    difficulty: 'easy',
+    minutes: 3,
+    blurb: 'PATTERN EDIT → DUPLICATE → zmień pady (p.73) — drugi bar bez ruszania oryginału.',
+    steps: [
+      {
+        id: 'duplicate-pattern',
+        title: 'DUPLICATE',
+        buttons: ['PATTERN SELECT', 'PATTERN EDIT'],
+        path: ['DUPLICATE'],
+        action: 'Zduplikuj pattern.',
+        explanation: 'DUPLICATE kopiuje pattern i dokleja go do końca.',
+        expectedResult: 'Pattern jest 2x dłuższy.',
+        source: { manual: 'RM5.50', page: 73 },
+        kind: 'verified',
+      },
+      {
+        id: 'edit-variation',
+        title: 'WARIANT',
+        action: 'Zmień elementy w drugiej połowie (inny hat, brak bassu).',
+        explanation: 'Edytujesz kopię — oryginalny bar zostaje nietknięty.',
+        expectedResult: 'Wariant gra inaczej niż oryginał.',
+        commonMistake: 'Zapominasz, że DUPLICATE nadpisuje pattern — najpierw zmiany, potem słuchaj.',
+        source: { manual: 'RM5.50', page: 73 },
+        kind: 'verified',
+      },
+    ],
+  },
+
+  {
+    id: 'final-bounce',
+    title: 'FINAL BOUNCE',
+    category: 'QUICK',
+    difficulty: 'easy',
+    minutes: 2,
+    blurb: 'PATTERN SELECT → BOUNCE do pada (p.66) — pattern zamieniony na audio.',
+    steps: [
+      {
+        id: 'select-pattern',
+        title: 'PATTERN SELECT',
+        buttons: ['PATTERN SELECT'],
+        action: 'Wejdź w tryb patternu i wybierz pattern do BOUNCE.',
+        explanation: 'BOUNCE konwertuje pattern na pojedynczy sample.',
+        expectedResult: 'Ekran wyboru patternu / zapisu sampla.',
+        source: { manual: 'RM5.50', page: 66 },
+        kind: 'verified',
+      },
+      {
+        id: 'bounce',
+        title: 'BOUNCE',
+        buttons: ['VALUE', 'COPY'],
+        path: ['BOUNCE'],
+        action: 'Wciśnij pad docelowy i zatwierdź (VALUE/COPY).',
+        explanation: 'Docelowy pad musi być pusty — BOUNCE nadpisuje zawartość.',
+        expectedResult: 'Pattern jako sample na padzie.',
+        commonMistake: 'BOUNCE na zajęty pad kasuje istniejący sample.',
+        source: { manual: 'RM5.50', page: 66 },
+        kind: 'verified',
+      },
+    ],
+  },
+]
+
+export const workflowsById: Record<string, Workflow> = Object.fromEntries(
+  workflows.map((w) => [w.id, w]),
+)

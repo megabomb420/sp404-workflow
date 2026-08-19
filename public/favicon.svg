@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="12" fill="#121315"/>
+  <g transform="translate(6 6)">
+    <g fill="#26282e" stroke="#42464f" stroke-width="1">
+      <rect x="0" y="0" width="11" height="11" rx="1.6"/>
+      <rect x="13" y="0" width="11" height="11" rx="1.6"/>
+      <rect x="26" y="0" width="11" height="11" rx="1.6"/>
+      <rect x="39" y="0" width="11" height="11" rx="1.6"/>
+      <rect x="0" y="13" width="11" height="11" rx="1.6"/>
+      <rect x="13" y="13" width="11" height="11" rx="1.6"/>
+      <rect x="26" y="13" width="11" height="11" rx="1.6"/>
+      <rect x="39" y="13" width="11" height="11" rx="1.6"/>
+      <rect x="0" y="26" width="11" height="11" rx="1.6"/>
+      <rect x="13" y="26" width="11" height="11" rx="1.6"/>
+      <rect x="26" y="26" width="11" height="11" rx="1.6"/>
+      <rect x="39" y="26" width="11" height="11" rx="1.6"/>
+      <rect x="0" y="39" width="11" height="11" rx="1.6"/>
+      <rect x="13" y="39" width="11" height="11" rx="1.6"/>
+      <rect x="26" y="39" width="11" height="11" rx="1.6"/>
+      <rect x="39" y="39" width="11" height="11" rx="1.6"/>
+    </g>
+    <rect x="13" y="13" width="11" height="11" rx="1.6" fill="#e8962c" stroke="#aa6c20" stroke-width="1"/>
+    <circle cx="47.5" cy="2" r="1.5" fill="#58c05a"/>
+    <circle cx="47.5" cy="15" r="1.5" fill="#58c05a"/>
+  </g>
+</svg>

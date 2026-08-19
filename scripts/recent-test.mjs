@@ -1,0 +1,17 @@
+import { chromium } from 'playwright'
+const BASE = 'http://localhost:4173'
+const browser = await chromium.launch()
+const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true })
+const page = await ctx.newPage()
+await page.goto(BASE + '/#/', { waitUntil: 'networkidle' })
+await page.evaluate(() => localStorage.setItem('spw.state.v1', JSON.stringify({settings:{reducedMotion:false,uiSound:false,haptics:true},favorites:{shortcuts:[],workflows:[],troubleshooting:[]},progress:{completedWorkflows:[],workflowStep:{},doneSteps:{}},ui:{lastSection:null,recent:[],recentSearches:[],onboarded:true}})))
+await page.reload({ waitUntil: 'networkidle' })
+await page.goto(BASE + '/#/section/sidechain', { waitUntil: 'networkidle' })
+await page.goto(BASE + '/#/section/pattern', { waitUntil: 'networkidle' })
+await page.goto(BASE + '/#/', { waitUntil: 'networkidle' })
+const recent = await page.locator('.home__recent-item').allTextContents()
+console.log('RECENT chips:', recent.map(s => s.trim().replace(/\s+/g,' ')))
+const ok = recent.length >= 2 && recent.join(' ').includes('PATTERN') && recent.join(' ').includes('SIDECHAIN')
+console.log('RECENT OK =', ok)
+await browser.close()
+process.exit(ok ? 0 : 1)
