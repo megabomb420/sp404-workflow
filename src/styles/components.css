@@ -57,12 +57,13 @@
 
 .padgrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   padding: 2px 0;
 }
 .pad {
   position: relative;
+  min-width: 0;
   aspect-ratio: 4 / 4.9;
   border-radius: var(--radius-m);
   background: linear-gradient(180deg, var(--surface-raised), var(--surface));
@@ -82,6 +83,8 @@
 .pad.is-active { transform: translateY(var(--pad-travel)); box-shadow: var(--shadow-key-pressed); }
 .pad__num { font-size: 12px; color: var(--ink-faint); }
 .pad__label {
+  max-width: 100%;
+  overflow-wrap: anywhere;
   font-size: 12px;
   line-height: 1.06;
   color: var(--ink);

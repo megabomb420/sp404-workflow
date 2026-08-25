@@ -41,12 +41,19 @@ const goals = await page.locator('.goal-card').count()
 check('home exposes 3 golden paths', goals === 3, String(goals))
 await page.click('.browse summary')
 const pad = await page.evaluate(() => {
+  const grid = document.querySelector('.browse .padgrid')
   const p = [...document.querySelectorAll('.pad')]
   const sizes = p.map((el) => Math.min(el.getBoundingClientRect().width, el.getBoundingClientRect().height))
-  return { count: p.length, min: Math.min(...sizes) }
+  return {
+    count: p.length,
+    min: Math.min(...sizes),
+    gridFits: !!grid && grid.scrollWidth <= grid.clientWidth + 1,
+    clipped: p.some((el) => !!grid && el.getBoundingClientRect().right > grid.getBoundingClientRect().right + 1),
+  }
 })
 check('Browse exposes 16-pad knowledge map', pad.count === 16, String(pad.count))
 check('all pads ≥ 44px', pad.min >= 44, `min=${Math.round(pad.min)}px`)
+check('Browse pad grid fits its panel', pad.gridFits && !pad.clipped, `fits=${pad.gridFits} clipped=${pad.clipped}`)
 
 // --- dock ---
 const dockMin = await page.evaluate(() =>
@@ -96,6 +103,15 @@ await page.fill('input[type=search]', 'resample jest suchy')
 await page.waitForTimeout(200)
 const doNow = await page.locator('.sgroup').first().textContent()
 check('vague symptom search surfaces an action', doNow?.includes('DO NOW') ?? false, doNow?.slice(0, 90) ?? '')
+
+// --- deterministic Loop Fit Lab ---
+await page.goto(BASE + '/#/loop-fit', { waitUntil: 'networkidle' })
+check('Loop Fit computes 4 bars at 90 BPM', (await page.textContent('.loopfit-result > strong'))?.trim() === '10.667 s')
+await page.fill('[aria-label="rzeczywista długość sampla w sekundach"]', '10,9')
+await page.waitForTimeout(100)
+const loopMetrics = await page.locator('.loopfit-metrics dd').allTextContents()
+check('Loop Fit reports inferred BPM and accumulated drift', loopMetrics[0] === '88.07' && loopMetrics[2] === '+933 ms', loopMetrics.join(' · '))
+check('Loop Fit has no horizontal overflow', await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1))
 
 // --- favorite → KIT ---
 await page.goto(BASE + '/#/shortcuts', { waitUntil: 'networkidle' })

@@ -6,9 +6,10 @@ import { searchIndex, SEARCH_SUGGESTIONS } from '../data/searchIndex'
 import { useDisplay } from '../state/display'
 import { useStore } from '../state/store'
 
-const KIND_ORDER = ['action', 'troubleshooting', 'workflow', 'shortcut', 'section', 'glossary', 'mfx'] as const
+const KIND_ORDER = ['action', 'tool', 'troubleshooting', 'workflow', 'shortcut', 'section', 'glossary', 'mfx'] as const
 const KIND_LABEL: Record<SearchEntry['kind'], string> = {
   action: 'DO NOW · DOKŁADNA AKCJA',
+  tool: 'USE NOW · OFFLINE TOOL',
   section: 'SEKCJE',
   shortcut: 'SKRÓTY',
   workflow: 'WORKFLOW',

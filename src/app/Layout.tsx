@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { MiniDisplay } from '../components/hardware/MiniDisplay'
 import { BottomDock } from '../components/nav/BottomDock'
@@ -8,9 +8,11 @@ export function Layout() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
-  }, [location.pathname, location.search])
+    const frame = window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }))
+    return () => window.cancelAnimationFrame(frame)
+  }, [location.key, location.pathname, location.search])
   return (
     <div className="shell">
       <header className="shell__top">

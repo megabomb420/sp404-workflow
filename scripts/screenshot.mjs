@@ -56,6 +56,10 @@ await ob.ctx.close()
 // main app
 const main = await makePage(true)
 await shot(main, '01-home', '/')
+await shot(main, '01b-browse', '/', async (p) => {
+  await p.click('.browse summary')
+  await p.locator('.browse').scrollIntoViewIfNeeded()
+})
 await shot(main, '02-sidechain', '/section/sidechain')
 await shot(main, '03-pattern', '/section/pattern')
 await shot(main, '04-skipback', '/section/skipback')
@@ -64,6 +68,9 @@ await shot(main, '05b-rescue', '/fix-it?ids=brak-sygnalu-wejscia,ext-source-usb-
 await shot(main, '06-search', '/search', async (p) => {
   await p.fill('input[type=search]', 'resample jest suchy')
   await p.waitForTimeout(250)
+})
+await shot(main, '06b-loop-fit', '/loop-fit', async (p) => {
+  await p.fill('[aria-label="rzeczywista długość sampla w sekundach"]', '10,9')
 })
 await shot(main, '07-shortcuts', '/shortcuts')
 await shot(main, '08-muscle', '/muscle')

@@ -15,6 +15,7 @@ import { GlossaryPage } from '../pages/GlossaryPage'
 import { SettingsPage } from '../pages/SettingsPage'
 import { SourcesPage } from '../pages/SourcesPage'
 import { OnboardingPage } from '../pages/OnboardingPage'
+import { LoopFitPage } from '../pages/LoopFitPage'
 
 function Gate() {
   const { state } = useStore()
@@ -43,6 +44,7 @@ function Gate() {
         <Route path="/glossary" element={<GlossaryPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/sources" element={<SourcesPage />} />
+        <Route path="/loop-fit" element={<LoopFitPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

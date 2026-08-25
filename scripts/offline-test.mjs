@@ -38,9 +38,15 @@ await page.goto(BASE + '/#/section/sidechain', { waitUntil: 'load' })
 await page.waitForTimeout(400)
 const scTitle = (await page.textContent('.sechead__title'))?.trim() ?? ''
 
+// 4. deterministic tool works offline
+await page.goto(BASE + '/#/loop-fit', { waitUntil: 'load' })
+await page.waitForTimeout(250)
+const loopTarget = (await page.textContent('.loopfit-result > strong'))?.trim() ?? ''
+
 console.log('offline reload — LCD:', JSON.stringify(lcd), '| pads:', pads, '| sw:', sw)
 console.log('offline section — title:', JSON.stringify(scTitle))
-const ok = lcd.includes('NOW') && pads === 16 && sw && scTitle === 'SIDECHAIN'
+console.log('offline tool — loop target:', JSON.stringify(loopTarget))
+const ok = lcd.includes('NOW') && pads === 16 && sw && scTitle === 'SIDECHAIN' && loopTarget === '10.667 s'
 console.log('OFFLINE OK =', ok)
 await browser.close()
 process.exit(ok ? 0 : 1)

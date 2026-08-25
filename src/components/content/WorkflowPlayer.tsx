@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { actionsById, resolveWorkflowEntry } from '../../data/actions'
 import { Workflow, isWorkflowActionRef } from '../../data/types'
 import { useStore } from '../../state/store'
@@ -169,6 +169,14 @@ export function WorkflowPlayer({ workflow }: WorkflowPlayerProps) {
             <span className="wf-step__k u-label">UWAŻAJ</span>
             <p>{step.commonMistake}</p>
           </div>
+        ) : null}
+
+        {actionRecord?.toolRoute ? (
+          <Link to={actionRecord.toolRoute} className="wf-tool-link u-label">
+            <span>◎</span>
+            {actionRecord.toolLabel ?? 'OTWÓRZ NARZĘDZIE'}
+            <span aria-hidden="true">→</span>
+          </Link>
         ) : null}
 
         <SourceTag source={step.source} kind={step.kind} />

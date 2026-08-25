@@ -23,6 +23,16 @@ export function buildSearchIndex(): SearchEntry[] {
   if (cache) return cache
   const idx: SearchEntry[] = []
 
+  idx.push({
+    kind: 'tool',
+    id: 'loop-fit',
+    title: 'LOOP FIT LAB',
+    preview: 'Policz oczekiwaną długość loopa, wykryj drift i przejdź do właściwej akcji na SP.',
+    route: '/loop-fit',
+    sectionLabel: 'OFFLINE TOOL',
+    tags: ['loop fit', 'długość sampla', 'sekundy', 'BPM', 'drift', 'tempo', 'pętla nie trzyma', 'ile taktów'],
+  })
+
   const actionLocations = new Map<string, { workflowId: string; step: number }>()
   for (const workflow of [...workflows].sort((a, b) => Number(b.featured) - Number(a.featured))) {
     workflow.steps.forEach((step, index) => {

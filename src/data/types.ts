@@ -100,6 +100,9 @@ export interface ActionRecord {
   safety?: 'safe' | 'careful' | 'destructive'
   warning?: string
   recoveryIds?: string[]
+  /** Powiązane, deterministyczne narzędzie offline. */
+  toolRoute?: string
+  toolLabel?: string
   tags: string[]
   source?: Source
   kind?: VerifiedKind
@@ -220,7 +223,7 @@ export interface Section {
 
 /* ============================ SEARCH ============================ */
 
-export type SearchKind = 'action' | 'section' | 'shortcut' | 'workflow' | 'troubleshooting' | 'glossary' | 'mfx'
+export type SearchKind = 'action' | 'tool' | 'section' | 'shortcut' | 'workflow' | 'troubleshooting' | 'glossary' | 'mfx'
 
 export interface SearchEntry {
   kind: SearchKind

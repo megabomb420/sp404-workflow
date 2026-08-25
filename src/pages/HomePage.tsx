@@ -73,6 +73,10 @@ export function HomePage() {
           <span className="u-label">FIND AN ACTION</span>
           <small>cel, objaw lub przyciski</small>
         </Link>
+        <Link to="/loop-fit" className="now-escape__item now-escape__item--tool panel-surface">
+          <span className="u-label">LOOP FIT LAB</span>
+          <small>policz długość, BPM i drift przed chopem</small>
+        </Link>
       </div>
 
       <details className="browse panel-surface">
