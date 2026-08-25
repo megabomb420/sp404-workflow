@@ -21,6 +21,8 @@ export interface Progress {
   workflowStep: Record<string, number>
   /** workflowId -> id ukończonych kroków */
   doneSteps: Record<string, string[]>
+  /** Ostatnia uruchomiona, nieukończona sesja — zasila CONTINUE na ekranie NOW. */
+  activeWorkflowId: string | null
 }
 
 export interface UIState {
@@ -41,7 +43,7 @@ export interface AppState {
 const DEFAULTS: AppState = {
   settings: { reducedMotion: false, uiSound: false, haptics: true },
   favorites: { shortcuts: [], workflows: [], troubleshooting: [] },
-  progress: { completedWorkflows: [], workflowStep: {}, doneSteps: {} },
+  progress: { completedWorkflows: [], workflowStep: {}, doneSteps: {}, activeWorkflowId: null },
   ui: { lastSection: null, recent: [], recentSearches: [], onboarded: false },
 }
 
@@ -73,6 +75,7 @@ export type Action =
   | { type: 'PUSH_RECENT'; id: string }
   | { type: 'ADD_RECENT_SEARCH'; q: string }
   | { type: 'SET_WORKFLOW_STEP'; workflowId: string; step: number }
+  | { type: 'SET_ACTIVE_WORKFLOW'; workflowId: string }
   | { type: 'TOGGLE_STEP_DONE'; workflowId: string; stepId: string }
   | { type: 'COMPLETE_WORKFLOW'; workflowId: string }
   | { type: 'RESET_WORKFLOW'; workflowId: string }
@@ -111,8 +114,11 @@ function reducer(state: AppState, action: Action): AppState {
         progress: {
           ...state.progress,
           workflowStep: { ...state.progress.workflowStep, [action.workflowId]: action.step },
+          activeWorkflowId: action.workflowId,
         },
       }
+    case 'SET_ACTIVE_WORKFLOW':
+      return { ...state, progress: { ...state.progress, activeWorkflowId: action.workflowId } }
     case 'TOGGLE_STEP_DONE': {
       const current = state.progress.doneSteps[action.workflowId] ?? []
       const doneSteps = {
@@ -127,7 +133,14 @@ function reducer(state: AppState, action: Action): AppState {
       const completedWorkflows = state.progress.completedWorkflows.includes(action.workflowId)
         ? state.progress.completedWorkflows
         : [...state.progress.completedWorkflows, action.workflowId]
-      return { ...state, progress: { ...state.progress, completedWorkflows } }
+      return {
+        ...state,
+        progress: {
+          ...state.progress,
+          completedWorkflows,
+          activeWorkflowId: state.progress.activeWorkflowId === action.workflowId ? null : state.progress.activeWorkflowId,
+        },
+      }
     }
     case 'RESET_WORKFLOW': {
       const workflowStep = { ...state.progress.workflowStep }
@@ -141,6 +154,7 @@ function reducer(state: AppState, action: Action): AppState {
           workflowStep,
           doneSteps,
           completedWorkflows: state.progress.completedWorkflows.filter((w) => w !== action.workflowId),
+          activeWorkflowId: state.progress.activeWorkflowId === action.workflowId ? null : state.progress.activeWorkflowId,
         },
       }
     }

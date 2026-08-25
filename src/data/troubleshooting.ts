@@ -2,6 +2,26 @@ import { Troubleshooting } from './types'
 
 export const troubleshooting: Troubleshooting[] = [
   {
+    id: 'resample-cisza',
+    symptom: 'Nowy pad po resamplingu jest pusty albo nagrała się cisza',
+    cause: 'ROUTING może być ustawione na ExtIn zamiast Mix, źródłowe pady/pattern nie zostały uruchomione po starcie nagrania albo nagranie zakończono przed dźwiękiem.',
+    fix: 'W RESAMPLE otwórz RECORD SETTING i ustaw ROUTING na Mix. Wybierz pusty pad, rozpocznij [REC], a następnie uruchom pattern lub pady, które chcesz nagrać. Zakończ kolejnym [REC] dopiero po wybrzmieniu materiału.',
+    related: ['resample', 'routing-mix'],
+    tags: ['resample', 'cisza', 'pusty pad', 'ROUTING', 'Mix', 'ExtIn', 'nie nagrało'],
+    source: { manual: 'RM5.50', page: 37 },
+    kind: 'verified',
+  },
+  {
+    id: 'print-jest-suchy',
+    symptom: 'Print / nowy sample jest suchy — nie nagrał efektów',
+    cause: 'Materiał mógł być skierowany na DRY albo użyto BOUNCE, który nie zachowuje BUS FX tak jak resampling.',
+    fix: 'Przed nagraniem przytrzymaj [REMAIN] i sprawdź routing padów: pomarańczowy = BUS 1, zielony = BUS 2, biały = DRY. Jeśli chcesz zamrozić słyszane efekty, użyj RESAMPLE z ROUTING ustawionym na Mix zamiast BOUNCE.',
+    related: ['bus-assign', 'resample', 'bounce'],
+    tags: ['print', 'dry', 'suchy', 'bez efektu', 'BUS FX', 'REMAIN', 'BOUNCE', 'RESAMPLE'],
+    source: { manual: 'RM5.50', page: 66 },
+    kind: 'verified',
+  },
+  {
     id: 'clipping-przesterowany-sample',
     symptom: 'Sample gra przesterowanie / zniekształcony dźwięk',
     cause: 'Sygnał wejściowy jest za mocny — wejście jest przesterowane (clipping).',

@@ -1,10 +1,16 @@
-import { Outlet, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { MiniDisplay } from '../components/hardware/MiniDisplay'
 import { BottomDock } from '../components/nav/BottomDock'
 
 /** Shell: LCD u góry, treść w środku, dock na dole (safe-area). */
 export function Layout() {
   const navigate = useNavigate()
+  const location = useLocation()
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [location.pathname, location.search])
   return (
     <div className="shell">
       <header className="shell__top">

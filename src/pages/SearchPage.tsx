@@ -6,8 +6,9 @@ import { searchIndex, SEARCH_SUGGESTIONS } from '../data/searchIndex'
 import { useDisplay } from '../state/display'
 import { useStore } from '../state/store'
 
-const KIND_ORDER = ['section', 'shortcut', 'workflow', 'troubleshooting', 'glossary', 'mfx'] as const
+const KIND_ORDER = ['action', 'troubleshooting', 'workflow', 'shortcut', 'section', 'glossary', 'mfx'] as const
 const KIND_LABEL: Record<SearchEntry['kind'], string> = {
+  action: 'DO NOW · DOKŁADNA AKCJA',
   section: 'SEKCJE',
   shortcut: 'SKRÓTY',
   workflow: 'WORKFLOW',
@@ -22,7 +23,7 @@ export function SearchPage() {
   const [q, setQ] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const results = useMemo(() => searchIndex(q), [q])
+  const results = useMemo(() => searchIndex(q, 40, state.progress.activeWorkflowId), [q, state.progress.activeWorkflowId])
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -52,7 +53,7 @@ export function SearchPage() {
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="sidechain, skipback, chop, USB, resample…"
+          placeholder="co chcesz zrobić albo co nie działa?"
           aria-label="szukaj w całym przewodniku"
           autoComplete="off"
           enterKeyHint="search"
@@ -83,7 +84,10 @@ export function SearchPage() {
           )}
         </div>
       ) : results.length === 0 ? (
-        <p className="page__empty">Brak wyników dla „{q}". Spróbuj inaczej — np. „duck", „pump", „input".</p>
+        <div className="search-no-results panel-surface">
+          <p>Brak pewnego wyniku dla „{q}".</p>
+          <Link to={`/fix-it?q=${encodeURIComponent(q)}`} className="chip">SZUKAJ PO OBJAWIE W FIX IT</Link>
+        </div>
       ) : (
         grouped.map((g) => (
           <section key={g.kind} className="sgroup">

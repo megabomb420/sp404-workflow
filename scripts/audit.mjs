@@ -15,8 +15,8 @@ const page = await ctx.newPage()
 const STATE = {
   settings: { reducedMotion: false, uiSound: false, haptics: true },
   favorites: { shortcuts: [], workflows: [], troubleshooting: [] },
-  progress: { completedWorkflows: [], workflowStep: {}, doneSteps: {} },
-  ui: { lastSection: null, recentSearches: [], onboarded: true },
+  progress: { completedWorkflows: [], workflowStep: {}, doneSteps: {}, activeWorkflowId: null },
+  ui: { lastSection: null, recent: [], recentSearches: [], onboarded: true },
 }
 
 // Seed localStorage once (NOT via addInitScript, so reloads preserve saved state).
@@ -34,15 +34,18 @@ check('fonts loaded', fonts.length >= 2, fonts.join(', '))
 
 // --- LCD ---
 const lcd = (await page.textContent('.lcd__title'))?.trim() ?? ''
-check('LCD shows SP WORKFLOW on home', lcd.includes('SP WORKFLOW'), lcd)
+check('LCD shows NOW on goal-first home', lcd.includes('NOW'), lcd)
 
-// --- pads ---
+// --- goal-first home + Browse ---
+const goals = await page.locator('.goal-card').count()
+check('home exposes 3 golden paths', goals === 3, String(goals))
+await page.click('.browse summary')
 const pad = await page.evaluate(() => {
   const p = [...document.querySelectorAll('.pad')]
   const sizes = p.map((el) => Math.min(el.getBoundingClientRect().width, el.getBoundingClientRect().height))
   return { count: p.length, min: Math.min(...sizes) }
 })
-check('16 pads on home', pad.count === 16, String(pad.count))
+check('Browse exposes 16-pad knowledge map', pad.count === 16, String(pad.count))
 check('all pads ≥ 44px', pad.min >= 44, `min=${Math.round(pad.min)}px`)
 
 // --- dock ---
@@ -65,16 +68,34 @@ check('search "sidechain" returns results', n > 0, `${n} results`)
 const firstHit = (await page.textContent('.sresult:first-child .sresult__title'))?.trim()
 check('search shows title + preview', !!firstHit, firstHit)
 
-// --- workflow: NEXT advances + persists ---
-await page.goto(BASE + '/#/workflow/build-a-beat', { waitUntil: 'networkidle' })
+// --- executable workflow: confirms observable result + persists ---
+await page.goto(BASE + '/#/workflow/source-to-pad', { waitUntil: 'networkidle' })
 const s1 = (await page.textContent('.wf-progress__label'))?.trim()
-await page.click('text=DALEJ')
+const checkpoint = await page.locator('.wf-check').count()
+check('workflow shows observable hardware checkpoint', checkpoint === 1)
+await page.click('text=TAK — DALEJ')
 await page.waitForTimeout(250)
 const s2 = (await page.textContent('.wf-progress__label'))?.trim()
-check('workflow NEXT advances', /STEP 2/.test(s2 ?? ''), `${s1} → ${s2}`)
+check('confirmed result advances workflow', /ACTION 2/.test(s2 ?? ''), `${s1} → ${s2}`)
 await page.reload({ waitUntil: 'networkidle' })
 const s3 = (await page.textContent('.wf-progress__label'))?.trim()
-check('workflow progress persists after reload', /STEP 2/.test(s3 ?? ''), s3)
+check('workflow progress persists after reload', /ACTION 2/.test(s3 ?? ''), s3)
+
+// --- contextual Rescue + return ---
+await page.click('text=TO SIĘ NIE STAŁO')
+await page.waitForTimeout(200)
+check('failed checkpoint opens contextual Rescue', new URL(page.url()).hash.startsWith('#/fix-it?'), page.url())
+check('Rescue carries workflow context', (await page.locator('.rescue-context').count()) === 1)
+await page.click('text=NAPRAWIONE — WRÓĆ DO AKCJI')
+await page.waitForTimeout(200)
+check('Rescue returns to interrupted action', new URL(page.url()).hash.includes('/workflow/source-to-pad?step=1'), page.url())
+
+// --- action-centric, intent-aware search ---
+await page.goto(BASE + '/#/search', { waitUntil: 'networkidle' })
+await page.fill('input[type=search]', 'resample jest suchy')
+await page.waitForTimeout(200)
+const doNow = await page.locator('.sgroup').first().textContent()
+check('vague symptom search surfaces an action', doNow?.includes('DO NOW') ?? false, doNow?.slice(0, 90) ?? '')
 
 // --- favorite → KIT ---
 await page.goto(BASE + '/#/shortcuts', { waitUntil: 'networkidle' })

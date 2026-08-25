@@ -1,6 +1,74 @@
 import { Workflow } from './types'
 
 export const workflows: Workflow[] = [
+  /* ============================ NOW · GOLDEN PATHS ============================ */
+
+  {
+    id: 'source-to-pad',
+    title: 'ŹRÓDŁO → GRYWALNY PAD',
+    category: 'NOW · CAPTURE',
+    difficulty: 'easy',
+    minutes: 6,
+    featured: true,
+    startingState: 'Podłącz źródło i przygotuj pusty pad. Nie musisz znać menu SP — sprawdzimy rezultat po każdym ruchu.',
+    outcome: 'Czysto nagrany, przycięty sample, który zachowuje się właściwie pod palcem.',
+    blurb: 'Od wejścia i poziomu do przyciętego, gotowego do grania sampla.',
+    steps: [
+      { id: 'capture-input', actionId: 'open-input-settings' },
+      { id: 'capture-monitor', actionId: 'enable-ext-source' },
+      { id: 'capture-standby', actionId: 'sampling-standby' },
+      { id: 'capture-pad', actionId: 'sampling-pick-pad' },
+      { id: 'capture-record', actionId: 'sampling-record' },
+      { id: 'capture-trim', actionId: 'trim-sample' },
+      { id: 'capture-playback', actionId: 'check-pad-playback' },
+    ],
+  },
+  {
+    id: 'pattern-to-print',
+    title: 'PATTERN → PRINT Z FX',
+    category: 'NOW · PRINT',
+    difficulty: 'medium',
+    minutes: 5,
+    featured: true,
+    startingState: 'Masz grający pattern, wybrane efekty i pusty pad na nowy zapis.',
+    outcome: 'Pattern zamieniony na nowy sample z dokładnie tym przetwarzaniem, które słyszysz.',
+    blurb: 'Sprawdź routing, nagraj resample i porównaj wynik z oryginałem.',
+    steps: [
+      { id: 'print-pattern', actionId: 'select-pattern-for-print' },
+      { id: 'print-bus', actionId: 'check-bus-routing' },
+      { id: 'print-resample', actionId: 'resample-on' },
+      { id: 'print-routing', actionId: 'resample-routing-mix' },
+      { id: 'print-record', actionId: 'resample-record-pattern' },
+      {
+        id: 'print-compare',
+        title: 'PORÓWNAJ WYNIK',
+        action: 'Zagraj nowy pad i oryginalny pattern osobno. Sprawdź poziom, długość oraz to, czy efekt został nagrany tylko tam, gdzie planowałeś.',
+        expectedResult: 'Nowy sample brzmi jak zamierzony print, a oryginalny pattern nadal jest dostępny.',
+        commonMistake: 'Jeśli print jest suchy albo zawiera niechciany efekt, nie nagrywaj ponownie w ciemno — wybierz „TO SIĘ NIE STAŁO”.',
+        kind: 'tip',
+      },
+    ],
+  },
+  {
+    id: 'loop-to-pattern',
+    title: 'LOOP → CHOPY → PATTERN',
+    category: 'NOW · FLIP',
+    difficulty: 'medium',
+    minutes: 8,
+    featured: true,
+    startingState: 'Loop znajduje się na padzie. Przygotuj kilka sąsiednich pustych padów i pusty pattern.',
+    outcome: 'Loop dopasowany do tempa, pocięty i zagrany jako nowa fraza w patternie.',
+    blurb: 'Ustal tempo, rozłóż cięcia na pady i zbuduj z nich nową frazę.',
+    steps: [
+      { id: 'loop-bpm', actionId: 'set-sample-bpm' },
+      { id: 'loop-sync', actionId: 'enable-bpm-sync' },
+      { id: 'loop-markers', actionId: 'open-marker-screen' },
+      { id: 'loop-cuts', actionId: 'add-markers' },
+      { id: 'loop-assign', actionId: 'assign-chops-to-pads' },
+      { id: 'loop-pattern', actionId: 'record-chops-to-pattern' },
+    ],
+  },
+
   /* ============================ BUILD A BEAT ============================ */
 
   {

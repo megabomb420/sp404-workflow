@@ -6,11 +6,13 @@ import cx from '../../utils/cx'
 
 interface TroubleshootingItemProps {
   item: Troubleshooting
+  defaultOpen?: boolean
+  order?: number
 }
 
 /** Akordeon PROBLEM → DLACZEGO → FIX. */
-export function TroubleshootingItem({ item }: TroubleshootingItemProps) {
-  const [open, setOpen] = useState(false)
+export function TroubleshootingItem({ item, defaultOpen = false, order }: TroubleshootingItemProps) {
+  const [open, setOpen] = useState(defaultOpen)
   const { isFav, dispatch } = useStore()
   const fav = isFav('troubleshooting', item.id)
 
@@ -22,7 +24,10 @@ export function TroubleshootingItem({ item }: TroubleshootingItemProps) {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
       >
-        <span className="tcard__symptom u-label">{item.symptom}</span>
+        <span className="tcard__symptom u-label">
+          {order ? <span className="tcard__order u-mono">{String(order).padStart(2, '0')}</span> : null}
+          {item.symptom}
+        </span>
         <span className={cx('tcard__chev', open && 'is-open')} aria-hidden="true">
           <svg viewBox="0 0 24 24" width="16" height="16">
             <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

@@ -84,6 +84,41 @@ export interface WorkflowStep {
   kind?: VerifiedKind
 }
 
+/**
+ * Kanoniczna, zweryfikowana czynność wykonywana na SP-404MKII.
+ * Rekordy akcji są współdzielone przez workflow, wyszukiwarkę i Rescue.
+ */
+export interface ActionRecord {
+  id: string
+  title: string
+  action: string
+  buttons?: string[]
+  path?: string[]
+  startingState?: string
+  explanation?: string
+  expectedResult: string
+  safety?: 'safe' | 'careful' | 'destructive'
+  warning?: string
+  recoveryIds?: string[]
+  tags: string[]
+  source?: Source
+  kind?: VerifiedKind
+}
+
+/** Lekka referencja do kanonicznej akcji; pozwala nie kopiować instrukcji. */
+export interface WorkflowActionRef {
+  id: string
+  actionId: string
+  /** Kontekst właściwy tylko dla tej ścieżki. */
+  context?: string
+}
+
+export type WorkflowEntry = WorkflowStep | WorkflowActionRef
+
+export function isWorkflowActionRef(step: WorkflowEntry): step is WorkflowActionRef {
+  return 'actionId' in step
+}
+
 export interface Workflow {
   id: string
   title: string
@@ -92,9 +127,15 @@ export interface Workflow {
   difficulty: Difficulty
   /** szacowany czas w minutach */
   minutes?: number
-  steps: WorkflowStep[]
+  steps: WorkflowEntry[]
   /** krótki opis na liście */
   blurb?: string
+  /** Stan, który użytkownik powinien przygotować przed pierwszym krokiem. */
+  startingState?: string
+  /** Muzyczny, obserwowalny rezultat całej ścieżki. */
+  outcome?: string
+  /** Złota ścieżka eksponowana na ekranie NOW. */
+  featured?: boolean
 }
 
 /* ============================ TROUBLESHOOTING ============================ */
@@ -179,7 +220,7 @@ export interface Section {
 
 /* ============================ SEARCH ============================ */
 
-export type SearchKind = 'section' | 'shortcut' | 'workflow' | 'troubleshooting' | 'glossary' | 'mfx'
+export type SearchKind = 'action' | 'section' | 'shortcut' | 'workflow' | 'troubleshooting' | 'glossary' | 'mfx'
 
 export interface SearchEntry {
   kind: SearchKind

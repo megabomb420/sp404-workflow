@@ -14,8 +14,8 @@ await page.evaluate(() =>
     JSON.stringify({
       settings: { reducedMotion: false, uiSound: false, haptics: true },
       favorites: { shortcuts: [], workflows: [], troubleshooting: [] },
-      progress: { completedWorkflows: [], workflowStep: {}, doneSteps: {} },
-      ui: { lastSection: null, recentSearches: [], onboarded: true },
+      progress: { completedWorkflows: [], workflowStep: {}, doneSteps: {}, activeWorkflowId: null },
+      ui: { lastSection: null, recent: [], recentSearches: [], onboarded: true },
     }),
   ),
 )
@@ -40,7 +40,7 @@ const scTitle = (await page.textContent('.sechead__title'))?.trim() ?? ''
 
 console.log('offline reload — LCD:', JSON.stringify(lcd), '| pads:', pads, '| sw:', sw)
 console.log('offline section — title:', JSON.stringify(scTitle))
-const ok = lcd.includes('SP WORKFLOW') && pads === 16 && sw && scTitle === 'SIDECHAIN'
+const ok = lcd.includes('NOW') && pads === 16 && sw && scTitle === 'SIDECHAIN'
 console.log('OFFLINE OK =', ok)
 await browser.close()
 process.exit(ok ? 0 : 1)

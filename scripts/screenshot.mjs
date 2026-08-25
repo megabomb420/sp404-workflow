@@ -9,8 +9,8 @@ fs.mkdirSync(SHOTS, { recursive: true })
 const STATE = JSON.stringify({
   settings: { reducedMotion: false, uiSound: false, haptics: true },
   favorites: { shortcuts: [], workflows: [], troubleshooting: [] },
-  progress: { completedWorkflows: [], workflowStep: {}, doneSteps: {} },
-  ui: { lastSection: null, recentSearches: [], onboarded: true },
+  progress: { completedWorkflows: [], workflowStep: {}, doneSteps: {}, activeWorkflowId: null },
+  ui: { lastSection: null, recent: [], recentSearches: [], onboarded: true },
 })
 
 const browser = await chromium.launch()
@@ -59,9 +59,10 @@ await shot(main, '01-home', '/')
 await shot(main, '02-sidechain', '/section/sidechain')
 await shot(main, '03-pattern', '/section/pattern')
 await shot(main, '04-skipback', '/section/skipback')
-await shot(main, '05-workflow', '/workflow/build-a-beat')
+await shot(main, '05-workflow', '/workflow/source-to-pad')
+await shot(main, '05b-rescue', '/fix-it?ids=brak-sygnalu-wejscia,ext-source-usb-brak-dzwieku&from=source-to-pad&step=1')
 await shot(main, '06-search', '/search', async (p) => {
-  await p.fill('input[type=search]', 'sidechain')
+  await p.fill('input[type=search]', 'resample jest suchy')
   await p.waitForTimeout(250)
 })
 await shot(main, '07-shortcuts', '/shortcuts')
