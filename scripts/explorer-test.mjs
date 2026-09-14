@@ -1,7 +1,7 @@
 // Checks the SIDECHAIN explorer renders + knobs respond (keyboard + pointer drag).
 // Uses the verified-working dispatch sequence from knob-debug.mjs.
 import { chromium } from 'playwright'
-const BASE = 'http://localhost:4173'
+const BASE = (process.env.TEST_BASE_URL || 'http://localhost:4173').replace(/\/$/, '')
 const browser = await chromium.launch()
 const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true })
 const page = await ctx.newPage()

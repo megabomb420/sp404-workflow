@@ -1,4 +1,5 @@
 import { ActionRecord, WorkflowEntry, WorkflowStep, isWorkflowActionRef } from './types'
+import { byId } from '../utils/byId'
 
 export const actions: ActionRecord[] = [
   {
@@ -90,7 +91,7 @@ export const actions: ActionRecord[] = [
     id: 'select-pattern-for-print',
     title: 'WYBIERZ PATTERN',
     buttons: ['PATTERN SELECT'],
-    action: 'Wybierz pattern, który chcesz zamrozić do nowego sampla.',
+    action: 'Włącz PATTERN SELECT i odsłuchaj pattern, który chcesz zamrozić do sampla. Zatrzymaj odtwarzanie przed przygotowaniem nagrania.',
     startingState: 'Pattern gra poprawnie i masz pusty pad na wynik.',
     expectedResult: 'Wybrany pattern gra od początku do końca bez brakujących elementów.',
     safety: 'safe',
@@ -116,7 +117,7 @@ export const actions: ActionRecord[] = [
     id: 'resample-on',
     title: 'WŁĄCZ RESAMPLE',
     buttons: ['RESAMPLE'],
-    action: 'Wciśnij [RESAMPLE] i przygotuj długość nowego sampla.',
+    action: 'Upewnij się, że PATTERN SELECT jest włączone. Wciśnij [RESAMPLE] i przygotuj długość nowego sampla.',
     expectedResult: 'SP jest w trybie resamplowania i czeka na pad docelowy.',
     safety: 'safe',
     recoveryIds: ['niechciany-fx-resampling'],
@@ -142,13 +143,13 @@ export const actions: ActionRecord[] = [
     id: 'resample-record-pattern',
     title: 'NAGRAJ PRINT',
     buttons: ['REC'],
-    action: 'Wybierz pusty pad, rozpocznij nagrywanie i odtwórz pattern od początku. Zakończ [REC].',
+    action: 'Wyjdź z RECORD SETTING przez [EXIT]. Wybierz pusty, migający czerwono pad docelowy. Gdy zobaczysz „Press Pad to START”, naciśnij pad patternu — nagrywanie ruszy razem z nim. Zakończ [REC].',
     expectedResult: 'Nowy pad zawiera pattern jako audio z zamierzonymi efektami.',
     safety: 'careful',
     warning: 'Użyj pustego pada i zostaw oryginalny pattern do porównania.',
     recoveryIds: ['resample-cisza', 'print-jest-suchy', 'niechciany-fx-resampling', 'zly-routing-bus'],
     tags: ['record print', 'resample', 'pattern audio', 'cisza', 'dry'],
-    source: { manual: 'RM5.50', page: 37 },
+    source: { manual: 'RM5.50', page: 65 },
     kind: 'verified',
   },
   {
@@ -156,7 +157,7 @@ export const actions: ActionRecord[] = [
     title: 'USTAW BPM SAMPLA',
     buttons: ['PITCH/SPEED'],
     path: ['BPM SET'],
-    action: 'Dla loopa ustaw BPM SET na AUTO albo wpisz poprawne tempo ręcznie.',
+    action: 'W PITCH/SPEED wybierz pad loopa. Pokrętłem VALUE wybierz BPM SET: AUTO do analizy albo MANU / MANU-F do ręcznego wpisania tempa; naciśnij VALUE i zatwierdź ustawienie.',
     expectedResult: 'Sample ma zapisane tempo odpowiadające materiałowi.',
     safety: 'safe',
     recoveryIds: ['bpm-sync-bez-tempa', 'sample-bpm-vs-pattern-bpm'],
@@ -232,7 +233,7 @@ export const actions: ActionRecord[] = [
   },
 ]
 
-export const actionsById: Record<string, ActionRecord> = Object.fromEntries(actions.map((action) => [action.id, action]))
+export const actionsById = byId(actions)
 
 export function resolveWorkflowEntry(entry: WorkflowEntry): WorkflowStep {
   if (!isWorkflowActionRef(entry)) return entry

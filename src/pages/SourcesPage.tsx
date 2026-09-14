@@ -17,15 +17,15 @@ export function SourcesPage() {
       <section className="sbody">
         <h2 className="sbody__h u-label">PODSTAWA</h2>
         <p>
-          Wszystkie fakty merytoryczne (ROLAND / VERIFIED) pochodzą z oficjalnego
+          Podstawą informacji o sprzęcie jest oficjalny
           dokumentu <strong>Roland SP-404MKII Reference Manual (Version {MANUAL_VERSION})</strong> — wersja HTML
-          (wyd. 404 Day 2026) oraz wydanie PDF v5 (lipiec 2025), których tekst został pobrany i zweryfikowany lokalnie.
+          oraz wydanie PDF v5. Odsyłacze ze stroną prowadzą do PDF v5; sekcje opisujące zmiany firmware mogą odnosić się do HTML v5.50.
         </p>
         <p>
-          Każdy fakt opatrzony jest paginacją (<span className="u-mono">RM5.50 p.X</span>) — możesz ją sprawdzić
-          w manualu. Treści, których nie udało się potwierdzić, są oznaczone jako niezweryfikowane i nie są
-          podawane jako fakty.
+          Kliknij etykietę źródła przy instrukcji, aby otworzyć manual. Odsyłacze wymagają internetu;
+          treść aplikacji pozostaje dostępna offline po pierwszym pełnym załadowaniu. Etykieta VERIFIED oznacza odniesienie do dokumentacji, nie automatyczną kontrolę sprzętu ani gwarancję braku błędu.
         </p>
+        <p><a href="https://static.roland.com/manuals/sp-404mk2_reference_v550/en-US/index.html" target="_blank" rel="noreferrer">Manual HTML v5.50 ↗</a> · <a href="https://static.roland.com/assets/media/pdf/SP-404MK2_v5_reference_eng03_W.pdf" target="_blank" rel="noreferrer">Manual PDF v5 ↗</a></p>
       </section>
 
       <section className="sbody">
@@ -33,7 +33,7 @@ export function SourcesPage() {
         <div className="sbody__seq">
           <SourceTag kind="verified" />
           <p>
-            <strong>ROLAND / VERIFIED</strong> — fakt zacytowany z manuala (skrót, parametr, ścieżka menu, zachowanie).
+            <strong>ROLAND / VERIFIED</strong> — instrukcja opracowana na podstawie manuala (skrót, parametr, ścieżka menu, zachowanie).
           </p>
         </div>
         <div className="sbody__seq">
@@ -58,8 +58,7 @@ export function SourcesPage() {
 
       <section className="sbody">
         <h2 className="sbody__h u-label">WERYFIKACJA</h2>
-        <p>Treść zweryfikowana <strong>2026-08-19</strong> względem manuala v5.50. Aplikacja działa offline i jest PWA —
-          instalacja z ekranu głównego po pierwszym otwarciu.</p>
+        <p>Podczas aktualizacji 2026-09-14 ponownie sprawdzono wybrane instrukcje resamplingu patternu, routingu Mix / BOUNCE i ustawiania BPM. Nie był to ponowny audyt całej biblioteki ani test wszystkich procedur na sprzęcie. Jeśli ekran SP się nie zgadza, przerwij krok i sprawdź dokumentację swojej wersji firmware.</p>
       </section>
     </div>
   )

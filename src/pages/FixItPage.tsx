@@ -4,15 +4,19 @@ import { TroubleshootingItem } from '../components/content/TroubleshootingItem'
 import { troubleshooting, troubleshootingById } from '../data/troubleshooting'
 import { workflowsById } from '../data/workflows'
 import { useDisplay } from '../state/display'
+import { RescueGuide } from '../components/content/RescueGuide'
+import { workflowReturnRoute } from '../utils/session'
+import { normalizeSearch } from '../utils/search'
 
-const normalize = (value: string) => value.toLowerCase().trim()
+const normalize = normalizeSearch
 
 export function FixItPage() {
   const { setDisplay } = useDisplay()
   const [params] = useSearchParams()
   const seededIds = useMemo(() => (params.get('ids') ?? '').split(',').filter(Boolean), [params])
   const fromWorkflow = params.get('from')
-  const fromStep = Number(params.get('step') ?? 0)
+  const returnRoute = workflowReturnRoute(params)
+  const fromStep = returnRoute ? Number(new URLSearchParams(returnRoute.split('?')[1]).get('step')) : 0
   const [q, setQ] = useState(params.get('q') ?? '')
   const contextual = seededIds.length > 0 || Boolean(fromWorkflow)
 
@@ -40,14 +44,13 @@ export function FixItPage() {
   }, [q, seededIds])
 
   const sourceWorkflow = fromWorkflow ? workflowsById[fromWorkflow] : undefined
-  const returnRoute = sourceWorkflow ? `/workflow/${sourceWorkflow.id}?step=${Number.isFinite(fromStep) ? fromStep : 0}` : null
 
   return (
     <div className="page">
       <h1 className="page__title u-label">{contextual ? 'RESCUE' : 'FIX IT'}</h1>
       <p className="page__lede">
         {sourceWorkflow
-          ? `Nie opuszczasz sesji „${sourceWorkflow.title}”. Sprawdź poniższe przyczyny w kolejności — od najszybszej i najbezpieczniejszej.`
+          ? `Pomoc do sesji „${sourceWorkflow.title}”. Twój krok pozostaje zachowany.`
           : 'Opisz objaw, który widzisz lub słyszysz. Nie musisz znać nazwy funkcji.'}
       </p>
 
@@ -61,6 +64,8 @@ export function FixItPage() {
           </div>
         </aside>
       ) : null}
+
+      <RescueGuide seededIds={seededIds} returnRoute={returnRoute} />
 
       {!seededIds.length ? (
         <label className="searchbox panel-surface">
@@ -81,23 +86,22 @@ export function FixItPage() {
         <p className="rescue-order u-label">SPRAWDŹ PO KOLEI</p>
       )}
 
-      <div className="tcardlist">
+      <details className="rescue-reference"><summary>Biblioteka porad ({list.length})</summary><div className="tcardlist">
         {list.map((item, index) => (
           <TroubleshootingItem
             key={item.id}
             item={item}
             order={contextual ? index + 1 : undefined}
-            defaultOpen={contextual && index === 0}
           />
         ))}
-      </div>
+      </div></details>
 
       {list.length === 0 && <p className="page__empty">Nie znaleziono tego objawu. Spróbuj opisać to, co słyszysz lub widzisz na ekranie.</p>}
 
       {returnRoute ? (
         <div className="rescue-return">
-          <Link to={returnRoute} className="rescue-return__primary u-label">NAPRAWIONE — WRÓĆ DO AKCJI →</Link>
-          <Link to="/search" className="rescue-return__secondary">To nie pomogło — znajdź inny objaw</Link>
+          <Link to={returnRoute} className="rescue-return__primary u-label">WRÓĆ DO AKCJI →</Link>
+          <span className="rescue-return__secondary">Powrót nie oznacza potwierdzenia sukcesu.</span>
         </div>
       ) : null}
     </div>

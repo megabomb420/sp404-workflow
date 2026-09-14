@@ -6,6 +6,7 @@ import { workflows } from './workflows'
 import { troubleshooting } from './troubleshooting'
 import { glossary } from './glossary'
 import { mfxEffects } from './mfx'
+import { normalizeSearch as normalize } from '../utils/search'
 
 /** Sugestie wyświetlane przy pustym polu. */
 export const SEARCH_SUGGESTIONS = [
@@ -34,7 +35,7 @@ export function buildSearchIndex(): SearchEntry[] {
   })
 
   const actionLocations = new Map<string, { workflowId: string; step: number }>()
-  for (const workflow of [...workflows].sort((a, b) => Number(b.featured) - Number(a.featured))) {
+  for (const workflow of [...workflows].sort((a, b) => Number(!!b.featured) - Number(!!a.featured))) {
     workflow.steps.forEach((step, index) => {
       if (isWorkflowActionRef(step) && !actionLocations.has(step.actionId)) {
         actionLocations.set(step.actionId, { workflowId: workflow.id, step: index })
@@ -75,7 +76,7 @@ export function buildSearchIndex(): SearchEntry[] {
       id: sc.id,
       title: sc.name,
       preview: sc.description,
-      route: '/shortcuts',
+      route: `/shortcuts?id=${encodeURIComponent(sc.id)}`,
       buttons: sc.buttons,
       path: sc.path,
       sectionLabel: sc.category,
@@ -113,7 +114,7 @@ export function buildSearchIndex(): SearchEntry[] {
       id: g.term,
       title: g.term,
       preview: g.definition,
-      route: '/glossary',
+      route: `/glossary?term=${encodeURIComponent(g.term)}`,
       sectionLabel: 'GLOSSARY',
       tags: [g.term, ...g.tags],
     })
@@ -145,27 +146,20 @@ const REWRITES: Array<[RegExp, string]> = [
   [/zamroz|wydrukuj/g, 'print resample bounce'],
 ]
 
-function normalize(value: string): string {
-  return value
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9+]+/g, ' ')
-    .trim()
-}
-
 function expandedQuery(value: string): string {
-  let query = normalize(value)
-  for (const [pattern, replacement] of REWRITES) query = query.replace(pattern, `${replacement} `)
-  return query.replace(/\s+/g, ' ').trim()
+  const query = normalize(value)
+  const expansions = REWRITES.filter(([pattern]) => new RegExp(pattern.source).test(query)).map(([, replacement]) => replacement)
+  return [query, ...expansions].join(' ')
 }
 
 export function searchIndex(query: string, limit = 40, contextWorkflowId?: string | null): SearchEntry[] {
-  const q = expandedQuery(query)
+  const q = normalize(query)
   if (!q) return []
   const idx = buildSearchIndex()
   const scored: Array<{ e: SearchEntry; score: number }> = []
-  const queryTokens = [...new Set(q.split(' ').filter((token) => token.length > 1))]
+  const stop = new Set(['jak', 'na', 'do', 'to', 'sie', 'mi', 'jest', 'chce', 'nie', 'co', 'albo', 'ze'])
+  const queryTokens = [...new Set(q.split(' ').filter((token) => token.length > 1 && !stop.has(token)))]
+  const aliases = [...new Set(expandedQuery(query).split(' ').filter((token) => token.length > 1 && !stop.has(token) && !queryTokens.includes(token)))]
 
   for (const e of idx) {
     let score = Infinity
@@ -183,12 +177,17 @@ export function searchIndex(query: string, limit = 40, contextWorkflowId?: strin
     ].join(' '))
     if (haystack.includes(q)) score = Math.min(score, 3)
 
-    const hits = queryTokens.filter((token) => haystack.includes(token) || title.includes(token)).length
-    if (hits > 0) score = Math.min(score, 7 - Math.min(hits, 4) + (hits < queryTokens.length ? 1 : 0))
+    const words = `${title} ${haystack}`.split(' ')
+    const matches = (token: string) => words.some((word) => word === token || (token.length >= 4 && word.startsWith(token)))
+    const hits = queryTokens.filter(matches).length
+    const aliasHits = aliases.filter(matches).length
+    const coverage = hits / Math.max(1, queryTokens.length)
+    if (coverage >= 0.5 || (hits > 0 && aliasHits > 0)) score = Math.min(score, 5 + 3 * (1 - coverage) - Math.min(aliasHits, 3) * 0.2)
+    else if (aliasHits >= 2) score = Math.min(score, 9 - Math.min(aliasHits, 4) * 0.2)
     if (score === Infinity) continue
     if (e.kind === 'action') score -= 0.75
     if (e.kind === 'troubleshooting') score -= 0.35
-    if (contextWorkflowId && e.route.includes(`/workflow/${contextWorkflowId}`)) score -= 1
+    if (contextWorkflowId && e.route.includes(`/workflow/${contextWorkflowId}`) && title !== q) score -= 0.4
     scored.push({ e, score })
   }
 

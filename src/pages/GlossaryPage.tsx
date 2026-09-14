@@ -1,24 +1,30 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { normalizeSearch } from '../utils/search'
 import { SourceTag } from '../components/content/SourceTag'
 import { glossary } from '../data/glossary'
 import { useDisplay } from '../state/display'
 
 export function GlossaryPage() {
   const { setDisplay } = useDisplay()
-  const [q, setQ] = useState('')
+  const [params, setParams] = useSearchParams()
+  const q = params.get('term') ?? ''
+  const setQ = (term: string) => setParams(term ? { term } : {}, { replace: true })
 
   useEffect(() => {
     setDisplay({ title: 'GLOSSARY', sub: 'słownik pojęć', right: String(glossary.length) })
   }, [setDisplay])
 
   const list = useMemo(() => {
-    const query = q.trim().toLowerCase()
+    const query = normalizeSearch(q)
     if (!query) return glossary
+    const exact = glossary.find((g) => normalizeSearch(g.term) === query)
+    if (exact) return [exact]
     return glossary.filter(
       (g) =>
-        g.term.toLowerCase().includes(query) ||
-        g.definition.toLowerCase().includes(query) ||
-        g.tags.some((t) => t.toLowerCase().includes(query)),
+        normalizeSearch(g.term).includes(query) ||
+        normalizeSearch(g.definition).includes(query) ||
+        g.tags.some((t) => normalizeSearch(t).includes(query)),
     )
   }, [q])
 

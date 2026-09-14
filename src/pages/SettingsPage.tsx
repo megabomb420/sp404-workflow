@@ -75,19 +75,13 @@ export function SettingsPage() {
           checked={state.settings.reducedMotion}
           onChange={(v) => setSetting('reducedMotion', v)}
         />
-        <Toggle
-          label="DŹWIĘKI UI"
-          sub="Domyślnie WYŁĄCZONE — aplikacja nie beepuje przy sprzęcie"
-          checked={state.settings.uiSound}
-          onChange={(v) => setSetting('uiSound', v)}
-        />
       </section>
 
       <section className="setgroup panel-surface">
         <h2 className="setgroup__title u-label">DANE</h2>
         {confirmReset === 'progress' ? (
           <div className="setgroup__confirm">
-            <p>Wyczyścić postęp tutoriali?</p>
+            <p>Wyczyścić postęp workflow i samooceny treningu?</p>
             <HardwareButton label="TAK, WYCZYŚĆ" tone="danger" onClick={() => doReset('progress')} />
             <HardwareButton label="ANULUJ" onClick={() => setConfirmReset(null)} />
           </div>
@@ -98,7 +92,7 @@ export function SettingsPage() {
             onClick={() => setConfirmReset('progress')}
           >
             <span className="toggle__label u-label">RESET PROGRESS</span>
-            <span className="toggle__sub">Ukończone workflow i kroki</span>
+            <span className="toggle__sub">Workflow, kroki i powtórki treningu</span>
           </button>
         )}
 

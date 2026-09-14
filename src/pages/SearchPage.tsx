@@ -1,12 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useRef } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { ButtonSequence } from '../components/content/ButtonSequence'
 import { SearchEntry } from '../data/types'
 import { searchIndex, SEARCH_SUGGESTIONS } from '../data/searchIndex'
 import { useDisplay } from '../state/display'
 import { useStore } from '../state/store'
 
-const KIND_ORDER = ['action', 'tool', 'troubleshooting', 'workflow', 'shortcut', 'section', 'glossary', 'mfx'] as const
 const KIND_LABEL: Record<SearchEntry['kind'], string> = {
   action: 'DO NOW · DOKŁADNA AKCJA',
   tool: 'USE NOW · OFFLINE TOOL',
@@ -21,7 +20,9 @@ const KIND_LABEL: Record<SearchEntry['kind'], string> = {
 export function SearchPage() {
   const { setDisplay } = useDisplay()
   const { state, dispatch } = useStore()
-  const [q, setQ] = useState('')
+  const [params, setParams] = useSearchParams()
+  const q = params.get('q') ?? ''
+  const setQ = (value: string) => setParams(value ? { q: value } : {}, { replace: true })
   const inputRef = useRef<HTMLInputElement>(null)
 
   const results = useMemo(() => searchIndex(q, 40, state.progress.activeWorkflowId), [q, state.progress.activeWorkflowId])
@@ -35,11 +36,17 @@ export function SearchPage() {
   }, [setDisplay, q, results.length])
 
   const grouped = useMemo(() => {
-    const groups = KIND_ORDER.map((k) => ({ kind: k, items: results.filter((r) => r.kind === k) }))
-    return groups.filter((g) => g.items.length > 0)
+    // Adjacent runs retain the global ranking; grouping must never bury an exact match.
+    const groups: Array<{ kind: SearchEntry['kind']; items: SearchEntry[] }> = []
+    for (const entry of results) {
+      const last = groups[groups.length - 1]
+      if (last?.kind === entry.kind) last.items.push(entry)
+      else groups.push({ kind: entry.kind, items: [entry] })
+    }
+    return groups
   }, [results])
 
-  const record = (e: SearchEntry) => dispatch({ type: 'ADD_RECENT_SEARCH', q: e.title })
+  const record = () => dispatch({ type: 'ADD_RECENT_SEARCH', q })
 
   return (
     <div className="page page--search">
@@ -90,13 +97,13 @@ export function SearchPage() {
           <Link to={`/fix-it?q=${encodeURIComponent(q)}`} className="chip">SZUKAJ PO OBJAWIE W FIX IT</Link>
         </div>
       ) : (
-        grouped.map((g) => (
-          <section key={g.kind} className="sgroup">
+        grouped.map((g, index) => (
+          <section key={`${g.kind}-${index}`} className="sgroup">
             <h2 className="sgroup__cat u-mono">{KIND_LABEL[g.kind]}</h2>
             <ul className="sgroup__list">
               {g.items.map((e) => (
                 <li key={`${e.kind}-${e.id}`}>
-                  <Link to={e.route} className="sresult panel-surface" onClick={() => record(e)}>
+                  <Link to={e.route} className="sresult panel-surface" onClick={record}>
                     <span className="sresult__head">
                       <span className="sresult__title u-label">{e.title}</span>
                       <span className="sresult__src u-mono">{e.sectionLabel}</span>

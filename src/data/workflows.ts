@@ -1,4 +1,5 @@
 import { Workflow } from './types'
+import { byId } from '../utils/byId'
 
 export const workflows: Workflow[] = [
   /* ============================ NOW · GOLDEN PATHS ============================ */
@@ -645,6 +646,4 @@ export const workflows: Workflow[] = [
   },
 ]
 
-export const workflowsById: Record<string, Workflow> = Object.fromEntries(
-  workflows.map((w) => [w.id, w]),
-)
+export const workflowsById = byId(workflows)

@@ -5,13 +5,15 @@ import { useDisplay } from '../state/display'
 import { useStore } from '../state/store'
 import { homePads, sectionsById } from '../data/sections'
 import { workflows, workflowsById } from '../data/workflows'
+import { actionsById } from '../data/actions'
 
 const featured = workflows.filter((workflow) => workflow.featured)
 
 export function HomePage() {
   const navigate = useNavigate()
   const { setDisplay } = useDisplay()
-  const { state } = useStore()
+  const { state, storageAvailable } = useStore()
+  const reviewCount = Object.entries(state.practice).filter(([id, stat]) => actionsById[id] && stat.needsReview).length
 
   useEffect(() => {
     setDisplay({ title: 'NOW', sub: 'co chcesz zrobić?', right: state.progress.activeWorkflowId ? 'RESUME' : 'READY' })
@@ -44,7 +46,7 @@ export function HomePage() {
           <span className="continue-card__body">
             <span className="continue-card__k u-label">CONTINUE</span>
             <strong>{active.title}</strong>
-            <span className="u-mono">AKCJA {activeStep + 1}/{active.steps.length} · POSTĘP ZAPISANY</span>
+            <span className="u-mono">AKCJA {activeStep + 1}/{active.steps.length} · {storageAvailable ? 'POSTĘP ZAPISANY' : 'TYLKO TA SESJA'}</span>
           </span>
           <span className="continue-card__go" aria-hidden="true">→</span>
         </Link>
@@ -65,6 +67,10 @@ export function HomePage() {
       </section>
 
       <div className="now-escape">
+        <Link to={reviewCount ? '/muscle?review=1' : '/muscle'} className="now-escape__item panel-surface">
+          <span className="u-label">POĆWICZ NA SP</span>
+          <small>{reviewCount ? `${reviewCount} akcji do powtórki po ostatnich trudnościach` : 'krótka sesja z akcjami workflow'}</small>
+        </Link>
         <Link to="/fix-it" className="now-escape__item panel-surface">
           <span className="u-label">FIX A PROBLEM</span>
           <small>zacznij od objawu</small>
@@ -94,6 +100,7 @@ export function HomePage() {
             <Link to="/workflows" className="chip u-label" role="listitem">ALL WORKFLOWS</Link>
             <Link to="/muscle" className="chip u-label" role="listitem">MUSCLE MEMORY</Link>
             <Link to="/sources" className="chip u-label" role="listitem">SOURCES</Link>
+            <Link to="/glossary" className="chip u-label" role="listitem">GLOSSARY</Link>
           </div>
         </div>
       </details>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useReducer } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { setHapticsEnabled } from '../utils/haptics'
 
 /* ============================ STATE SHAPE ============================ */
@@ -38,6 +38,8 @@ export interface AppState {
   favorites: Favorites
   progress: Progress
   ui: UIState
+  practice: Record<string, { correct: number; review: number; needsReview: boolean }>
+  loopFit: { bpm: string; bars: number; actual: string }
 }
 
 const DEFAULTS: AppState = {
@@ -45,21 +47,48 @@ const DEFAULTS: AppState = {
   favorites: { shortcuts: [], workflows: [], troubleshooting: [] },
   progress: { completedWorkflows: [], workflowStep: {}, doneSteps: {}, activeWorkflowId: null },
   ui: { lastSection: null, recent: [], recentSearches: [], onboarded: false },
+  practice: {},
+  loopFit: { bpm: '90', bars: 4, actual: '' },
 }
 
 const STORAGE_KEY = 'spw.state.v1'
 
+const record = (value: unknown): Record<string, unknown> =>
+  value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
+const strings = (value: unknown): string[] => Array.isArray(value) ? [...new Set(value.filter((v): v is string => typeof v === 'string'))] : []
+const count = (value: unknown): number => typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 ? value : 0
+const nullableString = (value: unknown): string | null => typeof value === 'string' ? value : null
+
 function loadState(): AppState {
-  if (typeof localStorage === 'undefined') return DEFAULTS
   try {
+    if (typeof localStorage === 'undefined') return DEFAULTS
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return DEFAULTS
-    const parsed = JSON.parse(raw) as Partial<AppState>
+    const parsed = record(JSON.parse(raw))
+    const settings = record(parsed.settings)
+    const favorites = record(parsed.favorites)
+    const progress = record(parsed.progress)
+    const ui = record(parsed.ui)
+    const loopFit = record(parsed.loopFit)
     return {
-      settings: { ...DEFAULTS.settings, ...parsed.settings },
-      favorites: { ...DEFAULTS.favorites, ...parsed.favorites },
-      progress: { ...DEFAULTS.progress, ...parsed.progress },
-      ui: { ...DEFAULTS.ui, ...parsed.ui },
+      settings: Object.fromEntries(Object.entries(DEFAULTS.settings).map(([key, fallback]) => [key, typeof settings[key] === 'boolean' ? settings[key] : fallback])) as unknown as Settings,
+      favorites: { shortcuts: strings(favorites.shortcuts), workflows: strings(favorites.workflows), troubleshooting: strings(favorites.troubleshooting) },
+      progress: {
+        completedWorkflows: strings(progress.completedWorkflows),
+        workflowStep: Object.fromEntries(Object.entries(record(progress.workflowStep)).map(([id, value]) => [id, count(value)])),
+        doneSteps: Object.fromEntries(Object.entries(record(progress.doneSteps)).map(([id, value]) => [id, strings(value)])),
+        activeWorkflowId: nullableString(progress.activeWorkflowId),
+      },
+      ui: { lastSection: nullableString(ui.lastSection), recent: strings(ui.recent).slice(0, 4), recentSearches: strings(ui.recentSearches).slice(0, 8), onboarded: ui.onboarded === true },
+      practice: Object.fromEntries(Object.entries(record(parsed.practice)).map(([id, value]) => {
+        const stat = record(value)
+        return [id, { correct: count(stat.correct), review: count(stat.review), needsReview: stat.needsReview === true }]
+      })),
+      loopFit: {
+        bpm: typeof loopFit.bpm === 'string' ? loopFit.bpm : '90',
+        bars: typeof loopFit.bars === 'number' && [0.5, 1, 2, 4, 8, 16].includes(loopFit.bars) ? loopFit.bars : 4,
+        actual: typeof loopFit.actual === 'string' ? loopFit.actual : '',
+      },
     }
   } catch {
     return DEFAULTS
@@ -83,6 +112,9 @@ export type Action =
   | { type: 'RESET_FAVORITES' }
   | { type: 'RESET_ALL' }
   | { type: 'SET_SETTING'; key: keyof Settings; value: boolean }
+  | { type: 'PRACTICE_RESULT'; id: string; correct: boolean }
+  | { type: 'QUEUE_PRACTICE'; id: string }
+  | { type: 'SET_LOOP_FIT'; value: Partial<AppState['loopFit']> }
 
 function toggle(list: string[], id: string): string[] {
   return list.includes(id) ? list.filter((x) => x !== id) : [...list, id]
@@ -90,6 +122,19 @@ function toggle(list: string[], id: string): string[] {
 
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
+    case 'SET_LOOP_FIT':
+      return { ...state, loopFit: { ...state.loopFit, ...action.value } }
+    case 'QUEUE_PRACTICE':
+    case 'PRACTICE_RESULT': {
+      const previous = state.practice[action.id] ?? { correct: 0, review: 0, needsReview: false }
+      const assessed = action.type === 'PRACTICE_RESULT'
+      const correct = assessed && action.correct
+      return { ...state, practice: { ...state.practice, [action.id]: {
+        correct: previous.correct + (correct ? 1 : 0),
+        review: previous.review + (assessed && !correct ? 1 : 0),
+        needsReview: !correct,
+      } } }
+    }
     case 'TOGGLE_FAV': {
       const list = toggle(state.favorites[action.kind], action.id)
       return { ...state, favorites: { ...state.favorites, [action.kind]: list } }
@@ -159,7 +204,7 @@ function reducer(state: AppState, action: Action): AppState {
       }
     }
     case 'RESET_PROGRESS':
-      return { ...state, progress: DEFAULTS.progress }
+      return { ...state, progress: DEFAULTS.progress, practice: {} }
     case 'RESET_FAVORITES':
       return { ...state, favorites: DEFAULTS.favorites }
     case 'RESET_ALL':
@@ -177,19 +222,22 @@ interface StoreValue {
   state: AppState
   dispatch: React.Dispatch<Action>
   isFav: (kind: keyof Favorites, id: string) => boolean
+  storageAvailable: boolean
 }
 
 const StoreContext = createContext<StoreValue | null>(null)
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, undefined, loadState)
+  const [storageAvailable, setStorageAvailable] = useState(true)
 
   // persist
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+      setStorageAvailable(true)
     } catch {
-      /* ignore quota errors */
+      setStorageAvailable(false)
     }
   }, [state])
 
@@ -208,11 +256,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       state,
       dispatch,
       isFav: (kind, id) => state.favorites[kind].includes(id),
+      storageAvailable,
     }),
-    [state],
+    [state, storageAvailable],
   )
 
-  return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
+  return <StoreContext.Provider value={value}>{!storageAvailable && <p className="storage-warning" role="alert">Zapis lokalny jest niedostępny. Postęp tej sesji może zniknąć po zamknięciu aplikacji.</p>}{children}</StoreContext.Provider>
 }
 
 export function useStore(): StoreValue {

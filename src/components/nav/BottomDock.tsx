@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import cx from '../../utils/cx'
 
 const TABS = [
-  { to: '/', label: 'HOME', icon: 'M3 10.5L12 3l9 7.5M5 9v11h5v-6h4v6h5V9' },
+  { to: '/', label: 'NOW', icon: 'M3 10.5L12 3l9 7.5M5 9v11h5v-6h4v6h5V9' },
   { to: '/search', label: 'SEARCH', icon: 'M11 4a7 7 0 100 14 7 7 0 000-14zM20 20l-4.5-4.5' },
   { to: '/workflows', label: 'WORKFLOW', icon: 'M4 6h16M4 12h10M4 18h16M16 3l3 3-3 3M17 9l3 3-3 3' },
   { to: '/shortcuts', label: 'SHORTCUTS', icon: 'M6 3h12a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1zM9 9h6M9 13h6M9 17h4' },

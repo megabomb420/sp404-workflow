@@ -319,15 +319,34 @@
 .wf-progress__label { font-size: 12px; color: var(--accent); letter-spacing: 0.12em; }
 .wf-progress__dots { display: flex; gap: 5px; flex-wrap: wrap; }
 .wf-progress__dot {
-  width: 16px; height: 16px;
-  border-radius: 50%;
+  width: 44px; height: 44px;
+  border-radius: 8px;
+  color: var(--ink); font-family: var(--font-mono); font-size: 12px;
   background: #1c1e22;
   border: 1px solid var(--hairline);
   transition: background 120ms, border-color 120ms;
 }
 .wf-progress__dot.is-done { background: var(--led-dim); border-color: var(--led); }
 .wf-progress__dot.is-current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-.wf-progress__dot.is-past { background: #2c2e33; }
+.wf-progress__dot.is-past:not(.is-done) { background: #2c2e33; }
+.wplayer > .chip { align-self: flex-start; }
+.wf-confirmed { color: var(--ink-dim); font-size: 12px; line-height: 1.5; }
+.wf-start summary, .wf-step__details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+.wf-step__details { font-size: 13px; color: var(--ink-dim); }
+.wf-step__details p { margin: 8px 0; }
+
+.storage-warning { position: sticky; top: 0; z-index: 100; margin: 0; padding: 12px; background: #642a20; color: #fff; font-size: 14px; }
+.practice-safety, .loopfit-assumptions { font-size: 13px; line-height: 1.6; color: var(--ink-dim); margin: 14px 0; overflow-wrap: anywhere; }
+.practice-score { font-size: 11px; margin: 14px 0; }
+.practice-categories, .rescue-reference { margin: 16px 0; }
+.practice-categories summary, .rescue-reference summary { padding: 12px 0; min-height: 44px; cursor: pointer; }
+.rescue-guide { padding: 16px; display: flex; flex-direction: column; gap: 14px; margin: 16px 0; }
+.rescue-guide h2, .rescue-guide h3 { font-size: 15px; }
+.rescue-guide p { font-size: 14px; line-height: 1.6; }
+.rescue-guide__choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.rescue-guide__choices .chip { min-height: 44px; white-space: normal; text-align: left; }
+.loopfit-error { padding: 16px; border: 1px solid var(--danger); border-radius: 8px; color: #e8b9b2; }
+.loopfit-input input[aria-invalid="true"] { outline: 2px solid var(--danger); outline-offset: 3px; }
 
 .wf-step { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 .wf-step__meta { font-size: 11px; color: var(--accent); letter-spacing: 0.14em; }

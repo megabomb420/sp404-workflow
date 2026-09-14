@@ -1,11 +1,12 @@
 import { Troubleshooting } from './types'
+import { byId } from '../utils/byId'
 
 export const troubleshooting: Troubleshooting[] = [
   {
     id: 'resample-cisza',
     symptom: 'Nowy pad po resamplingu jest pusty albo nagrała się cisza',
     cause: 'ROUTING może być ustawione na ExtIn zamiast Mix, źródłowe pady/pattern nie zostały uruchomione po starcie nagrania albo nagranie zakończono przed dźwiękiem.',
-    fix: 'W RESAMPLE otwórz RECORD SETTING i ustaw ROUTING na Mix. Wybierz pusty pad, rozpocznij [REC], a następnie uruchom pattern lub pady, które chcesz nagrać. Zakończ kolejnym [REC] dopiero po wybrzmieniu materiału.',
+    fix: 'Sprawdź ROUTING: Mix w RECORD SETTING. Wyjdź przez [EXIT] i wybierz pusty pad docelowy. Po „Press Pad to START” uruchom źródłowy pad; dla patternu przygotuj RESAMPLE przy włączonym PATTERN SELECT i uruchom pad patternu. Zakończ [REC].',
     related: ['resample', 'routing-mix'],
     tags: ['resample', 'cisza', 'pusty pad', 'ROUTING', 'Mix', 'ExtIn', 'nie nagrało'],
     source: { manual: 'RM5.50', page: 37 },
@@ -102,7 +103,7 @@ export const troubleshooting: Troubleshooting[] = [
     id: 'niechciany-fx-resampling',
     symptom: 'Podczas bounce/resamplingu słychać niechciane efekty',
     cause: 'Przy zamianie patternu na sample metodą BOUNCE efekty BUS 1–4 są automatycznie wyłączane, ale przy resamplingu efekty (w tym INPUT FX) są nagrywane.',
-    fix: 'Chcesz nagrać z efektami? Użyj resamplingu zamiast bounce. Nie chcesz efektów? Wyłącz INPUT FX, ustaw ROUTING na "Mix" (bez efektów) albo skieruj wejście na DRY (bez BUS-a).',
+    fix: 'ROUTING: Mix nie wyłącza efektów. Wyłącz niechciane efekty przed resamplingiem i sprawdź odsłuch. Jeśli konwertujesz pattern bez BUS FX, wybierz BOUNCE — ta metoda pomija BUS 1–4. DRY omija BUS 1/2, nie zastępuje sprawdzenia całego toru.',
     related: ['resample', 'bounce', 'input-fx'],
     tags: ['resample', 'BOUNCE', 'INPUT FX', 'BUS', 'efekty'],
     source: { manual: 'RM5.50', page: 66 },
@@ -198,6 +199,4 @@ export const troubleshooting: Troubleshooting[] = [
   },
 ]
 
-export const troubleshootingById: Record<string, Troubleshooting> = Object.fromEntries(
-  troubleshooting.map((t) => [t.id, t]),
-)
+export const troubleshootingById = byId(troubleshooting)

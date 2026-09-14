@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-    paths-ignore: ['*.md', 'docs/**', '.github/**']
+    paths-ignore: ['*.md', 'docs/**']
   workflow_dispatch:
 
 permissions:
@@ -26,7 +26,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -34,6 +34,24 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Install browser for release checks
+        run: npx playwright install --with-deps chromium
+
+      - name: Test the actual Pages build before publishing
+        env:
+          TEST_BASE_URL: http://localhost:4173/sp404-workflow
+        run: |
+          npm run preview -- --port 4173 --strictPort &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:4173/sp404-workflow/ >/dev/null && break
+            sleep 1
+          done
+          node scripts/audit.mjs
+          node scripts/offline-test.mjs
+          node scripts/explorer-test.mjs
+          node scripts/recent-test.mjs
+          node scripts/regression-test.mjs
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

@@ -4,6 +4,7 @@ import { shortcuts, shortcutCategories } from '../data/shortcuts'
 import { useDisplay } from '../state/display'
 import { useStore } from '../state/store'
 import cx from '../utils/cx'
+import { useSearchParams } from 'react-router-dom'
 
 type Filter = 'ALL' | (typeof shortcutCategories)[number]
 
@@ -12,6 +13,8 @@ export function ShortcutsPage() {
   const { isFav } = useStore()
   const [filter, setFilter] = useState<Filter>('ALL')
   const [favOnly, setFavOnly] = useState(false)
+  const [params, setParams] = useSearchParams()
+  const selected = shortcuts.find((s) => s.id === params.get('id'))
 
   useEffect(() => {
     setDisplay({ title: 'SHORTCUTS', sub: 'cheat sheet', right: String(shortcuts.length) })
@@ -19,18 +22,20 @@ export function ShortcutsPage() {
 
   const list = useMemo(() => {
     return shortcuts.filter((s) => {
+      if (selected) return s.id === selected.id
       if (favOnly && !isFav('shortcuts', s.id)) return false
       if (filter !== 'ALL' && s.category !== filter) return false
       return true
     })
-  }, [filter, favOnly, isFav])
+  }, [filter, favOnly, isFav, selected])
 
   return (
     <div className="page">
       <h1 className="page__title u-label">SHORTCUTS</h1>
       <p className="page__lede">Każda funkcja, dokładne przyciski. Filtruj po kategorii lub pokaż tylko ulubione.</p>
 
-      <div className="chipbar" role="toolbar" aria-label="filtry kategorii">
+      {selected && <button className="chip" onClick={() => { setParams({}); setFilter('ALL'); setFavOnly(false) }}>← WSZYSTKIE SKRÓTY</button>}
+      {!selected && <div className="chipbar" role="toolbar" aria-label="filtry kategorii">
         <button
           type="button"
           className={cx('chip', filter === 'ALL' && 'is-active')}
@@ -56,7 +61,7 @@ export function ShortcutsPage() {
         >
           ★ ULUBIONE
         </button>
-      </div>
+      </div>}
 
       <div className="scardlist">
         {list.map((s) => (

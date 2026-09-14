@@ -3,10 +3,10 @@ name: CI
 on:
   push:
     branches: [main]
-    paths-ignore: ['*.md', 'docs/**', '.github/**']
+    paths-ignore: ['*.md', 'docs/**']
   pull_request:
     branches: [main]
-    paths-ignore: ['*.md', 'docs/**', '.github/**']
+    paths-ignore: ['*.md', 'docs/**']
 
 jobs:
   build-and-test:
@@ -16,7 +16,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -38,3 +38,5 @@ jobs:
           node scripts/audit.mjs
           node scripts/offline-test.mjs
           node scripts/explorer-test.mjs
+          node scripts/recent-test.mjs
+          node scripts/regression-test.mjs

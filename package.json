@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "engines": { "node": ">=22.12.0" },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -12,21 +13,22 @@
     "shots": "node scripts/screenshot.mjs",
     "offline-test": "node scripts/offline-test.mjs",
     "explorer-test": "node scripts/explorer-test.mjs",
-    "recent-test": "node scripts/recent-test.mjs"
+    "recent-test": "node scripts/recent-test.mjs",
+    "regression-test": "node scripts/regression-test.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^7.18.3"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^5.2.0",
     "playwright": "^1.62.1",
     "typescript": "^5.6.3",
-    "vite": "^5.4.11",
-    "vite-plugin-pwa": "^0.20.5"
+    "vite": "^7.3.6",
+    "vite-plugin-pwa": "^1.3.0"
   }
 }

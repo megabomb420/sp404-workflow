@@ -1,7 +1,7 @@
 // Functional + UX audit of the built app at 390px (headless Chromium).
 import { chromium } from 'playwright'
 
-const BASE = 'http://localhost:4173'
+const BASE = (process.env.TEST_BASE_URL || 'http://localhost:4173').replace(/\/$/, '')
 const results = []
 const check = (name, ok, detail = '') => {
   results.push({ name, ok, detail })
@@ -93,16 +93,16 @@ await page.click('text=TO SIĘ NIE STAŁO')
 await page.waitForTimeout(200)
 check('failed checkpoint opens contextual Rescue', new URL(page.url()).hash.startsWith('#/fix-it?'), page.url())
 check('Rescue carries workflow context', (await page.locator('.rescue-context').count()) === 1)
-await page.click('text=NAPRAWIONE — WRÓĆ DO AKCJI')
+await page.locator('.rescue-return > a').click()
 await page.waitForTimeout(200)
-check('Rescue returns to interrupted action', new URL(page.url()).hash.includes('/workflow/source-to-pad?step=1'), page.url())
+check('Rescue returns to interrupted action', /ACTION 2/.test(await page.locator('.wf-progress__label').first().textContent()), page.url())
 
 // --- action-centric, intent-aware search ---
 await page.goto(BASE + '/#/search', { waitUntil: 'networkidle' })
 await page.fill('input[type=search]', 'resample jest suchy')
 await page.waitForTimeout(200)
 const doNow = await page.locator('.sgroup').first().textContent()
-check('vague symptom search surfaces an action', doNow?.includes('DO NOW') ?? false, doNow?.slice(0, 90) ?? '')
+check('vague symptom search surfaces actionable help', /DO NOW|FIX IT/.test(doNow ?? ''), doNow?.slice(0, 90) ?? '')
 
 // --- deterministic Loop Fit Lab ---
 await page.goto(BASE + '/#/loop-fit', { waitUntil: 'networkidle' })

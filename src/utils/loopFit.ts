@@ -12,13 +12,14 @@ export interface LoopFitResult {
 }
 
 /** Czysta matematyka — działa lokalnie, bez modelu i bez sieci. */
-export function calculateLoopFit(bpm: number, bars: number, actualSeconds?: number | null): LoopFitResult {
-  const safeBpm = Number.isFinite(bpm) && bpm > 0 ? bpm : 90
-  const safeBars = Number.isFinite(bars) && bars > 0 ? bars : 4
-  const beats = safeBars * 4
-  const targetSeconds = (beats * 60) / safeBpm
+export function calculateLoopFit(bpm: number, bars: number, actualSeconds?: number | null): LoopFitResult | null {
+  if (!Number.isFinite(bpm) || bpm <= 0 || !Number.isFinite(bars) || bars <= 0) return null
+  if (actualSeconds != null && (!Number.isFinite(actualSeconds) || actualSeconds <= 0)) return null
+  const beats = bars * 4
+  const targetSeconds = (beats * 60) / bpm
+  if (!Number.isFinite(targetSeconds) || targetSeconds <= 0 || (actualSeconds != null && !Number.isFinite(beats * 60 / actualSeconds))) return null
 
-  if (!actualSeconds || !Number.isFinite(actualSeconds) || actualSeconds <= 0) {
+  if (actualSeconds == null) {
     return {
       beats,
       targetSeconds,
@@ -48,7 +49,15 @@ export function calculateLoopFit(bpm: number, bars: number, actualSeconds?: numb
 }
 
 export function formatLoopSeconds(value: number): string {
-  const minutes = Math.floor(value / 60)
-  const seconds = value - minutes * 60
+  const rounded = Math.round(value * 1000) / 1000
+  const minutes = Math.floor(rounded / 60)
+  const seconds = rounded - minutes * 60
   return minutes > 0 ? `${minutes}:${seconds.toFixed(3).padStart(6, '0')}` : `${seconds.toFixed(3)} s`
+}
+
+export function parsePositiveDecimal(value: string): number | null {
+  const text = value.trim().replace(',', '.')
+  if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(text)) return null
+  const parsed = Number(text)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null
 }

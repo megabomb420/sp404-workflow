@@ -17,6 +17,8 @@ export interface Source {
   page?: number
   /** nazwa sekcji/zakładki w manualu (np. dla treści z edycji HTML 5.50) */
   section?: string
+  /** Bezpośredni odsyłacz do zweryfikowanego rozdziału. */
+  url?: string
 }
 
 export type VerifiedKind = 'verified' | 'tip'
@@ -25,7 +27,7 @@ export type VerifiedKind = 'verified' | 'tip'
 export function sourceLabel(s: Source | undefined): string | null {
   if (!s) return null
   if (s.section) return `${s.manual} · ${s.section}`
-  if (s.page) return `${s.manual} p.${s.page}`
+  if (s.page) return `PDF v5 · p.${s.page}`
   return s.manual
 }
 

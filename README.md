@@ -12,7 +12,7 @@
 
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)
 ![PWA](https://img.shields.io/badge/PWA-offline-5A0FC8?logo=pwa&logoColor=white)
 
 </div>
@@ -23,19 +23,21 @@
 
 Companion app do **Rolanda SP-404MKII** do używania *obok* samplera — na telefonie. Znajdziesz tu dokładne sekwencje przycisków, workflow krok po kroku, cheat sheety i trener muscle memory. Nie zastępuje manuala — zamienia go w szybkie, wizualne narzędzie.
 
-**Najważniejsze:** każdy fakt merytoryczny jest zweryfikowany względem **Roland Reference Manual v5.50** i opatrzony paginacją (`RM5.50 p.X`). Porady praktyczne są oznaczone osobno jako **WORKFLOW TIP**.
+**Źródło wiedzy:** Roland Reference Manual HTML v5.50 oraz PDF v5. Odsyłacze przy instrukcjach otwierają dokumentację online. Porady praktyczne są oznaczone jako **WORKFLOW TIP**. Nie wszystkie procedury przetestowano na fizycznym sprzęcie; opis aktualnego zakresu weryfikacji jest w SOURCES i [handover](docs/HANDOVER.md).
 
 ## ✨ Funkcje
 
 - **16 padów** jako mapa urządzenia → 12 sekcji merytorycznych
 - **MiniDisplay (LCD)** komunikujący realny stan: sekcję, krok, licznik wyników, READY
-- **Wyszukiwarka offline** z aliasami — wpisz `sidechain`, `ducking`, `skipback`, `chop`, `USB` i dostajesz ścieżkę przycisków
-- **Workflow krok po kroku** (Build a Beat — 11 kroków, 8-bar pattern, 8 quick workflow) z zapisanym postępem
+- **NOW** — trzy główne ścieżki: źródło → grywalny pad, pattern → print z FX, loop → chopy → pattern; wznowienie ostatniej sesji
+- **Wyszukiwarka offline** z polską normalizacją i aliasami; otwiera dokładną akcję, skrót lub hasło i zachowuje zapytanie po powrocie
+- **Workflow krok po kroku** — oczekiwany rezultat na SP, potwierdzenia, pominięte kroki, zapis postępu i ulubione. Link do konkretnego kroku nie nadpisuje późniejszego postępu po odświeżeniu
 - **Cheat sheet skrótów** z filtrami po kategoriach + **MY KIT** (ulubione)
-- **Trener muscle memory** — losowanie zadań, POKAŻ ODPOWIEDŹ
+- **Trener muscle memory** — wspólne akcje z workflow, uczciwa samoocena i lokalna kolejka powtórek z trudności. Odsłonięcie odpowiedzi nie daje zaliczenia
 - **Sekcja SIDECHAIN** (funkcja z firmware **5.50**) z prawdziwymi parametrami, 3 presetami startowymi i **interaktywnym eksploratorem** (pokrętła + wykres duckingu)
-- **FIX IT** — 18 problemów (clipping, loop click, routing…) w formacie *Problem → Dlaczego → Fix*
-- **PWA**: instalacja na ekran główny, działa w 100% offline po pierwszym załadowaniu
+- **Rescue / FIX IT** — cztery rodziny obserwacji, pojedyncze testy z odpowiedzią „pomogło / bez zmian”, biblioteka 20 porad, powrót do przerwanego kroku bez automatycznego zaliczenia
+- **Loop Fit Lab** — lokalne obliczenia czasu frazy 4/4, szacowanego BPM i przesunięcia swobodnej pętli; walidacja, zapis wejść i powrót do sesji
+- **PWA**: instalacja na ekran główny; główne funkcje działają offline po pełnym pierwszym załadowaniu. Zewnętrzne manuale wymagają internetu
 
 ## 🚀 Live & instalacja
 
@@ -47,14 +49,14 @@ Companion app do **Rolanda SP-404MKII** do używania *obok* samplera — na tele
 
 ## 🧰 Stack
 
-React 18 · TypeScript (strict) · Vite 5 · CSS (design tokens) · vite-plugin-pwa (Workbox) · react-router (hash) · localStorage. Bez backendu, bez ciężkich bibliotek UI.
+React 18 · TypeScript (strict) · Vite 7 · CSS (design tokens) · vite-plugin-pwa 1 (Workbox) · react-router 7 (hash) · localStorage. Node **22.12+**. Bez backendu, bez wysyłania danych i bez kluczy API w aplikacji.
 
 ## ⚡ Szybki start
 
 ```bash
 git clone https://github.com/megabomb420/sp404-workflow.git
 cd sp404-workflow
-npm install
+npm ci
 
 npm run dev       # development
 npm run build     # tsc (strict) + vite build → dist/
@@ -66,13 +68,17 @@ npm run preview   # podgląd buildu
 Testy działają na headless Chromium (Playwright) — `npx playwright install chromium` po instalacji.
 
 ```bash
-npm run audit          # 12 kontroli funkcjonalnych przy 390 px
+npm run audit          # 22 kontrole funkcjonalne przy 390 px
 npm run offline-test   # działanie offline po pierwszym załadowaniu
 npm run explorer-test  # interaktywne pokrętła SIDE CHAIN
+npm run recent-test    # historia otwartych sekcji
+npm run regression-test # sesje, Rescue, trainer, błędne dane, 320–768 px, offline
 npm run shots          # screenshoty ekranów + kontrola horizontal overflow
 ```
 
-Te same testy lecą w **CI** przy każdym pushu, a **deploy** wypycha build na GitHub Pages.
+Uruchom najpierw `npm run build` oraz `npm run preview -- --port 4173 --strictPort` w drugim terminalu. Dla podkatalogu ustaw `BASE_PATH=/sp404-workflow/` przy buildzie i podglądzie oraz `TEST_BASE_URL=http://localhost:4173/sp404-workflow` przy testach.
+
+CI uruchamia testy dla zmian kodu i konfiguracji. Deploy testuje również faktyczny build z podkatalogiem Pages i publikuje dopiero po powodzeniu kontroli. `npm audit` sprawdza zależności; `npm run audit` to test funkcjonalny aplikacji.
 
 ## 🗂 Struktura
 
@@ -92,10 +98,10 @@ Treść dodaje się w `src/data/*` — nowe skróty, sekcje i workflow bez zmian
 
 ## 📚 Treść i weryfikacja
 
-- **ROLAND / VERIFIED** — fakt zacytowany z manuala, z paginacją `RM5.50 p.X`.
+- **ROLAND / VERIFIED** — instrukcja opracowana na podstawie manuala, z odsyłaczem do źródła. To nie automatyczna walidacja stanu sprzętu.
 - **WORKFLOW TIP** — praktyczna porada workflow, nie cytat z manuala.
 - Źródła: **Roland SP-404MKII Reference Manual v5.50** (edycja HTML 404 Day 2026 + PDF v5, 07.2025).
-- Fakty zweryfikowane **2026-08-19**. Szczegóły i lista ustaleń w sekcji **SOURCES & VERSION** w aplikacji.
+- Ostatni przegląd wybranych instrukcji: **2026-09-14** (resampling patternu, Mix / BOUNCE, BPM, UTILITY). Nie był to pełny ponowny audyt biblioteki. Szczegóły w **SOURCES & VERSION** i [handover](docs/HANDOVER.md).
 
 ## ⚠️ Zastrzeżenie
 
