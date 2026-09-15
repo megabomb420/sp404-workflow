@@ -1,70 +1,8 @@
-name: Deploy to GitHub Pages
-
+name: GitHub Pages
 on:
-  push:
-    branches: [main]
-    paths-ignore: ['*.md', 'docs/**']
   workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
-
 jobs:
-  build:
+  skip:
     runs-on: ubuntu-latest
-    env:
-      # podstawa = nazwa repo, dzięki temu PWA działa pod /sp404-workflow/
-      BASE_PATH: /sp404-workflow/
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Install browser for release checks
-        run: npx playwright install --with-deps chromium
-
-      - name: Test the actual Pages build before publishing
-        env:
-          TEST_BASE_URL: http://localhost:4173/sp404-workflow
-        run: |
-          npm run preview -- --port 4173 --strictPort &
-          for i in $(seq 1 30); do
-            curl -sf http://localhost:4173/sp404-workflow/ >/dev/null && break
-            sleep 1
-          done
-          node scripts/audit.mjs
-          node scripts/offline-test.mjs
-          node scripts/explorer-test.mjs
-          node scripts/recent-test.mjs
-          node scripts/regression-test.mjs
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - run: echo "R3 ships on Vercel; GitHub Pages is retired."

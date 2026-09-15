@@ -1,25 +1,31 @@
 import { useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { PadGrid, PadConfig } from '../components/hardware/PadGrid'
-import { useDisplay } from '../state/display'
-import { useStore } from '../state/store'
-import { homePads, sectionsById } from '../data/sections'
-import { workflows, workflowsById } from '../data/workflows'
-import { actionsById } from '../data/actions'
-
-const featured = workflows.filter((workflow) => workflow.featured)
+import { Link, useNavigate } from '@/lib/rr'
+import { PadGrid, type PadConfig } from '@/components/hardware/PadGrid'
+import { useLocalizedHomePads, useLocalizedSections, useLocalizedWorkflows } from '@/i18n/content'
+import { useT } from '@/i18n/useT'
+import { useDisplay } from '@/state/display'
+import { useStore } from '@/state/store'
+import { actionsById } from '@/data/actions'
 
 export function HomePage() {
   const navigate = useNavigate()
   const { setDisplay } = useDisplay()
   const { state, storageAvailable } = useStore()
+  const t = useT()
+  const padsSource = useLocalizedHomePads()
+  const { featured, byId: workflowsById } = useLocalizedWorkflows()
+  const { byId: sectionsById } = useLocalizedSections()
   const reviewCount = Object.entries(state.practice).filter(([id, stat]) => actionsById[id] && stat.needsReview).length
 
   useEffect(() => {
-    setDisplay({ title: 'NOW', sub: 'co chcesz zrobić?', right: state.progress.activeWorkflowId ? 'RESUME' : 'READY' })
-  }, [setDisplay, state.progress.activeWorkflowId])
+    setDisplay({
+      title: t.home.lcdTitle,
+      sub: t.home.lcdSub,
+      right: state.progress.activeWorkflowId ? t.lcdResume : t.lcdReady,
+    })
+  }, [setDisplay, state.progress.activeWorkflowId, t])
 
-  const pads: PadConfig[] = homePads.map((pad) => ({
+  const pads: PadConfig[] = padsSource.map((pad) => ({
     pad: pad.pad,
     label: pad.label,
     sublabel: pad.sublabel,
@@ -34,80 +40,56 @@ export function HomePage() {
 
   return (
     <div className="page home home--now">
-      <header className="now-head">
-        <span className="now-head__eyebrow u-mono">SP-404MKII · OFFLINE</span>
-        <h1 className="now-head__title u-label">CO ROBISZ TERAZ?</h1>
-        <p>Wybierz rezultat. Dostaniesz po jednej czynności i sprawdzisz ją od razu na SP.</p>
-      </header>
-
       {active ? (
         <Link to={`/workflow/${active.id}`} className="continue-card panel-surface">
           <span className="continue-card__signal" aria-hidden="true" />
           <span className="continue-card__body">
-            <span className="continue-card__k u-label">CONTINUE</span>
+            <span className="continue-card__k u-label">{t.home.continue}</span>
             <strong>{active.title}</strong>
-            <span className="u-mono">AKCJA {activeStep + 1}/{active.steps.length} · {storageAvailable ? 'POSTĘP ZAPISANY' : 'TYLKO TA SESJA'}</span>
+            <span className="u-mono">
+              {t.home.actionOf(activeStep + 1, active.steps.length)} · {storageAvailable ? t.home.progressSaved : t.home.sessionOnly}
+            </span>
           </span>
           <span className="continue-card__go" aria-hidden="true">→</span>
         </Link>
       ) : null}
 
       <section className="now-goals" aria-labelledby="now-goals-title">
-        <h2 id="now-goals-title" className="now-section-title u-label">ZACZNIJ OD CELU</h2>
+        <h2 id="now-goals-title" className="now-section-title u-label">{t.home.goals}</h2>
         <div className="now-goals__grid">
           {featured.map((workflow, index) => (
             <Link key={workflow.id} to={`/workflow/${workflow.id}`} className="goal-card panel-surface">
               <span className="goal-card__n u-mono">0{index + 1}</span>
               <span className="goal-card__title u-label">{workflow.title}</span>
               <span className="goal-card__blurb">{workflow.blurb}</span>
-              <span className="goal-card__meta u-mono">{workflow.minutes} MIN · {workflow.steps.length} AKCJI</span>
+              <span className="goal-card__meta u-mono">{t.home.minActions(workflow.minutes ?? 0, workflow.steps.length)}</span>
             </Link>
           ))}
         </div>
       </section>
 
+      <section className="home-map" aria-label={t.appName}>
+        <PadGrid items={pads} />
+      </section>
+
       <div className="now-escape">
         <Link to={reviewCount ? '/muscle?review=1' : '/muscle'} className="now-escape__item panel-surface">
-          <span className="u-label">POĆWICZ NA SP</span>
-          <small>{reviewCount ? `${reviewCount} akcji do powtórki po ostatnich trudnościach` : 'krótka sesja z akcjami workflow'}</small>
+          <span className="u-label">{t.home.practice}</span>
+          <small>{reviewCount ? t.home.practiceReview(reviewCount) : t.home.practiceIdle}</small>
         </Link>
-        <Link to="/fix-it" className="now-escape__item panel-surface">
-          <span className="u-label">FIX A PROBLEM</span>
-          <small>zacznij od objawu</small>
-        </Link>
-        <Link to="/search" className="now-escape__item panel-surface">
-          <span className="u-label">FIND AN ACTION</span>
-          <small>cel, objaw lub przyciski</small>
+        <Link to="/fix-it" className="now-escape__item now-escape__item--fix panel-surface">
+          <span className="u-label">{t.home.fix}</span>
+          <small>{t.home.fixSub}</small>
         </Link>
         <Link to="/loop-fit" className="now-escape__item now-escape__item--tool panel-surface">
-          <span className="u-label">LOOP FIT LAB</span>
-          <small>policz długość, BPM i drift przed chopem</small>
+          <span className="u-label">{t.home.loopFit}</span>
+          <small>{t.home.loopFitSub}</small>
         </Link>
       </div>
 
-      <details className="browse panel-surface">
-        <summary>
-          <span>
-            <span className="browse__title u-label">BROWSE EVERYTHING</span>
-            <span className="browse__sub">pełna mapa funkcji SP Workflow</span>
-          </span>
-          <span className="browse__chev" aria-hidden="true">⌄</span>
-        </summary>
-        <div className="browse__body">
-          <PadGrid items={pads} />
-          <div className="home__chips" role="list">
-            <Link to="/section/start" className="chip u-label" role="listitem">START HERE</Link>
-            <Link to="/workflows" className="chip u-label" role="listitem">ALL WORKFLOWS</Link>
-            <Link to="/muscle" className="chip u-label" role="listitem">MUSCLE MEMORY</Link>
-            <Link to="/sources" className="chip u-label" role="listitem">SOURCES</Link>
-            <Link to="/glossary" className="chip u-label" role="listitem">GLOSSARY</Link>
-          </div>
-        </div>
-      </details>
-
       {recent.length > 0 && (
-        <section className="home__recent panel-surface" aria-label="ostatnio otwarte">
-          <span className="home__recent-k u-label">RECENT REFERENCE</span>
+        <section className="home__recent panel-surface" aria-label={t.home.recent}>
+          <span className="home__recent-k u-label">{t.home.recent}</span>
           <div className="home__recent-list">
             {recent.map((section) => (
               <button

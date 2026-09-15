@@ -17,7 +17,7 @@ export const section: Section = {
         { label: 'REC', sub: 'wybór pada', tone: 'bus' },
         { label: 'REAL-TIME / TR-REC', sub: 'metoda nagrania', tone: 'bus' },
         { label: 'PADY', sub: 'kroki / granie', tone: 'target' },
-        { label: 'QUANTIZE', sub: 'domknij timing', tone: 'master' },
+        { label: 'QUANTIZE', sub: 'wyrównaj timing', tone: 'master' },
       ],
     },
     {
@@ -73,7 +73,7 @@ export const section: Section = {
         {
           id: 'trr-delete',
           title: 'USUŃ',
-          action: 'DEL+A/F — noty pada; DEL+B/G — wszystkie pady (1 takt).',
+          action: 'DEL+A/F — nuty pada; DEL+B/G — wszystkie pady (1 takt).',
           buttons: ['DEL'],
         },
       ],
@@ -83,7 +83,7 @@ export const section: Section = {
       text: 'Parametry TR-REC: SUBSTEP, HOLD STEP, PITCH, PITCH MODE (CHROMATIC/PAD), VELOCITY 0–127, BPM, SHUFFLE -50..+50, START, MODE (TRIG / HOLD STEP).',
       source: { manual: 'RM5.50', page: 61 },
     },
-    { kind: 'h', title: 'DOMKNIJ TIMING' },
+    { kind: 'h', title: 'WYRÓWNAJ TIMING' },
     {
       kind: 'note',
       text: 'Quantize: RECORD SETTING na ekranie patternu → QTZ: GRID 32 / 16.3 / 16 / 8.3 / 8 / 4.3 / 4 / SHUFFLE 16 / SHUFFLE 8, STR 0–100 %. Nieodwracalne po OK.',
@@ -97,7 +97,7 @@ export const section: Section = {
     { kind: 'h', title: 'MIKROEDYCJA' },
     {
       kind: 'note',
-      text: 'Microscope: PATTERN EDIT + pad z notą — zmiana PITCH, VELOCITY, timingu (VALUE), DEL noty.',
+      text: 'Microscope: PATTERN EDIT + pad z nutą — zmiana PITCH, VELOCITY, timingu (VALUE), DEL nuty.',
       source: { manual: 'RM5.50', page: 64 },
     },
     { kind: 'h', title: 'EDIT I ORGANIZACJA' },
@@ -123,7 +123,7 @@ export const section: Section = {
       text: 'PAD MUTE MOTION REC: REC → SHIFT+REVERSE+REMAIN → wyciszasz pady w rytmie.',
       source: { manual: 'RM5.50', page: 71 },
     },
-    { kind: 'sequencer', label: 'TR-REC — wyklikaj wzór' },
+    { kind: 'sequencer', label: 'TR-REC — wyklikaj pattern' },
     { kind: 'link', title: 'WORKFLOW: 8-BAR PATTERN', route: '/workflow/8-bar-pattern' },
   ],
 }

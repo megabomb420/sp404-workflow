@@ -6,7 +6,13 @@ import { workflows } from './workflows'
 import { troubleshooting } from './troubleshooting'
 import { glossary } from './glossary'
 import { mfxEffects } from './mfx'
+import { actionsEn } from '../i18n/en/actions'
+import { glossaryEn } from '../i18n/en/glossary'
+import { shortcutsEn } from '../i18n/en/shortcuts'
+import { troubleshootingEn } from '../i18n/en/troubleshooting'
+import { workflowsEn } from '../i18n/en/workflows'
 import { normalizeSearch as normalize } from '../utils/search'
+
 
 /** Sugestie wyświetlane przy pustym polu. */
 export const SEARCH_SUGGESTIONS = [
@@ -54,7 +60,7 @@ export function buildSearchIndex(): SearchEntry[] {
       buttons: action.buttons,
       path: action.path,
       sectionLabel: 'DO NOW',
-      tags: [action.title, action.action, action.startingState ?? '', action.expectedResult, ...action.tags],
+      tags: [action.title, action.action, action.startingState ?? '', action.expectedResult, ...action.tags, ...stringValues(actionsEn[action.id])],
     })
   }
 
@@ -80,7 +86,7 @@ export function buildSearchIndex(): SearchEntry[] {
       buttons: sc.buttons,
       path: sc.path,
       sectionLabel: sc.category,
-      tags: [sc.name, sc.nameEn ?? '', ...sc.tags],
+      tags: [sc.name, sc.nameEn ?? '', ...sc.tags, shortcutsEn[sc.id]?.description ?? ''],
     })
   }
 
@@ -92,7 +98,7 @@ export function buildSearchIndex(): SearchEntry[] {
       preview: w.blurb ?? `${w.steps.length} kroków · ${w.difficulty}`,
       route: `/workflow/${w.id}`,
       sectionLabel: w.category,
-      tags: [w.title, w.category],
+      tags: [w.title, w.category, workflowsEn[w.id]?.title ?? '', workflowsEn[w.id]?.blurb ?? ''],
     })
   }
 
@@ -104,7 +110,7 @@ export function buildSearchIndex(): SearchEntry[] {
       preview: t.cause,
       route: `/fix-it?ids=${encodeURIComponent(t.id)}`,
       sectionLabel: 'FIX IT',
-      tags: [t.symptom, ...t.tags],
+      tags: [t.symptom, ...t.tags, troubleshootingEn[t.id]?.symptom ?? '', troubleshootingEn[t.id]?.cause ?? ''],
     })
   }
 
@@ -116,7 +122,7 @@ export function buildSearchIndex(): SearchEntry[] {
       preview: g.definition,
       route: `/glossary?term=${encodeURIComponent(g.term)}`,
       sectionLabel: 'GLOSSARY',
-      tags: [g.term, ...g.tags],
+      tags: [g.term, ...g.tags, glossaryEn[g.term]?.definition ?? ''],
     })
   }
 
@@ -125,7 +131,7 @@ export function buildSearchIndex(): SearchEntry[] {
       kind: 'mfx',
       id: m,
       title: m,
-      preview: 'Efekt MFX — przypisywany do BUS / przycisku efektu',
+      preview: 'MFX effect — BUS or FX button',
       route: '/section/effects',
       sectionLabel: 'EFFECTS · MFX',
       tags: [m],
@@ -136,14 +142,19 @@ export function buildSearchIndex(): SearchEntry[] {
   return cache
 }
 
+function stringValues(value: object | undefined): string[] {
+  if (!value) return []
+  return Object.values(value).filter((item): item is string => typeof item === 'string')
+}
+
 const REWRITES: Array<[RegExp, string]> = [
-  [/nie (slychac|ma dzwieku)/g, 'brak dzwieku cisza'],
-  [/telefon|laptop|komputer/g, 'usb zrodlo input'],
-  [/suchy|bez efektu/g, 'dry routing bus fx'],
-  [/plywa|rozjezdza|nie trzyma/g, 'drift tempo bpm sync'],
-  [/potnij|pociac|pokroic/g, 'chop markery assign to pad'],
-  [/nagraj|nagrywac/g, 'sampling record rec'],
-  [/zamroz|wydrukuj/g, 'print resample bounce'],
+  [/nie (slychac|ma dzwieku)|no (sound|audio)|silent|silence/g, 'brak dzwieku cisza'],
+  [/telefon|laptop|komputer|phone|computer/g, 'usb zrodlo input'],
+  [/suchy|bez efektu|dry|no effect/g, 'dry routing bus fx'],
+  [/plywa|rozjezdza|nie trzyma|drift|off tempo/g, 'drift tempo bpm sync'],
+  [/potnij|pociac|pokroic|chop|slice/g, 'chop markery assign to pad'],
+  [/nagraj|nagrywac|record|sample/g, 'sampling record rec'],
+  [/zamroz|wydrukuj|print|bounce|freeze/g, 'print resample bounce'],
 ]
 
 function expandedQuery(value: string): string {

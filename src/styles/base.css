@@ -13,6 +13,9 @@
 html {
   -webkit-text-size-adjust: 100%;
   background: var(--bg-chassis);
+  height: 100%;
+  height: var(--app-h, 100svh);
+  overflow: hidden;
 }
 
 body {
@@ -23,17 +26,38 @@ body {
   background:
     var(--noise),
     linear-gradient(180deg, #16171a 0%, var(--bg-chassis) 100%);
-  min-height: 100dvh;
+  position: fixed;
+  top: var(--app-t, 0px);
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: var(--app-h, 100svh);
+  max-height: var(--app-h, 100svh);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   -webkit-font-smoothing: antialiased;
-  overscroll-behavior-y: none;
+  overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-#root {
-  min-height: 100dvh;
+
+@media (display-mode: standalone) {
+  html, body { background: var(--bg-chassis); }
+}
+
+
+#root,
+.app-root {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
+
 
 button {
   font: inherit;

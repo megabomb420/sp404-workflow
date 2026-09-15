@@ -1,37 +1,19 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { HardwareButton } from '../components/hardware/HardwareButton'
-import { useStore } from '../state/store'
-import { buzz } from '../utils/haptics'
-import cx from '../utils/cx'
-
-const SLIDES = [
-  {
-    kick: 'SP WORKFLOW',
-    title: 'MANUAL, KTÓREGO UŻYJESZ NAPRAWDĘ',
-    body: 'Przewodnik po Roland SP-404MKII do czytania przy robieniu beatu, nie na kanapie wieczorem.',
-  },
-  {
-    kick: 'SEARCH',
-    title: 'ZNAJDŹ KAŻDĄ FUNKCJĘ SZYBKO',
-    body: 'Wpisz sidechain, skipback, chop, USB — wynik z dokładną ścieżką przycisków w sekundę.',
-  },
-  {
-    kick: 'PADS',
-    title: 'NAUCZ SIĘ PRZYCISKÓW',
-    body: 'Workflow krok po kroku i trainer muscle memory. Otwórz SIDECHAIN bez myślenia.',
-  },
-  {
-    kick: 'OFFLINE',
-    title: 'DZIAŁA OFFLINE',
-    body: 'Pobierz raz, dodaj do ekranu głównego, korzystaj bez internetu obok sprzętu.',
-  },
-] as const
+import { useNavigate } from '@/lib/rr'
+import { HardwareButton } from '@/components/hardware/HardwareButton'
+import { LangSwitch } from '@/components/nav/LangSwitch'
+import { APP_REV } from '@/lib/appRev'
+import { useT } from '@/i18n/useT'
+import { useStore } from '@/state/store'
+import { buzz } from '@/utils/haptics'
+import cx from '@/utils/cx'
 
 export function OnboardingPage() {
   const [i, setI] = useState(0)
   const { dispatch } = useStore()
   const navigate = useNavigate()
+  const t = useT()
+  const slides = t.onboarding.slides
 
   const finish = () => {
     buzz()
@@ -40,16 +22,18 @@ export function OnboardingPage() {
   }
   const next = () => {
     buzz()
-    if (i === SLIDES.length - 1) finish()
+    if (i === slides.length - 1) finish()
     else setI(i + 1)
   }
 
-  const slide = SLIDES[i]
+  const slide = slides[i]
 
   return (
     <div className="ob">
       <div className="ob__lcd" aria-hidden="true">
-        <span className="ob__brand u-label">SP WORKFLOW</span>
+        <span className="ob__brand u-label">{t.appName}</span>
+        <span className="lcd__rev u-mono">{APP_REV}</span>
+        <span className="ob__kick u-mono">{slide.kick}</span>
         <span className="ob__kick u-mono">{slide.kick}</span>
       </div>
       <div className="ob__content">
@@ -57,15 +41,16 @@ export function OnboardingPage() {
         <p className="ob__body">{slide.body}</p>
       </div>
       <div className="ob__foot">
+        {i === 0 ? <LangSwitch /> : null}
         <div className="ob__dots" aria-hidden="true">
-          {SLIDES.map((_, idx) => (
+          {slides.map((_, idx) => (
             <span key={idx} className={cx('ob__dot', idx === i && 'is-active')} />
           ))}
         </div>
-        <HardwareButton label={i === SLIDES.length - 1 ? 'START' : 'DALEJ →'} tone="accent" wide onClick={next} />
-        {i < SLIDES.length - 1 && (
+        <HardwareButton label={i === slides.length - 1 ? t.onboarding.start : t.onboarding.next} tone="accent" wide onClick={next} />
+        {i < slides.length - 1 && (
           <button type="button" className="ob__skip u-label" onClick={finish}>
-            POMIŃ
+            {t.onboarding.skip}
           </button>
         )}
       </div>

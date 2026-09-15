@@ -1,8 +1,13 @@
 node_modules
+.vercel
 dist
-dev-dist
-*.local
-.DS_Store
-
-# Lokalne materiały źródłowe (manual Roland — prawa autorskie) + artefakty testów
-reference/
+.output
+.nitro
+screenshots
+artifacts
+*.log
+.grok/preview.log
+.grok/skills
+.grok/references
+.grok/status
+.grok/og-pending

@@ -1,20 +1,58 @@
 import { useEffect, useMemo, useRef } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
-import { ButtonSequence } from '../components/content/ButtonSequence'
-import { SearchEntry } from '../data/types'
-import { searchIndex, SEARCH_SUGGESTIONS } from '../data/searchIndex'
-import { useDisplay } from '../state/display'
-import { useStore } from '../state/store'
+import { Link, useSearchParams } from '@/lib/rr'
+import { ButtonSequence } from '@/components/content/ButtonSequence'
+import type { SearchEntry } from '@/data/types'
+import { searchIndex } from '@/data/searchIndex'
+import { useT } from '@/i18n/useT'
+import { useLocale } from '@/i18n/locale'
+import { localizeAction, localizeGlossary, localizeShortcut, localizeTrouble, localizeWorkflow, localizeSection } from '@/i18n/content'
+import { actionsById } from '@/data/actions'
+import { glossary } from '@/data/glossary'
+import { shortcutsById } from '@/data/shortcuts'
+import { troubleshootingById } from '@/data/troubleshooting'
+import { workflowsById } from '@/data/workflows'
+import { sectionsById } from '@/data/sections'
+import { useDisplay } from '@/state/display'
+import { useStore } from '@/state/store'
 
-const KIND_LABEL: Record<SearchEntry['kind'], string> = {
-  action: 'DO NOW · DOKŁADNA AKCJA',
-  tool: 'USE NOW · OFFLINE TOOL',
-  section: 'SEKCJE',
-  shortcut: 'SKRÓTY',
-  workflow: 'WORKFLOW',
-  troubleshooting: 'FIX IT',
-  glossary: 'GLOSSARY',
-  mfx: 'EFFECTS · MFX',
+function localizeEntry(entry: SearchEntry, locale: ReturnType<typeof useLocale>['locale'], t: ReturnType<typeof useT>): SearchEntry {
+  if (locale === 'pl') {
+    if (entry.kind === 'tool') return { ...entry, preview: t.search.toolPreview }
+    if (entry.kind === 'mfx') return { ...entry, preview: t.search.mfxPreview }
+    return entry
+  }
+  if (entry.kind === 'action' && actionsById[entry.id]) {
+    const item = localizeAction(actionsById[entry.id], locale)
+    return { ...entry, title: item.title, preview: item.expectedResult }
+  }
+  if (entry.kind === 'shortcut' && shortcutsById[entry.id]) {
+    const item = localizeShortcut(shortcutsById[entry.id], locale)
+    return { ...entry, preview: item.description }
+  }
+  if (entry.kind === 'troubleshooting' && troubleshootingById[entry.id]) {
+    const item = localizeTrouble(troubleshootingById[entry.id], locale)
+    return { ...entry, title: item.symptom, preview: item.cause }
+  }
+  if (entry.kind === 'workflow' && workflowsById[entry.id]) {
+    const item = localizeWorkflow(workflowsById[entry.id], locale)
+    return { ...entry, title: item.title, preview: item.blurb ?? entry.preview }
+  }
+  if (entry.kind === 'section' && sectionsById[entry.id]) {
+    const item = localizeSection(sectionsById[entry.id], locale)
+    return {
+      ...entry,
+      title: item.title,
+      preview: item.short,
+      sectionLabel: t.search.sectionLabel(String(item.pad).padStart(2, '0')),
+    }
+  }
+  if (entry.kind === 'glossary') {
+    const term = glossary.find((g) => g.term === entry.id)
+    if (term) return { ...entry, preview: localizeGlossary(term, locale).definition }
+  }
+  if (entry.kind === 'tool') return { ...entry, preview: t.search.toolPreview }
+  if (entry.kind === 'mfx') return { ...entry, preview: t.search.mfxPreview }
+  return entry
 }
 
 export function SearchPage() {
@@ -24,19 +62,23 @@ export function SearchPage() {
   const q = params.get('q') ?? ''
   const setQ = (value: string) => setParams(value ? { q: value } : {}, { replace: true })
   const inputRef = useRef<HTMLInputElement>(null)
+  const t = useT()
+  const { locale } = useLocale()
 
-  const results = useMemo(() => searchIndex(q, 40, state.progress.activeWorkflowId), [q, state.progress.activeWorkflowId])
+  const results = useMemo(
+    () => searchIndex(q, 40, state.progress.activeWorkflowId).map((entry) => localizeEntry(entry, locale, t)),
+    [q, state.progress.activeWorkflowId, locale, t],
+  )
 
   useEffect(() => {
     inputRef.current?.focus()
   }, [])
 
   useEffect(() => {
-    setDisplay({ title: 'SEARCH', sub: q ? 'wyniki' : 'wpisz funkcję lub skrót', right: q ? String(results.length) : '' })
-  }, [setDisplay, q, results.length])
+    setDisplay({ title: 'SEARCH', sub: q ? t.search.lcdResults : t.search.lcdSub, right: q ? String(results.length) : '' })
+  }, [setDisplay, q, results.length, t])
 
   const grouped = useMemo(() => {
-    // Adjacent runs retain the global ranking; grouping must never bury an exact match.
     const groups: Array<{ kind: SearchEntry['kind']; items: SearchEntry[] }> = []
     for (const entry of results) {
       const last = groups[groups.length - 1]
@@ -61,8 +103,8 @@ export function SearchPage() {
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="co chcesz zrobić albo co nie działa?"
-          aria-label="szukaj w całym przewodniku"
+          placeholder={t.search.placeholder}
+          aria-label={t.search.aria}
           autoComplete="off"
           enterKeyHint="search"
         />
@@ -70,9 +112,9 @@ export function SearchPage() {
 
       {q.trim() === '' ? (
         <div className="search-empty">
-          <p className="search-empty__hint u-label">SPRÓBUJ WPISAĆ</p>
+          <p className="search-empty__hint u-label">{t.search.try}</p>
           <div className="chipbar">
-            {SEARCH_SUGGESTIONS.map((s) => (
+            {t.search.suggestions.map((s) => (
               <button key={s} type="button" className="chip" onClick={() => setQ(s)}>
                 {s}
               </button>
@@ -80,7 +122,7 @@ export function SearchPage() {
           </div>
           {state.ui.recentSearches.length > 0 && (
             <>
-              <p className="search-empty__hint u-label">OSTATNIE</p>
+              <p className="search-empty__hint u-label">{t.search.recent}</p>
               <div className="chipbar">
                 {state.ui.recentSearches.map((s) => (
                   <button key={s} type="button" className="chip" onClick={() => setQ(s)}>
@@ -93,13 +135,13 @@ export function SearchPage() {
         </div>
       ) : results.length === 0 ? (
         <div className="search-no-results panel-surface">
-          <p>Brak pewnego wyniku dla „{q}".</p>
-          <Link to={`/fix-it?q=${encodeURIComponent(q)}`} className="chip">SZUKAJ PO OBJAWIE W FIX IT</Link>
+          <p>{t.search.none(q)}</p>
+          <Link to={`/fix-it?q=${encodeURIComponent(q)}`} className="chip">{t.search.fixIt}</Link>
         </div>
       ) : (
         grouped.map((g, index) => (
           <section key={`${g.kind}-${index}`} className="sgroup">
-            <h2 className="sgroup__cat u-mono">{KIND_LABEL[g.kind]}</h2>
+            <h2 className="sgroup__cat u-mono">{t.search.kinds[g.kind]}</h2>
             <ul className="sgroup__list">
               {g.items.map((e) => (
                 <li key={`${e.kind}-${e.id}`}>

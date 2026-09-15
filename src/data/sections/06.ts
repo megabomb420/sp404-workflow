@@ -73,7 +73,7 @@ export const section: Section = {
       title: 'FX HUNTING',
       steps: [
         { id: 't2a', title: 'KOMBIŃ', action: 'Kręcisz efektami, nie nagrywasz.', kind: 'tip' },
-        { id: 't2b', title: 'Łów brzmienia', action: 'Po dobrym momencie: MARK → REC → pad.', buttons: ['MARK'], kind: 'tip' },
+        { id: 't2b', title: 'Łap brzmienie', action: 'Po dobrym momencie: MARK → REC → pad.', buttons: ['MARK'], kind: 'tip' },
       ],
     },
     {

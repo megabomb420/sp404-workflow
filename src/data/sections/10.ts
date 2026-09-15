@@ -56,12 +56,12 @@ export const section: Section = {
         },
         {
           id: 'sc-probe',
-          title: 'PROG',
+          title: 'PRÓG',
           action: 'Graj pattern; z RATIO max i RELEASE min znajdź THRESHOLD, od którego bas ucieka.',
         },
         {
           id: 'sc-tune',
-          title: 'DOBRZE',
+          title: 'DOSTRÓJ',
           action: 'Ustaw RATIO ~100, dopasuj RELEASE (dłuższy dla krótkiego, perkusyjnego kicka).',
         },
       ],
@@ -115,7 +115,7 @@ export const section: Section = {
     },
     {
       kind: 'task',
-      title: 'SPRĘDŹ SIĘ',
+      title: 'ĆWICZENIE',
       task: 'Otwórz ustawienia sidechain',
       answer: ['SHIFT', 'PAD 16'],
       path: ['EFX SET', 'SIDE CHAIN'],

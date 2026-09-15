@@ -1,39 +1,36 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { ShortcutCard } from '../components/content/ShortcutCard'
-import { TroubleshootingItem } from '../components/content/TroubleshootingItem'
-import { shortcutsById } from '../data/shortcuts'
-import { workflowsById } from '../data/workflows'
-import { troubleshootingById } from '../data/troubleshooting'
-import { useDisplay } from '../state/display'
-import { useStore } from '../state/store'
+import { Link } from '@/lib/rr'
+import { ShortcutCard } from '@/components/content/ShortcutCard'
+import { TroubleshootingItem } from '@/components/content/TroubleshootingItem'
+import { useLocalizedShortcuts, useLocalizedTroubleshooting, useLocalizedWorkflows } from '@/i18n/content'
+import { useT } from '@/i18n/useT'
+import { useDisplay } from '@/state/display'
+import { useStore } from '@/state/store'
 
-/** MY KIT — osobisty zestaw ulubionych: skróty, workflow, fixy. */
 export function KitPage() {
   const { setDisplay } = useDisplay()
   const { state } = useStore()
+  const t = useT()
+  const { byId: shortcutsById } = useLocalizedShortcuts()
+  const { byId: workflowsById } = useLocalizedWorkflows()
+  const { byId: troubleshootingById } = useLocalizedTroubleshooting()
 
   useEffect(() => {
-    setDisplay({ title: 'MY KIT', sub: 'ulubione', right: '' })
-  }, [setDisplay])
+    setDisplay({ title: 'MY KIT', sub: t.kit.lcdSub, right: '' })
+  }, [setDisplay, t])
 
   const favShortcuts = state.favorites.shortcuts.map((id) => shortcutsById[id]).filter(Boolean)
   const favWorkflows = state.favorites.workflows.map((id) => workflowsById[id]).filter(Boolean)
   const favTroubles = state.favorites.troubleshooting.map((id) => troubleshootingById[id]).filter(Boolean)
-
   const total = favShortcuts.length + favWorkflows.length + favTroubles.length
 
   if (total === 0) {
     return (
       <div className="page">
-        <h1 className="page__title u-label">MY KIT</h1>
         <div className="kit-empty panel-surface">
           <span className="kit-empty__star" aria-hidden="true">☆</span>
-          <p>
-            Twój zestaw jest pusty. Dodawaj ulubione przez ★ przy skrótach, workflow i problemach z sekcji
-            FIX IT — znajdziesz je tu szybciej.
-          </p>
-          <Link to="/shortcuts" className="chip u-label">PRZEGLĄDAJ SKRÓTY</Link>
+          <p>{t.kit.empty}</p>
+          <Link to="/shortcuts" className="chip u-label">{t.kit.browse}</Link>
         </div>
       </div>
     )
@@ -41,8 +38,7 @@ export function KitPage() {
 
   return (
     <div className="page">
-      <h1 className="page__title u-label">MY KIT</h1>
-      <p className="page__lede">{total} {total === 1 ? 'element' : 'elementów'} w zestawie.</p>
+      <p className="page__lede">{t.kit.count(total)}</p>
 
       {favWorkflows.length > 0 && (
         <section className="wfgroup">
@@ -52,7 +48,7 @@ export function KitPage() {
               <li key={w.id}>
                 <Link to={`/workflow/${w.id}`} className="wfcard panel-surface">
                   <span className="wfcard__title u-label">{w.title}</span>
-                  <span className="wfcard__meta u-mono">{String(w.steps.length)} KROKÓW</span>
+                  <span className="wfcard__meta u-mono">{t.kit.steps(w.steps.length)}</span>
                 </Link>
               </li>
             ))}
@@ -62,7 +58,7 @@ export function KitPage() {
 
       {favShortcuts.length > 0 && (
         <section className="wfgroup">
-          <h2 className="wfgroup__cat u-mono">SKRÓTY</h2>
+          <h2 className="wfgroup__cat u-mono">{t.kit.shortcuts}</h2>
           <div className="scardlist">
             {favShortcuts.map((s) => (
               <ShortcutCard key={s.id} shortcut={s} />
@@ -75,8 +71,8 @@ export function KitPage() {
         <section className="wfgroup">
           <h2 className="wfgroup__cat u-mono">FIX IT</h2>
           <div className="tcardlist">
-            {favTroubles.map((t) => (
-              <TroubleshootingItem key={t.id} item={t} />
+            {favTroubles.map((item) => (
+              <TroubleshootingItem key={item.id} item={item} />
             ))}
           </div>
         </section>

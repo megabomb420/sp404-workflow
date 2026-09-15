@@ -1,27 +1,43 @@
 import { useEffect, useMemo } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { actionsById, resolveWorkflowEntry } from '../../data/actions'
-import { Workflow, isWorkflowActionRef } from '../../data/types'
-import { useStore } from '../../state/store'
-import { useDisplay } from '../../state/display'
+import { Link, useNavigate, useSearchParams } from '@/lib/rr'
+import { isWorkflowActionRef, type Workflow, type WorkflowEntry, type WorkflowStep, type ActionRecord } from '@/data/types'
+import { useLocalizedActions } from '@/i18n/content'
+import { useT } from '@/i18n/useT'
+import { useStore } from '@/state/store'
+import { useDisplay } from '@/state/display'
 import { ButtonSequence } from './ButtonSequence'
 import { SourceTag } from './SourceTag'
 import { HardwareButton } from '../hardware/HardwareButton'
-import { buzz } from '../../utils/haptics'
-import cx from '../../utils/cx'
+import { buzz } from '@/utils/haptics'
+import cx from '@/utils/cx'
 
-interface WorkflowPlayerProps {
-  workflow: Workflow
+function resolveEntry(entry: WorkflowEntry, actionsById: Record<string, ActionRecord>): WorkflowStep {
+  if (!isWorkflowActionRef(entry)) return entry
+  const action = actionsById[entry.actionId]
+  if (!action) throw new Error(`Unknown action record: ${entry.actionId}`)
+  return {
+    id: entry.id,
+    title: action.title,
+    action: entry.context ? `${entry.context} ${action.action}` : action.action,
+    buttons: action.buttons,
+    path: action.path,
+    explanation: action.explanation,
+    expectedResult: action.expectedResult,
+    commonMistake: action.warning,
+    source: action.source,
+    kind: action.kind,
+  }
 }
 
-/** Jedna czynność, obserwowalny rezultat, kontekstowe Rescue i lokalny zapis pozycji. */
-export function WorkflowPlayer({ workflow }: WorkflowPlayerProps) {
+export function WorkflowPlayer({ workflow }: { workflow: Workflow }) {
   const { state, dispatch, isFav, storageAvailable } = useStore()
   const { setDisplay } = useDisplay()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
+  const t = useT()
+  const { byId: actionsById } = useLocalizedActions()
 
-  const steps = useMemo(() => workflow.steps.map(resolveWorkflowEntry), [workflow.steps])
+  const steps = useMemo(() => workflow.steps.map((entry) => resolveEntry(entry, actionsById)), [workflow.steps, actionsById])
   const total = steps.length
   const storedStep = Math.max(0, Math.min(state.progress.workflowStep[workflow.id] ?? 0, total))
   const done = state.progress.doneSteps[workflow.id] ?? []
@@ -50,15 +66,17 @@ export function WorkflowPlayer({ workflow }: WorkflowPlayerProps) {
     }
   }, [dispatch, finished, searchParams, setSearchParams, state.progress.activeWorkflowId, stepIndex, total, workflow.id])
 
-  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }) }, [stepIndex, workflow.id])
+  useEffect(() => {
+    document.querySelector('.shell__main')?.scrollTo({ top: 0, behavior: 'instant' })
+  }, [stepIndex, workflow.id])
 
   useEffect(() => {
     setDisplay({
       title: workflow.title,
       sub: workflow.category,
-      right: finished ? 'DONE' : `STEP ${Math.min(stepIndex + 1, total)}/${total}`,
+      right: finished ? t.lcdDone : t.workflow.stepRight(Math.min(stepIndex + 1, total), total),
     })
-  }, [workflow.title, workflow.category, stepIndex, total, finished, setDisplay])
+  }, [workflow.title, workflow.category, stepIndex, total, finished, setDisplay, t])
 
   const go = (idx: number) => {
     buzz()
@@ -97,12 +115,12 @@ export function WorkflowPlayer({ workflow }: WorkflowPlayerProps) {
       <div className="wplayer">
         <div className="wf-done panel-surface">
           <div className="wf-done__led" aria-hidden="true" />
-          <span className="wf-done__kick u-label">CEL OSIĄGNIĘTY</span>
-          <p className="wf-done__text">{workflow.outcome ?? `${workflow.title} — zrobione.`}</p>
-          <p className="wf-done__meta u-mono">{completed && storageAvailable ? 'POSTĘP ZAPISANY LOKALNIE' : 'SESJA ZAKOŃCZONA'}</p>
+          <span className="wf-done__kick u-label">{t.workflow.achieved}</span>
+          <p className="wf-done__text">{workflow.outcome ?? t.workflow.doneFallback(workflow.title)}</p>
+          <p className="wf-done__meta u-mono">{completed && storageAvailable ? t.workflow.progressSaved : t.workflow.sessionDone}</p>
           <div className="wf-done__actions">
-            <HardwareButton label="OD NOWA" onClick={reset} />
-            <HardwareButton label="NOW" tone="accent" onClick={() => navigate('/')} />
+            <HardwareButton label={t.workflow.again} onClick={reset} />
+            <HardwareButton label={t.workflow.now} tone="accent" onClick={() => navigate('/')} />
           </div>
         </div>
       </div>
@@ -112,11 +130,11 @@ export function WorkflowPlayer({ workflow }: WorkflowPlayerProps) {
   return (
     <div className="wplayer">
       <button className="chip" type="button" aria-pressed={isFav('workflows', workflow.id)} onClick={() => dispatch({ type: 'TOGGLE_FAV', kind: 'workflows', id: workflow.id })}>
-        {isFav('workflows', workflow.id) ? '★ W MY KIT' : '☆ ZAPISZ W MY KIT'}
+        {isFav('workflows', workflow.id) ? t.workflow.inKit : t.workflow.saveKit}
       </button>
       <div className="wf-progress">
-        <span className="wf-progress__label u-mono">ACTION {stepIndex + 1} / {total}</span>
-        <div className="wf-progress__dots" role="group" aria-label="kroki workflow">
+        <span className="wf-progress__label u-mono">{t.workflow.actionN(stepIndex + 1, total)}</span>
+        <div className="wf-progress__dots" role="group" aria-label={t.workflow.stepsAria}>
           {steps.map((item, index) => (
             <button
               key={item.id}
@@ -129,22 +147,22 @@ export function WorkflowPlayer({ workflow }: WorkflowPlayerProps) {
                 index < stepIndex && 'is-past',
               )}
               onClick={() => go(index)}
-              aria-label={`krok ${index + 1}: ${item.title}`}
+              aria-label={t.workflow.stepAria(index + 1, item.title)}
             >{index + 1}</button>
           ))}
         </div>
       </div>
-      <p className="wf-confirmed">Potwierdzone: {steps.filter((item) => done.includes(item.id)).length}/{total}. Pominięte kroki wrócą przed zakończeniem.</p>
+      <p className="wf-confirmed">{t.workflow.confirmed(steps.filter((item) => done.includes(item.id)).length, total)}</p>
 
       {stepIndex === 0 && workflow.startingState ? (
         <details className="wf-start panel-surface">
-          <summary className="wf-start__k u-label">ZANIM ZACZNIESZ</summary>
+          <summary className="wf-start__k u-label">{t.workflow.beforeStart}</summary>
           <p>{workflow.startingState}</p>
         </details>
       ) : null}
 
       <article className="wf-step panel-surface">
-        <span className="wf-step__meta u-mono">ZRÓB TERAZ · {stepIndex + 1}</span>
+        <span className="wf-step__meta u-mono">{t.workflow.doNow(stepIndex + 1)}</span>
         <h2 className="wf-step__title u-label">{step.title}</h2>
         <p className="wf-step__action">{step.action}</p>
 
@@ -154,21 +172,21 @@ export function WorkflowPlayer({ workflow }: WorkflowPlayerProps) {
           <div className="wf-check">
             <span className="wf-check__led" aria-hidden="true" />
             <div>
-              <span className="wf-check__k u-label">SPRAWDŹ NA SP</span>
+              <span className="wf-check__k u-label">{t.workflow.checkOnSp}</span>
               <p>{step.expectedResult}</p>
             </div>
           </div>
         ) : null}
 
         {(actionRecord?.startingState || step.explanation) && <details className="wf-step__details">
-          <summary>Przygotowanie i dlaczego</summary>
+          <summary>{t.workflow.why}</summary>
           {actionRecord?.startingState && <p>{actionRecord.startingState}</p>}
           {step.explanation && <p>{step.explanation}</p>}
         </details>}
 
         {step.commonMistake ? (
           <div className="wf-step__row wf-step__row--warn">
-            <span className="wf-step__k u-label">UWAŻAJ</span>
+            <span className="wf-step__k u-label">{t.workflow.watch}</span>
             <p>{step.commonMistake}</p>
           </div>
         ) : null}
@@ -176,7 +194,7 @@ export function WorkflowPlayer({ workflow }: WorkflowPlayerProps) {
         {actionRecord?.toolRoute ? (
           <Link to={`${actionRecord.toolRoute}?from=${encodeURIComponent(workflow.id)}&step=${stepIndex}`} className="wf-tool-link u-label">
             <span>◎</span>
-            {actionRecord.toolLabel ?? 'OTWÓRZ NARZĘDZIE'}
+            {actionRecord.toolLabel ?? t.workflow.openTool}
             <span aria-hidden="true">→</span>
           </Link>
         ) : null}
@@ -186,15 +204,15 @@ export function WorkflowPlayer({ workflow }: WorkflowPlayerProps) {
 
       <div className="wf-confirm">
         <HardwareButton
-          label={stepIndex === total - 1 ? 'TAK — ZAKOŃCZ ✓' : 'TAK — DALEJ →'}
-          sublabel="rezultat zgadza się"
+          label={stepIndex === total - 1 ? t.workflow.yesFinish : t.workflow.yesNext}
+          sublabel={t.workflow.resultOk}
           tone="accent"
           wide
           onClick={confirmAndNext}
         />
         <HardwareButton
-          label="TO SIĘ NIE STAŁO"
-          sublabel="otwórz Rescue w tym kontekście"
+          label={t.workflow.didntHappen}
+          sublabel={t.workflow.openRescue}
           tone="danger"
           wide
           onClick={openRescue}
@@ -202,12 +220,12 @@ export function WorkflowPlayer({ workflow }: WorkflowPlayerProps) {
       </div>
 
       <div className="wf-nav wf-nav--quiet">
-        {actionRecord && <Link className="wf-text-action" to={`/muscle?practice=${actionRecord.id}&from=${workflow.id}&step=${stepIndex}`}>przećwicz tę akcję</Link>}
+        {actionRecord && <Link className="wf-text-action" to={`/muscle?practice=${actionRecord.id}&from=${workflow.id}&step=${stepIndex}`}>{t.workflow.drill}</Link>}
         <button type="button" className="wf-text-action" onClick={() => go(stepIndex - 1)} disabled={stepIndex === 0}>
-          ← poprzednia akcja
+          {t.workflow.prev}
         </button>
         <button type="button" className="wf-text-action" onClick={() => navigate('/')}>
-          wyjdź bez utraty postępu
+          {t.workflow.exit}
         </button>
       </div>
     </div>

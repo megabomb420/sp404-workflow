@@ -1,16 +1,13 @@
-import { Shortcut } from '../../data/types'
-import { useStore } from '../../state/store'
+import type { Shortcut } from '@/data/types'
+import { useT } from '@/i18n/useT'
+import { useStore } from '@/state/store'
 import { ButtonSequence } from './ButtonSequence'
 import { SourceTag } from './SourceTag'
 
-interface ShortcutCardProps {
-  shortcut: Shortcut
-}
-
-/** Karta skrótu — sekwencja, opis, kategoria, ulubione. */
-export function ShortcutCard({ shortcut }: ShortcutCardProps) {
+export function ShortcutCard({ shortcut }: { shortcut: Shortcut }) {
   const { isFav, dispatch } = useStore()
   const fav = isFav('shortcuts', shortcut.id)
+  const t = useT()
   const toggle = () => dispatch({ type: 'TOGGLE_FAV', kind: 'shortcuts', id: shortcut.id })
 
   return (
@@ -22,7 +19,7 @@ export function ShortcutCard({ shortcut }: ShortcutCardProps) {
           className={`scard__star${fav ? ' is-fav' : ''}`}
           onClick={toggle}
           aria-pressed={fav}
-          aria-label={fav ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
+          aria-label={fav ? t.fav.remove : t.fav.add}
         >
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
             <path

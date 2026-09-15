@@ -1,19 +1,22 @@
 import { useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { normalizeSearch } from '../utils/search'
-import { SourceTag } from '../components/content/SourceTag'
-import { glossary } from '../data/glossary'
-import { useDisplay } from '../state/display'
+import { useSearchParams } from '@/lib/rr'
+import { SourceTag } from '@/components/content/SourceTag'
+import { useLocalizedGlossary } from '@/i18n/content'
+import { useT } from '@/i18n/useT'
+import { useDisplay } from '@/state/display'
+import { normalizeSearch } from '@/utils/search'
 
 export function GlossaryPage() {
   const { setDisplay } = useDisplay()
   const [params, setParams] = useSearchParams()
   const q = params.get('term') ?? ''
   const setQ = (term: string) => setParams(term ? { term } : {}, { replace: true })
+  const t = useT()
+  const glossary = useLocalizedGlossary()
 
   useEffect(() => {
-    setDisplay({ title: 'GLOSSARY', sub: 'słownik pojęć', right: String(glossary.length) })
-  }, [setDisplay])
+    setDisplay({ title: 'GLOSSARY', sub: t.glossary.lcdSub, right: String(glossary.length) })
+  }, [setDisplay, t, glossary.length])
 
   const list = useMemo(() => {
     const query = normalizeSearch(q)
@@ -24,20 +27,19 @@ export function GlossaryPage() {
       (g) =>
         normalizeSearch(g.term).includes(query) ||
         normalizeSearch(g.definition).includes(query) ||
-        g.tags.some((t) => normalizeSearch(t).includes(query)),
+        g.tags.some((tag) => normalizeSearch(tag).includes(query)),
     )
-  }, [q])
+  }, [q, glossary])
 
   return (
     <div className="page">
-      <h1 className="page__title u-label">GLOSSARY</h1>
       <label className="searchbox panel-surface">
         <span className="searchbox__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="18" height="18">
             <path d="M11 4a7 7 0 100 14 7 7 0 000-14zM20 20l-4.5-4.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
           </svg>
         </span>
-        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Project, Bank, Pad, BPM SYNC…" aria-label="szukaj w słowniku" />
+        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.glossary.placeholder} aria-label={t.glossary.aria} />
       </label>
       <dl className="glist">
         {list.map((g) => (
@@ -48,7 +50,7 @@ export function GlossaryPage() {
           </div>
         ))}
       </dl>
-      {list.length === 0 && <p className="page__empty">Brak haseł.</p>}
+      {list.length === 0 && <p className="page__empty">{t.glossary.empty}</p>}
     </div>
   )
 }

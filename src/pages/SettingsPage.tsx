@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { HardwareButton } from '../components/hardware/HardwareButton'
-import { MANUAL_VERSION } from '../data/types'
-import { useDisplay } from '../state/display'
-import { useStore } from '../state/store'
-import { buzz } from '../utils/haptics'
-import { usePWAInstall } from '../utils/pwaInstall'
-import cx from '../utils/cx'
+import { Link, useNavigate } from '@/lib/rr'
+import { HardwareButton } from '@/components/hardware/HardwareButton'
+import { LangSwitch } from '@/components/nav/LangSwitch'
+import { MANUAL_VERSION } from '@/data/types'
+import { APP_REV, APP_REV_DATE } from '@/lib/appRev'
+import { useT } from '@/i18n/useT'
+import { useDisplay } from '@/state/display'
+import { useStore } from '@/state/store'
+import { buzz } from '@/utils/haptics'
+import { usePWAInstall } from '@/utils/pwaInstall'
+import cx from '@/utils/cx'
 
 function Toggle({
   label,
@@ -39,10 +42,11 @@ export function SettingsPage() {
   const navigate = useNavigate()
   const { canInstall, install, installed } = usePWAInstall()
   const [confirmReset, setConfirmReset] = useState<null | 'progress' | 'favs' | 'all'>(null)
+  const t = useT()
 
   useEffect(() => {
-    setDisplay({ title: 'SETTINGS', sub: 'ustawienia', right: '' })
-  }, [setDisplay])
+    setDisplay({ title: 'SETTINGS', sub: t.settings.lcdSub, right: '' })
+  }, [setDisplay, t])
 
   const setSetting = (key: keyof typeof state.settings, value: boolean) => {
     buzz(8)
@@ -59,53 +63,44 @@ export function SettingsPage() {
 
   return (
     <div className="page">
-      <h1 className="page__title u-label">SETTINGS</h1>
-
       <section className="setgroup panel-surface">
-        <h2 className="setgroup__title u-label">INTERFEJS</h2>
-        <Toggle
-          label="HAPTYKA"
-          sub="Delikatna wibracja przy padach (jeśli telefon wspiera)"
-          checked={state.settings.haptics}
-          onChange={(v) => setSetting('haptics', v)}
-        />
-        <Toggle
-          label="REDUCED MOTION"
-          sub="Ograniczenie animacji"
-          checked={state.settings.reducedMotion}
-          onChange={(v) => setSetting('reducedMotion', v)}
-        />
+        <h2 className="setgroup__title u-label">{t.settings.ui}</h2>
+        <Toggle label={t.settings.haptics} sub={t.settings.hapticsSub} checked={state.settings.haptics} onChange={(v) => setSetting('haptics', v)} />
+        <Toggle label={t.settings.motion} sub={t.settings.motionSub} checked={state.settings.reducedMotion} onChange={(v) => setSetting('reducedMotion', v)} />
+        <div className="setrow">
+          <span>
+            <span className="toggle__label u-label">{t.settings.language}</span>
+            <span className="toggle__sub">{t.settings.languageSub}</span>
+          </span>
+          <LangSwitch />
+        </div>
       </section>
 
       <section className="setgroup panel-surface">
-        <h2 className="setgroup__title u-label">DANE</h2>
+        <h2 className="setgroup__title u-label">{t.settings.data}</h2>
         {confirmReset === 'progress' ? (
           <div className="setgroup__confirm">
-            <p>Wyczyścić postęp workflow i samooceny treningu?</p>
-            <HardwareButton label="TAK, WYCZYŚĆ" tone="danger" onClick={() => doReset('progress')} />
-            <HardwareButton label="ANULUJ" onClick={() => setConfirmReset(null)} />
+            <p>{t.settings.resetProgressQ}</p>
+            <HardwareButton label={t.settings.yesClear} tone="danger" onClick={() => doReset('progress')} />
+            <HardwareButton label={t.settings.cancel} onClick={() => setConfirmReset(null)} />
           </div>
         ) : (
-          <button
-            type="button"
-            className={cx('setrow')}
-            onClick={() => setConfirmReset('progress')}
-          >
-            <span className="toggle__label u-label">RESET PROGRESS</span>
-            <span className="toggle__sub">Workflow, kroki i powtórki treningu</span>
+          <button type="button" className={cx('setrow')} onClick={() => setConfirmReset('progress')}>
+            <span className="toggle__label u-label">{t.settings.resetProgress}</span>
+            <span className="toggle__sub">{t.settings.resetProgressSub}</span>
           </button>
         )}
 
         {confirmReset === 'favs' ? (
           <div className="setgroup__confirm">
-            <p>Wyczyścić ulubione?</p>
-            <HardwareButton label="TAK, WYCZYŚĆ" tone="danger" onClick={() => doReset('favs')} />
-            <HardwareButton label="ANULUJ" onClick={() => setConfirmReset(null)} />
+            <p>{t.settings.resetFavsQ}</p>
+            <HardwareButton label={t.settings.yesClear} tone="danger" onClick={() => doReset('favs')} />
+            <HardwareButton label={t.settings.cancel} onClick={() => setConfirmReset(null)} />
           </div>
         ) : (
           <button type="button" className="setrow" onClick={() => setConfirmReset('favs')}>
-            <span className="toggle__label u-label">RESET FAVORITES</span>
-            <span className="toggle__sub">Wszystkie gwiazdki w MY KIT</span>
+            <span className="toggle__label u-label">{t.settings.resetFavs}</span>
+            <span className="toggle__sub">{t.settings.resetFavsSub}</span>
           </button>
         )}
 
@@ -117,40 +112,51 @@ export function SettingsPage() {
             navigate('/onboarding')
           }}
         >
-          <span className="toggle__label u-label">REPLAY ONBOARDING</span>
-          <span className="toggle__sub">Pokaż wprowadzenie od nowa</span>
+          <span className="toggle__label u-label">{t.settings.replay}</span>
+          <span className="toggle__sub">{t.settings.replaySub}</span>
         </button>
       </section>
 
       <section className="setgroup panel-surface">
-        <h2 className="setgroup__title u-label">INSTALACJA</h2>
+        <h2 className="setgroup__title u-label">{t.settings.install}</h2>
         {canInstall ? (
           <div className="setgroup__confirm">
-            <p>Dodaj SP WORKFLOW do ekranu głównego i korzystaj offline jak z aplikacji.</p>
-            <HardwareButton label="ZAINSTALUJ APLIKACJĘ" tone="accent" onClick={install} />
+            <p>{t.settings.installP}</p>
+            <HardwareButton label={t.settings.installBtn} tone="accent" onClick={install} />
           </div>
         ) : installed ? (
           <div className="setrow">
-            <span className="toggle__label u-label">ZAINSTALOWANO ✓</span>
-            <span className="toggle__sub">Aplikacja działa z ekranu głównego, offline.</span>
+            <span className="toggle__label u-label">{t.settings.installed}</span>
+            <span className="toggle__sub">{t.settings.installedSub}</span>
           </div>
         ) : (
           <div className="setrow">
-            <span className="toggle__label u-label">INSTALACJA</span>
-            <span className="toggle__sub">W przeglądarce: menu → „Dodaj do ekranu głównego" / „Zainstaluj aplikację".</span>
+            <span className="toggle__label u-label">{t.settings.install}</span>
+            <span className="toggle__sub">{t.settings.installHint}</span>
           </div>
         )}
       </section>
 
       <section className="setgroup panel-surface">
-        <h2 className="setgroup__title u-label">O APLIKACJI</h2>
+        <h2 className="setgroup__title u-label">{t.settings.about}</h2>
         <div className="setrow">
-          <span className="toggle__label u-label">FIRMWARE</span>
-          <span className="toggle__sub u-mono">Roland Reference Manual v{MANUAL_VERSION}</span>
+          <span>
+            <span className="toggle__label u-label">{t.settings.appRev}</span>
+            <span className="toggle__sub">{t.settings.appRevHint}</span>
+          </span>
+          <span className="setrow__rev u-mono">{t.settings.appRevSub(APP_REV, APP_REV_DATE)}</span>
         </div>
+        <div className="setrow">
+          <span className="toggle__label u-label">{t.settings.firmware}</span>
+          <span className="toggle__sub u-mono">{t.settings.firmwareSub(MANUAL_VERSION)}</span>
+        </div>
+        <Link to="/glossary" className="setrow">
+          <span className="toggle__label u-label">{t.settings.glossary}</span>
+          <span className="toggle__sub">{t.settings.glossarySub}</span>
+        </Link>
         <Link to="/sources" className="setrow">
-          <span className="toggle__label u-label">SOURCES & VERSION</span>
-          <span className="toggle__sub">Skąd pochodzą fakty i jak są weryfikowane</span>
+          <span className="toggle__label u-label">{t.settings.sources}</span>
+          <span className="toggle__sub">{t.settings.sourcesSub}</span>
         </Link>
       </section>
     </div>

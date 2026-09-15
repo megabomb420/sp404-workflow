@@ -86,8 +86,8 @@ export const workflows: Workflow[] = [
         buttons: ['EXT SOURCE'],
         action: 'Podłącz telefon/komputer po USB, wciśnij EXT SOURCE i nagraj sample na pad [REC].',
         explanation:
-          'USB AUDIO traktuje telefon/komputer jak każde zewnętrzne źródło — po wciśnięciu EXT SOURCE sygnał wchodzi do SP-404MK2 i możesz go samplować jak zwykły input.',
-        expectedResult: 'Wpadka z USB jest w EXT SOURCE — nagrywasz ją na pad jak każdy zewnętrzny sygnał.',
+          'USB AUDIO traktuje telefon/komputer jak każde zewnętrzne źródło — po wciśnięciu EXT SOURCE sygnał wchodzi do SP-404MKII i możesz go samplować jak zwykły input.',
+        expectedResult: 'Sygnał z USB jest w EXT SOURCE — nagrywasz go na pad jak każdy zewnętrzny sygnał.',
         commonMistake:
           'Zapominasz ustawić w systemie "Speakers SP-404MKII-G" jako domyślne urządzenie wyjściowe — wtedy z USB nic nie leci.',
         source: { manual: 'RM5.50', page: 94 },
@@ -100,7 +100,7 @@ export const workflows: Workflow[] = [
         path: ['ASSIGN TO PAD'],
         action: 'Wstaw markery (MARK) i pokrój sample na pady przez ASSIGN TO PAD.',
         explanation:
-          'Markery dzielą sample na fragmenty, a ASSIGN TO PAD rozkłada je na sąsiednie pady — gotowe do trigerowania.',
+          'Markery dzielą sample na fragmenty, a ASSIGN TO PAD rozkłada je na sąsiednie pady — gotowe do odpalania.',
         expectedResult: 'Sample jest pokrojony na kilka padów — każdy gra inny fragment.',
         commonMistake:
           'Nie słychać cięć, bo ASSIGN TO PAD wykonuje się dopiero po zatwierdzeniu [VALUE] na końcu.',
@@ -174,9 +174,9 @@ export const workflows: Workflow[] = [
         id: 'resample',
         title: 'RESAMPLE',
         buttons: ['RESAMPLE'],
-        action: 'Zresampluj pattern z FX na nowy pad (ROUTING Mix).',
+        action: 'Zrób resample patternu z FX na nowy pad (ROUTING Mix).',
         explanation:
-          'Resample zamraża cały miks z efektami do jednego audio — odciąża CPU i pozwala potem edytować destruktrywnie.',
+          'Resample zamraża cały miks z efektami do jednego audio — odciąża CPU i pozwala potem edytować destrukcyjnie.',
         expectedResult: 'Nowy pad gra cały pattern jako jeden sample z nałożonymi FX.',
         commonMistake:
           'ROUTING zostaje ExtIn — resample łapie tylko wejście, a nie sample + efekty.',
@@ -215,7 +215,7 @@ export const workflows: Workflow[] = [
         title: 'FINAL BOUNCE',
         buttons: ['PATTERN SELECT'],
         path: ['BOUNCE'],
-        action: 'Zbounceuj finalny układ na jeden sample.',
+        action: 'Zrób bounce finalnego układu na jeden sample.',
         explanation:
           'BOUNCE konwertuje pattern do jednego sampla — idealne do udostępnienia albo dalszej obróbki.',
         expectedResult: 'Cały bit jest na jednym padzie jako audio.',
@@ -281,7 +281,7 @@ export const workflows: Workflow[] = [
         buttons: ['SUB PAD'],
         action: 'Dodaj bass i drobniejsze stopy — SUBSTEP dzieli krok na sub-stopy dla 16/32.',
         explanation:
-          'SUBSTEP rozbija krok na mniejsze jednostki — potrzebny do szesnastek przy bassie czy ghost notach.',
+          'SUBSTEP rozbija krok na mniejsze jednostki — do szesnastek na bassie i ghost notes.',
         expectedResult: 'Bass gra 16-tki, a haty dostają sub-stopy.',
         commonMistake:
           'MODE jest TRIG, a chcesz długie nuty — przełącz na HOLD STEP albo ustaw dłuższy HOLD STEP.',
@@ -319,7 +319,7 @@ export const workflows: Workflow[] = [
         id: 'bounce-optional',
         title: 'BOUNCE (OPCJA)',
         buttons: ['PATTERN SELECT'],
-        action: 'Opcjonalnie zbounceuj pattern na sample, żeby mieć audio do dalszej obróbki.',
+        action: 'Opcjonalnie zrób bounce patternu na sample, żeby mieć audio do dalszej obróbki.',
         explanation: 'Jeśli pattern gra i chcesz go "zamrozić" do audio — użyj BOUNCE lub RESAMPLE.',
         expectedResult: 'Pattern jako sample na padzie.',
         commonMistake:
@@ -384,7 +384,7 @@ export const workflows: Workflow[] = [
         id: 'marker-screen',
         title: 'MARKER SCREEN',
         buttons: ['SHIFT', 'START/END'],
-        action: 'Otwórz marker setting screen dla loopa.',
+        action: 'Otwórz ekran markerów dla loopa.',
         explanation: 'Tu dodajesz punkty cięcia na waveformie.',
         expectedResult: 'Ekran markerów; widać przebieg sampla.',
         source: { manual: 'RM5.50', page: 45 },

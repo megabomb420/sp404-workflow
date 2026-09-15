@@ -47,7 +47,7 @@ export const shortcuts: Shortcut[] = [
     category: 'ROUTING',
     buttons: ['SHIFT', 'PAD 3'],
     description:
-      'Reguluje balans dźwięku odsłuchiwanego w gnieździe PHONES (podgląd słuchawkowy).',
+      'Reguluje, co słychać w PHONES — podgląd słuchawkowy, bez LINE OUT.',
     kind: 'verified',
     source: { manual: 'RM5.50', page: 145 },
     tags: ['cue', 'phones', 'słuchawki', 'balans', 'monitoring', 'podgląd', 'cue mix'],
@@ -83,7 +83,7 @@ export const shortcuts: Shortcut[] = [
     category: 'EDIT',
     buttons: ['SHIFT', 'PAD 6'],
     description:
-      'Inicjalizuje (zeruje) parametry sampla dla wybranego pada — przywraca ustawienia domyślne.',
+      'Zeruje parametry sampla na wybranym padzie — wracają ustawienia fabryczne.',
     kind: 'verified',
     source: { manual: 'RM5.50', page: 145 },
     tags: ['init', 'init param', 'reset parametrów', 'wyzeruj', 'przywróć ustawienia', 'default', 'na nowo'],
@@ -107,7 +107,7 @@ export const shortcuts: Shortcut[] = [
     category: 'MUTE',
     buttons: ['SHIFT', 'PAD 8'],
     description:
-      'Grupuje sample, których nie chcesz odtwarzać jednocześnie (nie chcesz nakładać warstw) — grupa wyciszenia.',
+      'Przypisuje pady do grupy, w której gra tylko jeden na raz — nowy wycisza poprzedni.',
     kind: 'verified',
     source: { manual: 'RM5.50', page: 145 },
     tags: ['mute group', 'grupa mute', 'mute', 'wyciszenie', 'nie nakładaj', 'exclusive', 'alternatywne sample'],
@@ -130,7 +130,7 @@ export const shortcuts: Shortcut[] = [
     category: 'SAMPLING',
     buttons: ['SHIFT', 'PAD 10'],
     description:
-      'Dodaje odliczanie (zliczenie) przed rozpoczęciem samplowania lub nagrywania patternu.',
+      'Dodaje count-in przed samplowaniem albo nagraniem patternu.',
     kind: 'verified',
     source: { manual: 'RM5.50', page: 145 },
     tags: ['count-in', 'count in', 'odliczanie', 'zliczenie', 'pre-roll', 'przed nagraniem', 'intro'],
@@ -178,7 +178,7 @@ export const shortcuts: Shortcut[] = [
     category: 'UTILITY',
     buttons: ['SHIFT', 'PAD 14'],
     path: ['UTILITY', 'IMPORT/EXPORT'],
-    description: 'Otwiera menu IMPORT/EXPORT — import i eksport próbek na karcie SD.',
+    description: 'Otwiera menu IMPORT/EXPORT — import i eksport sampli na karcie SD.',
     kind: 'verified',
     source: { manual: 'RM5.50', page: 145 },
     tags: ['import', 'export', 'import/export', 'sd card', 'karta sd', 'wav', 'przesyłanie', 'pliki'],
@@ -489,7 +489,7 @@ export const shortcuts: Shortcut[] = [
     category: 'ROUTING',
     buttons: ['REMAIN', 'A/F–E/J'],
     description:
-      'Ustawia miejsce wysyłki do busa (które efekty są używane) dla wszystkich sampli w banku.',
+      'Ustawia bus send dla wszystkich sampli w banku — te same efekty na cały bank.',
     kind: 'verified',
     source: { manual: 'RM5.50', page: 146 },
     tags: ['bank bus send', 'bus send', 'wysyłka banku', 'routing banku', 'wszystkie sample', 'bank'],
@@ -538,7 +538,7 @@ export const shortcuts: Shortcut[] = [
     nameEn: 'BYPASS BUS 3/4',
     category: 'ROUTING',
     buttons: ['VALUE', 'BUS FX'],
-    description: 'Tymczasowo omija (bypassuje) BUS 3 i BUS 4.',
+    description: 'Tymczasowo omija BUS 3 i BUS 4 (bypass).',
     kind: 'verified',
     source: { manual: 'RM5.50', page: 147 },
     tags: ['bypass', 'bus 3', 'bus 4', 'omiń', 'pomijanie', 'pomiń efekty'],

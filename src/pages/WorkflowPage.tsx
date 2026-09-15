@@ -1,10 +1,10 @@
-import { Navigate, useParams } from 'react-router-dom'
-import { WorkflowPlayer } from '../components/content/WorkflowPlayer'
-import { workflowsById } from '../data/workflows'
+import { Navigate, useParams } from '@/lib/rr'
+import { WorkflowPlayer } from '@/components/content/WorkflowPlayer'
+import { useLocalizedWorkflow } from '@/i18n/content'
 
 export function WorkflowPage() {
   const { id } = useParams<{ id: string }>()
-  const workflow = id ? workflowsById[id] : undefined
+  const workflow = useLocalizedWorkflow(id)
   if (!workflow) return <Navigate to="/workflows" replace />
   return (
     <div className="page">

@@ -261,7 +261,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     [state, storageAvailable],
   )
 
-  return <StoreContext.Provider value={value}>{!storageAvailable && <p className="storage-warning" role="alert">Zapis lokalny jest niedostępny. Postęp tej sesji może zniknąć po zamknięciu aplikacji.</p>}{children}</StoreContext.Provider>
+  return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
 }
 
 export function useStore(): StoreValue {

@@ -1,12 +1,12 @@
-import { Section, SectionBlock } from '../../data/types'
+import type { Section, SectionBlock } from '@/data/types'
+import { useT } from '@/i18n/useT'
 import { ButtonSequence } from './ButtonSequence'
 import { SourceTag } from './SourceTag'
 import { RoutingDiagram } from './RoutingDiagram'
 import { StepSequencer as StepSeq } from './StepSequencer'
 import { SidechainExplorer } from './SidechainExplorer'
-import { Link } from 'react-router-dom'
+import { Link } from '@/lib/rr'
 
-/** Renderuje bloki treści sekcji. */
 export function SectionRenderer({ section }: { section: Section }) {
   return (
     <div className="sbody">
@@ -18,6 +18,7 @@ export function SectionRenderer({ section }: { section: Section }) {
 }
 
 function Block({ block }: { block: SectionBlock }) {
+  const t = useT()
   switch (block.kind) {
     case 'intro':
       return <p className="sbody__intro">{block.text}</p>
@@ -47,7 +48,7 @@ function Block({ block }: { block: SectionBlock }) {
                   {s.expectedResult ? <p className="wflist__result">{s.expectedResult}</p> : null}
                   {s.commonMistake ? (
                     <p className="wflist__mistake">
-                      <span className="u-label">BŁĄD: </span>
+                      <span className="u-label">{t.section.error}</span>
                       {s.commonMistake}
                     </p>
                   ) : null}
@@ -73,14 +74,14 @@ function Block({ block }: { block: SectionBlock }) {
     case 'tip':
       return (
         <aside className="callout callout--tip">
-          <span className="callout__k u-label">WORKFLOW TIP</span>
+          <span className="callout__k u-label">{t.tags.tip}</span>
           <p>{block.text}</p>
         </aside>
       )
     case 'note':
       return (
         <aside className="callout callout--note">
-          <span className="callout__k u-label">ROLAND / VERIFIED</span>
+          <span className="callout__k u-label">{t.tags.verified}</span>
           <p>{block.text}</p>
           <SourceTag source={block.source} />
         </aside>
@@ -90,8 +91,8 @@ function Block({ block }: { block: SectionBlock }) {
         <div>
           {block.title ? <h3 className="sbody__h u-label">{block.title}</h3> : null}
           <ul className="checklist">
-            {block.items.map((t, i) => (
-              <li key={i}>{t}</li>
+            {block.items.map((item, i) => (
+              <li key={i}>{item}</li>
             ))}
           </ul>
         </div>
@@ -101,8 +102,8 @@ function Block({ block }: { block: SectionBlock }) {
         <div>
           {block.title ? <h3 className="sbody__h u-label">{block.title}</h3> : null}
           <ul className="dotlist">
-            {block.items.map((t, i) => (
-              <li key={i}>{t}</li>
+            {block.items.map((item, i) => (
+              <li key={i}>{item}</li>
             ))}
           </ul>
         </div>
@@ -114,9 +115,7 @@ function Block({ block }: { block: SectionBlock }) {
             <thead>
               <tr>
                 {block.headers.map((h, i) => (
-                  <th key={i} className="u-label">
-                    {h}
-                  </th>
+                  <th key={i} className="u-label">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -124,9 +123,7 @@ function Block({ block }: { block: SectionBlock }) {
               {block.rows.map((row, i) => (
                 <tr key={i}>
                   {row.map((c, j) => (
-                    <td key={j} className="u-mono">
-                      {c}
-                    </td>
+                    <td key={j} className="u-mono">{c}</td>
                   ))}
                 </tr>
               ))}
@@ -150,7 +147,7 @@ function Block({ block }: { block: SectionBlock }) {
             ))}
           </dl>
           <p className="preset__hear">
-            <span className="u-label">CO POWINIENEŚ USŁYSZEĆ: </span>
+            <span className="u-label">{t.section.hear}</span>
             {block.whatYouHear}
           </p>
           <SourceTag source={block.source} kind="tip" />
@@ -162,7 +159,7 @@ function Block({ block }: { block: SectionBlock }) {
           <span className="mtask__title u-label">{block.title}</span>
           <p className="mtask__task">{block.task}</p>
           <details className="mtask__answer">
-            <summary className="u-label">POKAŻ ODPOWIEDŹ</summary>
+            <summary className="u-label">{t.section.showAnswer}</summary>
             <div className="mtask__answer-inner">
               <ButtonSequence buttons={block.answer} path={block.path} />
             </div>
