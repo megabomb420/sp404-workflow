@@ -1,0 +1,11 @@
+/* iPhone 17 Pro: labels sit on the home-indicator, not in a hole under NOW/SZUKAJ */
+.dock {
+  padding: 4px 2px 0;
+  padding-bottom: max(6px, var(--safe-b));
+}
+
+.dock__tab {
+  gap: 2px;
+  padding: 4px 0 2px;
+  justify-content: flex-end;
+}
