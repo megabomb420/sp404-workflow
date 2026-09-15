@@ -49,9 +49,9 @@
   --pad-travel: 2px;
 
   /* layout */
-  --app-h: 100svh;
+  --app-h: 100dvh;
   --app-t: 0px;
-  --dock-h: 64px;
+  --dock-h: 56px;
   --safe-b: env(safe-area-inset-bottom, 0px);
   --safe-t: env(safe-area-inset-top, 0px);
 
