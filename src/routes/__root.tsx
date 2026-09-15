@@ -1,6 +1,7 @@
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { ViewportLock } from "@/components/nav/ViewportLock";
 import { APP_REV } from "@/lib/appRev";
+import { publicUrl } from "@/lib/publicUrl";
 import { Layout } from "@/app/Layout";
 import { LocaleProvider } from "@/i18n/locale";
 import { AuthProvider } from "@/lib/auth/provider";
@@ -27,10 +28,10 @@ export const Route = createRootRoute({
       { name: "description", content: "Offline companion for the Roland SP-404MKII — workflows, shortcuts, muscle memory." },
     ],
     links: [
-      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "icon", type: "image/svg+xml", href: publicUrl("favicon.svg") },
       { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/__grok/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
+      { rel: "manifest", href: publicUrl("manifest.webmanifest") },
+      { rel: "apple-touch-icon", href: publicUrl("icons/apple-touch-icon.png") },
     ],
   }),
   component: RootDocument,
