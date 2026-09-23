@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 /**
- * Finish a GitHub Pages build: promote TanStack's SPA shell to index.html
- * and 404.html (client-side routes), rewrite the prerender CSS href to the
- * real client stylesheet, and drop .nojekyll.
+ * Finish a static Pages build: promote TanStack's SPA shell to index.html and
+ * rewrite the prerender CSS href to the real client stylesheet.
+ *
+ * GitHub Pages gets `404.html` (its only client-route fallback) and `.nojekyll`.
+ * Cloudflare Pages must NOT: an unmatched path answered by `404.html` carries a
+ * 404 status, and Cloudflare serves the fallback from `public/_redirects`
+ * (`/* /index.html 200`) instead. `CF_PAGES=1` selects that shape — Cloudflare's
+ * own build image sets it, and `scripts/build-cf-pages.mjs` sets it locally.
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -32,8 +37,16 @@ if (cssFile) {
   html = html.replace(/styles-[^"'\\\s]+\.css/g, cssFile);
 }
 
-writeFileSync(join(outDir, "index.html"), html);
-writeFileSync(join(outDir, "404.html"), html);
-writeFileSync(join(outDir, ".nojekyll"), "");
+const forCloudflare = process.env.CF_PAGES === "1";
 
-console.log(`[pages-postbuild] ${outDir} from ${shellPath}${cssFile ? ` css=${cssFile}` : ""}`);
+writeFileSync(join(outDir, "index.html"), html);
+if (!forCloudflare) {
+  writeFileSync(join(outDir, "404.html"), html);
+  writeFileSync(join(outDir, ".nojekyll"), "");
+}
+
+console.log(
+  `[pages-postbuild] ${outDir} from ${shellPath}${cssFile ? ` css=${cssFile}` : ""} ${
+    forCloudflare ? "cf(_redirects)" : "gh-pages(404.html)"
+  }`,
+);

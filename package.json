@@ -10,6 +10,8 @@
     "dev": "node scripts/with-app-env.mjs vite dev --host 0.0.0.0 --port 8080",
     "build": "node scripts/with-app-env.mjs vite build && npm run db:migrate",
     "build:pages": "PAGES=1 node scripts/with-app-env.mjs vite build && node scripts/pages-postbuild.mjs",
+    "build:pages:cf": "node scripts/build-cf-pages.mjs",
+    "deploy:cf": "npm run build:pages:cf && npx --yes wrangler@4 pages deploy dist/client --project-name=sp-workflow --branch=main --commit-dirty=true",
     "db:migrate": "node scripts/migrate.mjs",
     "build:dev": "node scripts/with-app-env.mjs vite build --mode development",
     "preview": "node scripts/with-app-env.mjs vite preview",
