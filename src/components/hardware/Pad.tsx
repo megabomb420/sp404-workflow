@@ -17,7 +17,7 @@ interface PadProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 /** Pad 4×4 — główny skrót nawigacji. Liczba + nazwa + LED w rogu. */
-export function Pad({ pad, label, sublabel, tone = 'default', active, ledOn, onClick, className, 'aria-label': ariaLabel, ...rest }: PadProps) {
+export function Pad({ pad, label, sublabel, tone = 'default', active, ledOn, onClick, className, ...rest }: PadProps) {
   const handle = () => {
     buzz()
     onClick?.()
@@ -27,7 +27,7 @@ export function Pad({ pad, label, sublabel, tone = 'default', active, ledOn, onC
       type="button"
       className={cx('pad', `pad--${tone}`, active && 'is-active', className)}
       onClick={handle}
-      aria-label={ariaLabel ?? `${pad}. ${label}${sublabel ? ' — ' + sublabel : ''}`}
+      aria-label={`${pad}. ${label}${sublabel ? ' — ' + sublabel : ''}`}
       {...rest}
     >
       <span className="pad__num u-mono">{pad}</span>

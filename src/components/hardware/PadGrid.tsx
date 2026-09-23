@@ -6,8 +6,6 @@ export interface PadConfig {
   sublabel?: string
   tone?: PadTone
   active?: boolean
-  ledOn?: boolean
-  ariaLabel?: string
   onClick?: () => void
 }
 
@@ -23,8 +21,6 @@ export function PadGrid({ items, className }: { items: PadConfig[]; className?: 
           sublabel={cfg.sublabel}
           tone={cfg.tone}
           active={cfg.active}
-          ledOn={cfg.ledOn}
-          aria-label={cfg.ariaLabel}
           onClick={cfg.onClick}
         />
       ))}

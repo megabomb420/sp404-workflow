@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useNavigate } from '@/lib/rr'
 import { PadGrid, type PadConfig } from '@/components/hardware/PadGrid'
-import { MyPads } from '@/components/content/MyPads'
 import { useLocalizedHomePads, useLocalizedSections, useLocalizedWorkflows } from '@/i18n/content'
 import { useT } from '@/i18n/useT'
 import { useDisplay } from '@/state/display'
@@ -72,8 +71,6 @@ export function HomePage() {
       <section className="home-map" aria-label={t.appName}>
         <PadGrid items={pads} />
       </section>
-
-      <MyPads />
 
       <div className="now-escape">
         <Link to={reviewCount ? '/muscle?review=1' : '/muscle'} className="now-escape__item panel-surface">

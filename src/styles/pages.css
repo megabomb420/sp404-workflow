@@ -407,13 +407,6 @@ a.chip { text-decoration: none; }
    ============================================================ */
 
 .home--now { gap: 12px; }
-.my-pads { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.my-pads__hint { color: var(--ink-dim); font-size: 12px; line-height: 1.45; }
-.my-pads .chipbar { margin: 0; padding: 0; }
-.my-pads .padgrid { gap: 6px; }
-.my-pads .pad { padding: 7px 6px 8px; min-height: 0; aspect-ratio: 1 / 1.15; }
-.my-pads .pad__label { font-size: clamp(8px, 2.4vw, 10px); line-height: 1.08; letter-spacing: 0; }
-.my-pads__palette { display: flex; flex-direction: column; gap: 7px; border-top: 1px solid var(--hairline); padding-top: 10px; }
 .now-section-title { font-size: 10px; color: var(--ink-faint); letter-spacing: 0.16em; margin: 2px 0 8px; }
 
 

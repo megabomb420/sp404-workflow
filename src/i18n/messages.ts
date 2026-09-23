@@ -308,18 +308,6 @@ const pl = {
     },
   },
 
-  pads: {
-    title: 'MOJE PADY',
-    hint: 'Twoje notatki, co masz pod palcami w tym banku. Aplikacja nie czyta zawartości SP.',
-    bankAria: 'Wybór banku A–J',
-    padAria: (pad: number, label: string) => `PAD ${pad} — ${label}`,
-    padEmptyAria: (pad: number) => `PAD ${pad} — pusty`,
-    empty: '—',
-    paletteLabel: 'ROLA',
-    palette: ['KICK', 'SNARE', 'CLAP', 'HAT ZAMK.', 'HAT OTW.', 'PERC', 'TOM', 'BASS', 'SUB', 'STAB', 'AKORD', 'VOX', 'FX', 'LOOP'],
-    clear: 'WYCZYŚĆ PAD',
-  },
-
   section: {
     meta: (n: string) => `SEKCJA ${n} / 16`,
     padRight: (n: string) => `PAD ${n}`,
@@ -657,18 +645,6 @@ const en: typeof pl = {
       close: { label: 'CLOSE', text: 'A small difference can pile up after a few repeats.' },
       adjust: { label: 'CHECK TEMPO / TRIM', text: 'Lengths disagree. Check bar count, START/END points and source BPM.' },
     },
-  },
-
-  pads: {
-    title: 'MY PADS',
-    hint: 'Your notes on what is under your fingers in this bank. The app does not read anything from the SP.',
-    bankAria: 'Bank selection A–J',
-    padAria: (pad: number, label: string) => `PAD ${pad} — ${label}`,
-    padEmptyAria: (pad: number) => `PAD ${pad} — empty`,
-    empty: '—',
-    paletteLabel: 'ROLE',
-    palette: ['KICK', 'SNARE', 'CLAP', 'HAT CLOSED', 'HAT OPEN', 'PERC', 'TOM', 'BASS', 'SUB', 'STAB', 'CHORD', 'VOX', 'FX', 'LOOP'],
-    clear: 'CLEAR PAD',
   },
 
   section: {
