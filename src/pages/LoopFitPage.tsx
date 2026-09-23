@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { Link, useSearchParams } from '@/lib/rr'
 import { ButtonSequence } from '@/components/content/ButtonSequence'
 import { SourceTag } from '@/components/content/SourceTag'
+import { TapTempo } from '@/components/content/TapTempo'
 import { useLocalizedActions } from '@/i18n/content'
 import { useT } from '@/i18n/useT'
 import { useDisplay } from '@/state/display'
@@ -55,6 +56,8 @@ export function LoopFitPage() {
         <h1 className="page__title u-label">{t.loopfit.title}</h1>
         <p className="page__lede">{t.loopfit.lede}</p>
       </header>
+
+      <TapTempo onUse={setBpm} />
 
       <section className="loopfit-controls panel-surface" aria-label={t.loopfit.params}>
         <label className="loopfit-field">
