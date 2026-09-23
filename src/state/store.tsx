@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { setHapticsEnabled } from '../utils/haptics'
+import { isPadBank, sanitizePadMap, setPadLabel } from '../utils/pads'
 
 /* ============================ STATE SHAPE ============================ */
 
@@ -40,6 +41,8 @@ export interface AppState {
   ui: UIState
   practice: Record<string, { correct: number; review: number; needsReview: boolean }>
   loopFit: { bpm: string; bars: number; actual: string }
+  /** Własne notatki użytkownika: bank A–J, klucz pada -> etykieta. Nie jest to odczyt z SP. */
+  pads: { bank: string; map: Record<string, string> }
 }
 
 const DEFAULTS: AppState = {
@@ -49,6 +52,7 @@ const DEFAULTS: AppState = {
   ui: { lastSection: null, recent: [], recentSearches: [], onboarded: false },
   practice: {},
   loopFit: { bpm: '90', bars: 4, actual: '' },
+  pads: { bank: 'A', map: {} },
 }
 
 const STORAGE_KEY = 'spw.state.v1'
@@ -70,6 +74,7 @@ function loadState(): AppState {
     const progress = record(parsed.progress)
     const ui = record(parsed.ui)
     const loopFit = record(parsed.loopFit)
+    const pads = record(parsed.pads)
     return {
       settings: Object.fromEntries(Object.entries(DEFAULTS.settings).map(([key, fallback]) => [key, typeof settings[key] === 'boolean' ? settings[key] : fallback])) as unknown as Settings,
       favorites: { shortcuts: strings(favorites.shortcuts), workflows: strings(favorites.workflows), troubleshooting: strings(favorites.troubleshooting) },
@@ -88,6 +93,10 @@ function loadState(): AppState {
         bpm: typeof loopFit.bpm === 'string' ? loopFit.bpm : '90',
         bars: typeof loopFit.bars === 'number' && [0.5, 1, 2, 4, 8, 16].includes(loopFit.bars) ? loopFit.bars : 4,
         actual: typeof loopFit.actual === 'string' ? loopFit.actual : '',
+      },
+      pads: {
+        bank: isPadBank(pads.bank) ? pads.bank : 'A',
+        map: sanitizePadMap(pads.map),
       },
     }
   } catch {
@@ -115,6 +124,8 @@ export type Action =
   | { type: 'PRACTICE_RESULT'; id: string; correct: boolean }
   | { type: 'QUEUE_PRACTICE'; id: string }
   | { type: 'SET_LOOP_FIT'; value: Partial<AppState['loopFit']> }
+  | { type: 'SET_PAD_BANK'; bank: string }
+  | { type: 'SET_PAD_LABEL'; key: string; label: string }
 
 function toggle(list: string[], id: string): string[] {
   return list.includes(id) ? list.filter((x) => x !== id) : [...list, id]
@@ -124,6 +135,12 @@ function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
     case 'SET_LOOP_FIT':
       return { ...state, loopFit: { ...state.loopFit, ...action.value } }
+    case 'SET_PAD_BANK':
+      return isPadBank(action.bank) && action.bank !== state.pads.bank ? { ...state, pads: { ...state.pads, bank: action.bank } } : state
+    case 'SET_PAD_LABEL': {
+      const map = setPadLabel(state.pads.map, action.key, action.label)
+      return map === state.pads.map ? state : { ...state, pads: { ...state.pads, map } }
+    }
     case 'QUEUE_PRACTICE':
     case 'PRACTICE_RESULT': {
       const previous = state.practice[action.id] ?? { correct: 0, review: 0, needsReview: false }
