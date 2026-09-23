@@ -18,12 +18,19 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" },
+      // No `viewport-fit=cover`: WebKit then insets the installed app itself and
+      // the icon reaches the screen bottom. Asking for edge-to-edge left an
+      // orphan band below the dock that no CSS could reach (iPhone 17 Pro /
+      // iOS 27; the N3X build was fixed by removing this flag).
+      { name: "viewport", content: "width=device-width, initial-scale=1, interactive-widget=resizes-content" },
       { title: APP_NAME },
       { name: "theme-color", content: "#121315" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      // Opaque, like N3X: with automatic insetting the page starts below the
+      // status bar, so `black-translucent` only bought a header that had to be
+      // padded back out of the clock.
+      { name: "apple-mobile-web-app-status-bar-style", content: "black" },
       { name: "apple-mobile-web-app-title", content: APP_NAME },
       { name: "description", content: "Offline companion for the Roland SP-404MKII — workflows, shortcuts, muscle memory." },
     ],

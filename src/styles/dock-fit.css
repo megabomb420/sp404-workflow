@@ -9,3 +9,15 @@
   padding: 4px 0 2px;
   justify-content: flex-end;
 }
+
+/* Fresh iOS Home Screen installs can report a zero bottom inset while the
+   gesture indicator still overlays the page (measured in the N3X build on an
+   iPhone 17 Pro / iOS 27, where the 34px floor was confirmed on the phone).
+   Reserve the indicator's own 34px there, and keep the 6px chrome gap. */
+@supports (-webkit-touch-callout: none) {
+  @media (display-mode: standalone) and (pointer: coarse) and (max-width: 600px) and (min-height: 750px) {
+    .dock {
+      padding-bottom: calc(max(env(safe-area-inset-bottom, 0px), 34px) + 6px);
+    }
+  }
+}
