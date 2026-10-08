@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '@/lib/rr'
 import { DOOM } from '../../data/doom'
 
 export function DoomContext() {

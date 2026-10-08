@@ -1,33 +1,26 @@
-import { sourceLabel, Source, VerifiedKind } from '../../data/types'
+import { sourceLabel, type Source, type VerifiedKind } from '@/data/types'
+import { useT } from '@/i18n/useT'
+import { useLocale } from '@/i18n/locale'
 
-interface SourceTagProps {
-  source?: Source
-  kind?: VerifiedKind
-}
-
-/** Mała pilka źródła + typ treści (ROLAND/VERIFIED vs WORKFLOW TIP). */
-export function SourceTag({ source, kind }: SourceTagProps) {
+export function SourceTag({ source, kind }: { source?: Source; kind?: VerifiedKind }) {
+  const t = useT()
+  const { locale } = useLocale()
   if (!source && !kind) return null
   const label = source ? sourceLabel(source) : null
-  const doom = source?.manual.startsWith('DOOM')
-  const href = source?.url ?? (doom ? 'https://klangfeldlabs.com/doom-os/manual/' : source?.page
+  const href = source?.url ?? (source?.page
     ? `https://static.roland.com/assets/media/pdf/SP-404MK2_v5_reference_eng03_W.pdf#page=${source.page}`
     : 'https://static.roland.com/manuals/sp-404mk2_reference_v550/en-US/index.html')
   return (
-    <div className="source-evidence">
-    <span className="srctag" aria-label={`Źródło: ${label ?? ''}${kind ? ' — ' + kind : ''}`}>
-      {kind === 'tip' && <span className="srctag__pill srctag__pill--tip">WORKFLOW TIP</span>}
-      {kind === 'verified' && <span className="srctag__pill srctag__pill--verified">{doom ? 'DOOM OS / MANUAL' : 'ROLAND / VERIFIED'}</span>}
-      {label && <a className="srctag__src u-mono" href={href} target="_blank" rel="noreferrer" title={`Otwórz ${doom ? 'dokumentację DOOM OS' : 'manual Rolanda'} (wymaga internetu)`}>{label} ↗</a>}
+    <div className="source-evidence"><span className="srctag" aria-label={t.tags.sourceAria(label ?? '', kind ?? '')}>
+      {kind === 'tip' && <span className="srctag__pill srctag__pill--tip">{t.tags.tip}</span>}
+      {kind === 'verified' && <span className="srctag__pill srctag__pill--verified">{locale === 'en' ? 'DOCUMENTED' : 'Z DOKUMENTACJI'}</span>}
+      {label && (
+        <a className="srctag__src u-mono" href={href} target="_blank" rel="noreferrer" title={t.tags.openManual}>
+          {label} ↗
+        </a>
+      )}
     </span>
-    {source && <details className="source-review">
-      <summary className="u-mono">{source.hardwareTestedAt ? 'POTWIERDZONE NA SPRZĘCIE' : 'Z DOKUMENTACJI'} · STATUS INSTRUKCJI</summary>
-      <dl>
-        <div><dt>Wersja</dt><dd>{source.firmwareVersion ?? (doom ? `DOOM OS ${source.manual.replace('DOOM', '')} alpha · Roland 5.52` : 'Roland · Reference Manual 5.50')}</dd></div>
-        <div><dt>Przegląd źródła</dt><dd>{source.reviewedAt ?? 'Data nie zapisana dla tej czynności'}</dd></div>
-        <div><dt>Test na samplerze</dt><dd>{source.hardwareTestedAt ?? 'Brak potwierdzenia testu na sprzęcie'}</dd></div>
-      </dl>
-    </details>}
+    {source && <details className="source-review"><summary>{source.hardwareTestedAt ? (locale === 'en' ? 'HARDWARE TESTED' : 'TEST NA SPRZĘCIE') : (locale === 'en' ? 'MANUAL STATUS' : 'STATUS INSTRUKCJI')}</summary><p>{source.firmwareVersion ?? source.manual} · {locale === 'en' ? 'Documentation reviewed: ' : 'Weryfikacja dokumentacji: '}{source.reviewedAt ?? (locale === 'en' ? 'date not recorded' : 'brak zapisanej daty')}. {locale === 'en' ? 'Hardware test: ' : 'Test na urządzeniu: '}{source.hardwareTestedAt ?? (locale === 'en' ? 'not performed' : 'nie wykonano')}.</p></details>}
     </div>
   )
 }

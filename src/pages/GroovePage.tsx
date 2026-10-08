@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from '@/lib/rr'
 import { useStore } from '../state/store'
 import { useDisplay } from '../state/display'
 import { DEFAULTS } from '../state/model'
@@ -36,7 +36,7 @@ export function GroovePage() {
           const at = nextBar + ((i + n.nudge + 16) % 16) * stepSeconds
           const oscillator = audio.createOscillator(), gain = audio.createGain(), length = Math.max(.025, n.length * stepSeconds)
           oscillator.type = 'sine'; oscillator.frequency.value = 500
-          gain.gain.setValueAtTime(.0001, at); gain.gain.linearRampToValue(n.velocity / 127 * .16, at + .004); gain.gain.exponentialRampToValueAtTime(.0001, at + length)
+          gain.gain.setValueAtTime(.0001, at); gain.gain.linearRampToValueAtTime(n.velocity / 127 * .16, at + .004); gain.gain.exponentialRampToValueAtTime(.0001, at + length)
           oscillator.connect(gain); gain.connect(audio.destination); oscillator.start(at); oscillator.stop(at + length + .01)
           oscillator.onended = () => { oscillator.disconnect(); gain.disconnect() }
         })

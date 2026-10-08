@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from '@/lib/rr'
 import { comparisons } from '../data/comparisons'
 import { SourceTag } from '../components/content/SourceTag'
 import { useDisplay } from '../state/display'

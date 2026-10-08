@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from '@/lib/rr'
 import { ShortcutCard } from '../components/content/ShortcutCard'
 import { TroubleshootingItem } from '../components/content/TroubleshootingItem'
 import { shortcutsById } from '../data/shortcuts'
@@ -10,11 +10,15 @@ import { useDisplay } from '../state/display'
 import { useStore } from '../state/store'
 import type { Favorites, KitItem } from '../state/model'
 import cx from '../utils/cx'
+import { useLocale } from '@/i18n/locale'
+import { localizeShortcut, localizeTrouble, localizeWorkflow } from '@/i18n/content'
 
 function ItemCard({ item }: { item: KitItem }) {
-  if (item.kind === 'shortcuts' && shortcutsById[item.id]) return <ShortcutCard shortcut={shortcutsById[item.id]} />
-  if (item.kind === 'troubleshooting' && troubleshootingById[item.id]) return <TroubleshootingItem item={troubleshootingById[item.id]} />
-  const workflow = item.kind === 'workflows' ? workflowsById[item.id] : null
+  const { locale } = useLocale()
+  if (item.kind === 'shortcuts' && shortcutsById[item.id]) return <ShortcutCard shortcut={localizeShortcut(shortcutsById[item.id], locale)} />
+  if (item.kind === 'troubleshooting' && troubleshootingById[item.id]) return <TroubleshootingItem item={localizeTrouble(troubleshootingById[item.id], locale)} />
+  const original = item.kind === 'workflows' ? workflowsById[item.id] : null
+  const workflow = original ? localizeWorkflow(original, locale) : null
   if (workflow) return <Link to={`/workflow/${workflow.id}`} className="wfcard panel-surface"><span className="wfcard__title u-label">{workflow.title}</span><span className="wfcard__meta u-mono">{workflow.environment === 'doom' ? 'DOOM OS' : 'ROLAND'} · {workflow.steps.length} KROKÓW</span></Link>
   return <p className="panel-surface kit-missing">Ta pozycja nie występuje w aktualnej bibliotece: {item.id}.</p>
 }

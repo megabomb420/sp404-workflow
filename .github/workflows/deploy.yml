@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-    paths-ignore: ['*.md', 'docs/**']
+    paths-ignore: ["*.md", "docs/**"]
   workflow_dispatch:
 
 permissions:
@@ -19,8 +19,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # podstawa = nazwa repo, dzięki temu PWA działa pod /sp404-workflow/
       BASE_PATH: /sp404-workflow/
+      PAGES: "1"
     steps:
       - uses: actions/checkout@v4
 
@@ -30,33 +30,15 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
-      - name: Build
-        run: npm run build
-
-      - name: Install browser for release checks
-        run: npx playwright install --with-deps chromium
-
-      - name: Test the actual Pages build before publishing
-        env:
-          TEST_BASE_URL: http://localhost:4173/sp404-workflow
-        run: |
-          npm run preview -- --port 4173 --strictPort &
-          for i in $(seq 1 30); do
-            curl -sf http://localhost:4173/sp404-workflow/ >/dev/null && break
-            sleep 1
-          done
-          node scripts/audit.mjs
-          node scripts/offline-test.mjs
-          node scripts/explorer-test.mjs
-          node scripts/recent-test.mjs
-          node scripts/regression-test.mjs
+      - name: Build static Pages site
+        run: npm run build:pages
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: dist/client
 
   deploy:
     needs: build

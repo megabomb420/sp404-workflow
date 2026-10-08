@@ -8,7 +8,7 @@ export const section: Section = {
   body: [
     {
       kind: 'intro',
-      text: 'Cały bit w 11 ruchach: sample z USB, chop, drums, bas, pattern, FX, sidechain, resample, wariant, arrangement, bounce. To jest twój roadmap.',
+      text: 'Cały bit w 11 ruchach: sample z USB, chop, drums, bas, pattern, FX, sidechain, resample, wariant, arrangement, bounce. To twoja mapa drogi.',
     },
     {
       kind: 'diagram',

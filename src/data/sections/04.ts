@@ -57,7 +57,7 @@ export const section: Section = {
         },
         {
           id: 'u2',
-          title: 'UJAWNIJ SP',
+          title: 'USTAW WYJŚCIE',
           action: 'W systemie ustaw SP-404MKII jako domyślne wyjście (Windows: "SP-404MKII-G", macOS: "SP-404MKII-OUT").',
           expectedResult: 'Urządzenie SP-404MKII jest domyślnym wyjściem audio w systemie.',
           commonMistake: 'Wybranie innego wyjścia = z USB nic nie leci.',

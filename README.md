@@ -1,114 +1,17 @@
-<div align="center">
+# SP WORKFLOW R4
 
-# SP WORKFLOW
+Offline companion for the **Roland SP-404MKII**.
 
-**Interaktywny, offline-first przewodnik workflow po samplerze Roland SP-404MKII** — PWA, która wygląda i działa jak companion app do sprzętu, nie jak strona dokumentacji.
+Polish-first companion, English overlay for the original Roland guide, pad map on NOW, local progress. Roland terms stay in English. The new DOOM OS companion and tool explanations are in Polish.
 
-`Manual, którego użyjesz przy robieniu beatu — nie na kanapie.`
+**Live:** [sp-workflow.pages.dev](https://sp-workflow.pages.dev/) · mirror: [megabomb420.github.io/sp404-workflow](https://megabomb420.github.io/sp404-workflow/)
 
-[![CI](https://github.com/megabomb420/sp404-workflow/actions/workflows/ci.yml/badge.svg)](https://github.com/megabomb420/sp404-workflow/actions/workflows/ci.yml)
-[![Deploy](https://github.com/megabomb420/sp404-workflow/actions/workflows/deploy.yml/badge.svg)](https://github.com/megabomb420/sp404-workflow/actions/workflows/deploy.yml)
-[![Live](https://img.shields.io/badge/Live-GitHub%20Pages-2ea44f)](https://megabomb420.github.io/sp404-workflow/)
+Look for the amber **R4** badge on the LCD.
 
-![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)
-![PWA](https://img.shields.io/badge/PWA-offline-5A0FC8?logo=pwa&logoColor=white)
+R4 adds the official DOOM OS guide (78 controls and 3 workflows), a persistent Roland/DOOM instruction filter, screen context with knob mappings, custom ordered MY KIT sets, Groove Lab with optional synthetic audio, three method comparisons, a larger-control mode, optional screen wake lock, backup/restore including language, and honest source review / hardware-test status.
 
-</div>
+All companion data stays local. Import shows a preview before replacing existing data. Older `spw.state.v1` data migrates without losing favorites or progress. See [DOOM_OS.md](docs/DOOM_OS.md) for source versions and limitations. External manuals and firmware downloads require a connection; the integrated guide and tools work offline after caching.
 
----
+Validation: `npm run typecheck`, `npm test`, `npm run build:pages:cf`, and `node scripts/companion-test.mjs` against a static preview (`COMPANION_URL`, default `http://127.0.0.1:4175`). Cloudflare deploy uses the root-domain build; GitHub Pages uses `/sp404-workflow/`.
 
-## 🔥 Co to jest
-
-Companion app do **Rolanda SP-404MKII** do używania *obok* samplera — na telefonie. Znajdziesz tu dokładne sekwencje przycisków, workflow krok po kroku, cheat sheety i trener muscle memory. Nie zastępuje manuala — zamienia go w szybkie, wizualne narzędzie.
-
-**Źródło wiedzy:** Roland Reference Manual HTML v5.50 oraz PDF v5. Odsyłacze przy instrukcjach otwierają dokumentację online. Porady praktyczne są oznaczone jako **WORKFLOW TIP**. Nie wszystkie procedury przetestowano na fizycznym sprzęcie; opis aktualnego zakresu weryfikacji jest w SOURCES i [handover](docs/HANDOVER.md).
-
-## ✨ Funkcje
-
-- **16 padów** jako mapa urządzenia → 12 sekcji merytorycznych
-- **MiniDisplay (LCD)** komunikujący realny stan: sekcję, krok, licznik wyników, READY
-- **NOW** — trzy główne ścieżki: źródło → grywalny pad, pattern → print z FX, loop → chopy → pattern; wznowienie ostatniej sesji
-- **Wyszukiwarka offline** z polską normalizacją i aliasami; otwiera dokładną akcję, skrót lub hasło i zachowuje zapytanie po powrocie
-- **Workflow krok po kroku** — oczekiwany rezultat na SP, potwierdzenia, pominięte kroki, zapis postępu i ulubione. Link do konkretnego kroku nie nadpisuje późniejszego postępu po odświeżeniu
-- **Cheat sheet skrótów** z filtrami po kategoriach + **MY KIT** (ulubione)
-- **Trener muscle memory** — wspólne akcje z workflow, uczciwa samoocena i lokalna kolejka powtórek z trudności. Odsłonięcie odpowiedzi nie daje zaliczenia
-- **Sekcja SIDECHAIN** (funkcja z firmware **5.50**) z prawdziwymi parametrami, 3 presetami startowymi i **interaktywnym eksploratorem** (pokrętła + wykres duckingu)
-- **Rescue / FIX IT** — cztery rodziny obserwacji, pojedyncze testy z odpowiedzią „pomogło / bez zmian”, biblioteka 20 porad, powrót do przerwanego kroku bez automatycznego zaliczenia
-- **Loop Fit Lab** — lokalne obliczenia czasu frazy 4/4, szacowanego BPM i przesunięcia swobodnej pętli; walidacja, zapis wejść i powrót do sesji
-- **DOOM OS** — osobny polski przewodnik po custom firmware: sterowanie z filtrami, pierwszy pattern, live recording i automatyka FX. Współdzieli wyszukiwarkę, MY KIT i zapis postępu; opis sterowania z Quickstart 0.6.1 alpha, informacje o wydaniu 0.6.2 alpha / Roland 5.52 sprawdzone 2026-10-08. Źródła: [Klangfeld Labs](https://klangfeldlabs.com/doom-os/manual/) i changelog autora. Instrukcje nie były testowane na sprzęcie.
-- **PWA**: instalacja na ekran główny; główne funkcje działają offline po pełnym pierwszym załadowaniu. Zewnętrzne manuale wymagają internetu
-
-## 🚀 Live & instalacja
-
-**https://megabomb420.github.io/sp404-workflow/**
-
-1. Otwórz link na telefonie (iPhone / Android).
-2. Dodaj do ekranu głównego (Safari: *Udostępnij → Dodaj do ekranu głównego*; Chrome: *Zainstaluj aplikację*).
-3. Gotowe — działa offline, bez logowania, dane trzyma lokalnie.
-
-## 🧰 Stack
-
-React 18 · TypeScript (strict) · Vite 7 · CSS (design tokens) · vite-plugin-pwa 1 (Workbox) · react-router 7 (hash) · localStorage. Node **22.12+**. Bez backendu, bez wysyłania danych i bez kluczy API w aplikacji.
-
-## ⚡ Szybki start
-
-```bash
-git clone https://github.com/megabomb420/sp404-workflow.git
-cd sp404-workflow
-npm ci
-
-npm run dev       # development
-npm run build     # tsc (strict) + vite build → dist/
-npm run preview   # podgląd buildu
-```
-
-## ✅ Testy i audit
-
-Testy działają na headless Chromium (Playwright) — `npx playwright install chromium` po instalacji.
-
-```bash
-npm run audit          # 22 kontrole funkcjonalne przy 390 px
-npm run offline-test   # działanie offline po pierwszym załadowaniu
-npm run explorer-test  # interaktywne pokrętła SIDE CHAIN
-npm run recent-test    # historia otwartych sekcji
-npm run regression-test # sesje, Rescue, trainer, błędne dane, 320–768 px, offline
-npm run doom-test      # DOOM OS: źródła, filtry, deep linki, MY KIT, postęp i offline
-npm run shots          # screenshoty ekranów + kontrola horizontal overflow
-```
-
-Uruchom najpierw `npm run build` oraz `npm run preview -- --port 4173 --strictPort` w drugim terminalu. Dla podkatalogu ustaw `BASE_PATH=/sp404-workflow/` przy buildzie i podglądzie oraz `TEST_BASE_URL=http://localhost:4173/sp404-workflow` przy testach.
-
-CI uruchamia testy dla zmian kodu i konfiguracji. Deploy testuje również faktyczny build z podkatalogiem Pages i publikuje dopiero po powodzeniu kontroli. `npm audit` sprawdza zależności; `npm run audit` to test funkcjonalny aplikacji.
-
-## 🗂 Struktura
-
-```
-src/
-  app/            # shell, router, onboarding gate
-  components/     # hardware UI (Pad, MiniDisplay, ButtonSequence…) + content
-  data/           # cała treść — types + shortcuts/sections/workflows/glossary…
-  pages/          # ekrany
-  state/          # store + localStorage, display context
-  styles/         # tokens, base, components, pages
-scripts/          # generate-icons.ps1, fetch-fonts.py, testy Playwright
-.github/workflows/  # CI + deploy do GitHub Pages
-```
-
-Treść dodaje się w `src/data/*` — nowe skróty, sekcje i workflow bez zmian w komponentach.
-
-## 📚 Treść i weryfikacja
-
-- **ROLAND / VERIFIED** — instrukcja opracowana na podstawie manuala, z odsyłaczem do źródła. To nie automatyczna walidacja stanu sprzętu.
-- **WORKFLOW TIP** — praktyczna porada workflow, nie cytat z manuala.
-- Źródła: **Roland SP-404MKII Reference Manual v5.50** (edycja HTML 404 Day 2026 + PDF v5, 07.2025).
-- Ostatni przegląd wybranych instrukcji: **2026-09-14** (resampling patternu, Mix / BOUNCE, BPM, UTILITY). Nie był to pełny ponowny audyt biblioteki. Szczegóły w **SOURCES & VERSION** i [handover](docs/HANDOVER.md).
-
-## ⚠️ Zastrzeżenie
-
-**SP-404MKII** i **Roland** są znakami towarowymi Roland Corporation. Aplikacja jest **nieoficjalna** — nie jest powiązana ani autoryzowana przez Roland. Design inspirowany sprzętem, ale nie kopiuje wyglądu produktu.
-
-## 📜 Licencja
-
-© 2026 myby — **Wszelkie prawa zastrzeżone.** Kod jest publiczny do wglądu i nauki. Nazwy funkcji, skróty i parametry SP-404MKII pochodzą z manuala Roland i należą do Roland Corporation.
+`npm run test:tooling` separately runs the inherited app-builder template checks. They currently include unrelated failing assumptions about a generic brand identity, ignored `.grok/skills` files, the absent migrations directory, and Windows symlink/shell behavior; application and companion checks run independently.

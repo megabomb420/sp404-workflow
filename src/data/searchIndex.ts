@@ -6,9 +6,15 @@ import { workflows } from './workflows'
 import { troubleshooting } from './troubleshooting'
 import { glossary } from './glossary'
 import { mfxEffects } from './mfx'
-import { doomShortcuts, doomTopics } from './doom'
-import { normalizeSearch as normalize } from '../utils/search'
+import { doomShortcuts, DOOM } from './doom'
 import type { Firmware } from '../state/model'
+import { actionsEn } from '../i18n/en/actions'
+import { glossaryEn } from '../i18n/en/glossary'
+import { shortcutsEn } from '../i18n/en/shortcuts'
+import { troubleshootingEn } from '../i18n/en/troubleshooting'
+import { workflowsEn } from '../i18n/en/workflows'
+import { normalizeSearch as normalize } from '../utils/search'
+
 
 /** Sugestie wyświetlane przy pustym polu. */
 export const SEARCH_SUGGESTIONS = [
@@ -18,7 +24,6 @@ export const SEARCH_SUGGESTIONS = [
   'jak pociąć loop',
   'nie słychać USB',
   'REMAIN + PAD',
-  'DOOM OS',
 ]
 
 let cache: SearchEntry[] | null = null
@@ -26,13 +31,10 @@ let cache: SearchEntry[] | null = null
 export function buildSearchIndex(): SearchEntry[] {
   if (cache) return cache
   const idx: SearchEntry[] = []
-  idx.push({ kind: 'section', id: 'doom-os', title: 'DOOM OS', preview: 'Osobny firmware: graficzny sequencer, piano roll, mikser i automatyka FX. Polski przewodnik offline.', route: '/doom-os', sectionLabel: 'DOOM OS · CUSTOM FIRMWARE', tags: ['doom', 'doomos', 'doom os', 'manual', 'instrukcja', 'custom firmware', '5.52'] })
-  for (const shortcut of doomShortcuts) {
-    idx.push({ kind: 'shortcut', id: shortcut.id, title: `DOOM OS · ${shortcut.name}`, preview: shortcut.description,
-      route: `/doom-os?id=${encodeURIComponent(shortcut.id)}`, buttons: shortcut.buttons, path: shortcut.path,
-      sectionLabel: `DOOM OS · ${doomTopics.find((topic) => topic.id === shortcut.topic)?.label}`,
-      tags: shortcut.tags })
-  }
+  idx.push({ kind: 'tool', id: 'doom-os', title: 'DOOM OS', preview: `Manual ${DOOM.manualVersion} · sterowanie, patterny i automatyka`, route: '/doom-os', sectionLabel: 'DOOM OS', tags: ['doom', 'doom os', 'custom firmware', 'klangfeld', 'manual', 'mixer', 'automation'] })
+  idx.push({ kind: 'tool', id: 'screen', title: 'JESTEM NA EKRANIE', preview: 'Wybierz ekran SP i znajdź pokrętła oraz czynności.', route: '/screen', sectionLabel: 'OFFLINE TOOL', tags: ['ekran', 'screen', 'ctrl', 'pokrętła', 'knobs', 'tr rec', 'mixer'] })
+  idx.push({ kind: 'tool', id: 'groove', title: 'GROOVE LAB', preview: 'Velocity, nudge i długość nuty w interaktywnej siatce.', route: '/groove', sectionLabel: 'OFFLINE TOOL', tags: ['groove', 'velocity', 'nudge', 'length', 'timing', 'długość nuty'] })
+  idx.push({ kind: 'tool', id: 'compare', title: 'ROLAND ↔ DOOM OS', preview: 'Porównaj sposoby wykonania tego samego zadania.', route: '/compare', sectionLabel: 'OFFLINE TOOL', tags: ['porównaj', 'compare', 'roland', 'doom', 'tr rec', 'live', 'fx'] })
 
   idx.push({
     kind: 'tool',
@@ -64,7 +66,7 @@ export function buildSearchIndex(): SearchEntry[] {
       buttons: action.buttons,
       path: action.path,
       sectionLabel: 'DO NOW',
-      tags: [action.title, action.action, action.startingState ?? '', action.expectedResult, ...action.tags],
+      tags: [action.title, action.action, action.startingState ?? '', action.expectedResult, ...action.tags, ...stringValues(actionsEn[action.id])],
     })
   }
 
@@ -80,17 +82,17 @@ export function buildSearchIndex(): SearchEntry[] {
     })
   }
 
-  for (const sc of shortcuts) {
+  for (const sc of [...shortcuts, ...doomShortcuts]) {
     idx.push({
       kind: 'shortcut',
       id: sc.id,
       title: sc.name,
       preview: sc.description,
-      route: `/shortcuts?id=${encodeURIComponent(sc.id)}`,
+      route: `${sc.category === 'DOOM OS' ? '/doom-os' : '/shortcuts'}?id=${encodeURIComponent(sc.id)}`,
       buttons: sc.buttons,
       path: sc.path,
       sectionLabel: sc.category,
-      tags: [sc.name, sc.nameEn ?? '', ...sc.tags],
+      tags: [sc.name, sc.nameEn ?? '', ...sc.tags, shortcutsEn[sc.id]?.description ?? ''],
     })
   }
 
@@ -102,7 +104,7 @@ export function buildSearchIndex(): SearchEntry[] {
       preview: w.blurb ?? `${w.steps.length} kroków · ${w.difficulty}`,
       route: `/workflow/${w.id}`,
       sectionLabel: w.category,
-      tags: [w.title, w.category],
+      tags: [w.title, w.category, workflowsEn[w.id]?.title ?? '', workflowsEn[w.id]?.blurb ?? ''],
     })
   }
 
@@ -114,7 +116,7 @@ export function buildSearchIndex(): SearchEntry[] {
       preview: t.cause,
       route: `/fix-it?ids=${encodeURIComponent(t.id)}`,
       sectionLabel: 'FIX IT',
-      tags: [t.symptom, ...t.tags],
+      tags: [t.symptom, ...t.tags, troubleshootingEn[t.id]?.symptom ?? '', troubleshootingEn[t.id]?.cause ?? ''],
     })
   }
 
@@ -126,7 +128,7 @@ export function buildSearchIndex(): SearchEntry[] {
       preview: g.definition,
       route: `/glossary?term=${encodeURIComponent(g.term)}`,
       sectionLabel: 'GLOSSARY',
-      tags: [g.term, ...g.tags],
+      tags: [g.term, ...g.tags, glossaryEn[g.term]?.definition ?? ''],
     })
   }
 
@@ -135,7 +137,7 @@ export function buildSearchIndex(): SearchEntry[] {
       kind: 'mfx',
       id: m,
       title: m,
-      preview: 'Efekt MFX — przypisywany do BUS / przycisku efektu',
+      preview: 'MFX effect — BUS or FX button',
       route: '/section/effects',
       sectionLabel: 'EFFECTS · MFX',
       tags: [m],
@@ -146,14 +148,19 @@ export function buildSearchIndex(): SearchEntry[] {
   return cache
 }
 
+function stringValues(value: object | undefined): string[] {
+  if (!value) return []
+  return Object.values(value).filter((item): item is string => typeof item === 'string')
+}
+
 const REWRITES: Array<[RegExp, string]> = [
-  [/nie (slychac|ma dzwieku)/g, 'brak dzwieku cisza'],
-  [/telefon|laptop|komputer/g, 'usb zrodlo input'],
-  [/suchy|bez efektu/g, 'dry routing bus fx'],
-  [/plywa|rozjezdza|nie trzyma/g, 'drift tempo bpm sync'],
-  [/potnij|pociac|pokroic/g, 'chop markery assign to pad'],
-  [/nagraj|nagrywac/g, 'sampling record rec'],
-  [/zamroz|wydrukuj/g, 'print resample bounce'],
+  [/nie (slychac|ma dzwieku)|no (sound|audio)|silent|silence/g, 'brak dzwieku cisza'],
+  [/telefon|laptop|komputer|phone|computer/g, 'usb zrodlo input'],
+  [/suchy|bez efektu|dry|no effect/g, 'dry routing bus fx'],
+  [/plywa|rozjezdza|nie trzyma|drift|off tempo/g, 'drift tempo bpm sync'],
+  [/potnij|pociac|pokroic|chop|slice/g, 'chop markery assign to pad'],
+  [/nagraj|nagrywac|record|sample/g, 'sampling record rec'],
+  [/zamroz|wydrukuj|print|bounce|freeze/g, 'print resample bounce'],
 ]
 
 function expandedQuery(value: string): string {
@@ -165,16 +172,17 @@ function expandedQuery(value: string): string {
 export function searchIndex(query: string, limit = 40, contextWorkflowId?: string | null, firmware: Firmware = 'roland'): SearchEntry[] {
   const q = normalize(query)
   if (!q) return []
+  const targetFirmware = q.includes('doom') ? 'doom' : firmware
   const idx = buildSearchIndex()
-  const doomQuery = /\bdoom(?:os)?\b/.test(q)
   const scored: Array<{ e: SearchEntry; score: number }> = []
   const stop = new Set(['jak', 'na', 'do', 'to', 'sie', 'mi', 'jest', 'chce', 'nie', 'co', 'albo', 'ze'])
   const queryTokens = [...new Set(q.split(' ').filter((token) => token.length > 1 && !stop.has(token)))]
   const aliases = [...new Set(expandedQuery(query).split(' ').filter((token) => token.length > 1 && !stop.has(token) && !queryTokens.includes(token)))]
 
   for (const e of idx) {
-    if (doomQuery && !e.sectionLabel.startsWith('DOOM OS')) continue
-    if (!doomQuery && e.kind !== 'tool' && (e.sectionLabel.startsWith('DOOM OS') ? firmware !== 'doom' : firmware === 'doom')) continue
+    const isDoom = e.id.startsWith('doom-') || e.route.startsWith('/doom-os')
+    const shared = e.kind === 'tool' && e.id !== 'doom-os'
+    if (!shared && isDoom !== (targetFirmware === 'doom')) continue
     let score = Infinity
     const title = normalize(e.title)
     if (title === q) score = 0

@@ -1,29 +1,19 @@
 import { useState } from 'react'
-import { Troubleshooting } from '../../data/types'
-import { useStore } from '../../state/store'
+import type { Troubleshooting } from '@/data/types'
+import { useT } from '@/i18n/useT'
+import { useStore } from '@/state/store'
 import { SourceTag } from './SourceTag'
-import cx from '../../utils/cx'
+import cx from '@/utils/cx'
 
-interface TroubleshootingItemProps {
-  item: Troubleshooting
-  defaultOpen?: boolean
-  order?: number
-}
-
-/** Akordeon PROBLEM → DLACZEGO → FIX. */
-export function TroubleshootingItem({ item, defaultOpen = false, order }: TroubleshootingItemProps) {
+export function TroubleshootingItem({ item, defaultOpen = false, order }: { item: Troubleshooting; defaultOpen?: boolean; order?: number }) {
   const [open, setOpen] = useState(defaultOpen)
   const { isFav, dispatch } = useStore()
   const fav = isFav('troubleshooting', item.id)
+  const t = useT()
 
   return (
     <article className="tcard panel-surface">
-      <button
-        type="button"
-        className="tcard__trigger"
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-      >
+      <button type="button" className="tcard__trigger" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
         <span className="tcard__symptom u-label">
           {order ? <span className="tcard__order u-mono">{String(order).padStart(2, '0')}</span> : null}
           {item.symptom}
@@ -37,11 +27,11 @@ export function TroubleshootingItem({ item, defaultOpen = false, order }: Troubl
       {open && (
         <div className="tcard__body">
           <div className="tcard__row">
-            <span className="tcard__k u-label">DLACZEGO</span>
+            <span className="tcard__k u-label">{t.trouble.why}</span>
             <p>{item.cause}</p>
           </div>
           <div className="tcard__row">
-            <span className="tcard__k u-label">FIX</span>
+            <span className="tcard__k u-label">{t.trouble.fix}</span>
             <p>{item.fix}</p>
           </div>
           <div className="tcard__foot">
@@ -51,7 +41,7 @@ export function TroubleshootingItem({ item, defaultOpen = false, order }: Troubl
               onClick={() => dispatch({ type: 'TOGGLE_FAV', kind: 'troubleshooting', id: item.id })}
               aria-pressed={fav}
             >
-              {fav ? '★ W ulubionych' : '☆ Dodaj'}
+              {fav ? t.fav.inFav : t.fav.addShort}
             </button>
             <SourceTag source={item.source} kind={item.kind} />
           </div>

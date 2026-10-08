@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ShortcutCard } from '../components/content/ShortcutCard'
-import { shortcuts, shortcutCategories } from '../data/shortcuts'
-import { doomShortcuts } from '../data/doom'
-import { useDisplay } from '../state/display'
-import { useStore } from '../state/store'
-import cx from '../utils/cx'
-import { useSearchParams } from 'react-router-dom'
+import { ShortcutCard } from '@/components/content/ShortcutCard'
+import { shortcutCategories } from '@/data/shortcuts'
+import { useLocalizedShortcuts } from '@/i18n/content'
+import { useT } from '@/i18n/useT'
+import { useDisplay } from '@/state/display'
+import { useStore } from '@/state/store'
+import cx from '@/utils/cx'
+import { useSearchParams } from '@/lib/rr'
+import { doomShortcuts } from '@/data/doom'
+import { FirmwareNotice } from '@/components/content/FirmwareSwitch'
 
 type Filter = 'ALL' | (typeof shortcutCategories)[number]
 
@@ -15,65 +18,57 @@ export function ShortcutsPage() {
   const [filter, setFilter] = useState<Filter>('ALL')
   const [favOnly, setFavOnly] = useState(false)
   const [params, setParams] = useSearchParams()
-  const selected = [...shortcuts, ...doomShortcuts].find((s) => s.id === params.get('id'))
+  const t = useT()
+  const { list: stockShortcuts } = useLocalizedShortcuts()
+  const shortcuts = useMemo(() => [...stockShortcuts, ...doomShortcuts], [stockShortcuts])
+  const selected = shortcuts.find((s) => s.id === params.get('id'))
 
   useEffect(() => {
-    const doom = filter === 'DOOM OS' || selected?.category === 'DOOM OS' || (filter === 'ALL' && state.settings.firmware === 'doom')
-    setDisplay({ title: doom ? 'DOOM OS' : 'SHORTCUTS', sub: doom ? 'osobny firmware · cheat sheet' : 'cheat sheet', right: String(doom ? doomShortcuts.length : shortcuts.length) })
-  }, [setDisplay, filter, selected, state.settings.firmware])
+    setDisplay({ title: 'SHORTCUTS', sub: t.shortcuts.lcdSub, right: String(shortcuts.length) })
+  }, [setDisplay, t, shortcuts.length])
 
   const list = useMemo(() => {
-    return (filter === 'DOOM OS' || selected?.category === 'DOOM OS' || (filter === 'ALL' && state.settings.firmware === 'doom') ? doomShortcuts : shortcuts).filter((s) => {
+    return shortcuts.filter((s) => {
       if (selected) return s.id === selected.id
       if (favOnly && !isFav('shortcuts', s.id)) return false
       if (filter !== 'ALL' && s.category !== filter) return false
+      if (filter === 'ALL' && (s.category === 'DOOM OS' ? 'doom' : 'roland') !== state.settings.firmware) return false
       return true
     })
-  }, [filter, favOnly, isFav, selected, state.settings.firmware])
+  }, [filter, favOnly, isFav, selected, shortcuts, state.settings.firmware])
 
   return (
     <div className="page">
-      <h1 className="page__title u-label">SHORTCUTS</h1>
-      <p className="page__lede">Każda funkcja, dokładne przyciski. Filtruj po kategorii lub pokaż tylko ulubione.</p>
-      <p className="page__lede">ALL dopasowuje skróty do wybranego firmware. DOOM OS ma też <a href="#/doom-os">własny przewodnik →</a>.</p>
+      {selected && <FirmwareNotice firmware={selected.category === 'DOOM OS' ? 'doom' : 'roland'} />}
+      <p className="page__lede">{t.shortcuts.lede}</p>
 
-      {selected && <button className="chip" onClick={() => { setParams({}); setFilter('ALL'); setFavOnly(false) }}>← WSZYSTKIE SKRÓTY</button>}
-      {!selected && <div className="chipbar" role="toolbar" aria-label="filtry kategorii">
-        <button
-          type="button"
-          className={cx('chip', filter === 'ALL' && 'is-active')}
-          onClick={() => setFilter('ALL')}
-        >
-          ALL
+      {selected && (
+        <button className="chip" onClick={() => { setParams({}); setFilter('ALL'); setFavOnly(false) }}>
+          {t.shortcuts.allShortcuts}
         </button>
-        {shortcutCategories.map((c) => (
-          <button
-            key={c}
-            type="button"
-            className={cx('chip', filter === c && 'is-active')}
-            onClick={() => setFilter(c)}
-          >
-            {c}
+      )}
+      {!selected && (
+        <div className="chipbar" role="toolbar" aria-label={t.shortcuts.filtersAria}>
+          <button type="button" className={cx('chip', filter === 'ALL' && 'is-active')} onClick={() => setFilter('ALL')}>
+            {t.shortcuts.all}
           </button>
-        ))}
-        <button
-          type="button"
-          className={cx('chip', favOnly && 'is-active')}
-          onClick={() => setFavOnly((f) => !f)}
-          aria-pressed={favOnly}
-        >
-          ★ ULUBIONE
-        </button>
-      </div>}
+          {shortcutCategories.map((c) => (
+            <button key={c} type="button" className={cx('chip', filter === c && 'is-active')} onClick={() => setFilter(c)}>
+              {c}
+            </button>
+          ))}
+          <button type="button" className={cx('chip', favOnly && 'is-active')} onClick={() => setFavOnly((f) => !f)} aria-pressed={favOnly}>
+            {t.shortcuts.fav}
+          </button>
+        </div>
+      )}
 
       <div className="scardlist">
         {list.map((s) => (
           <ShortcutCard key={s.id} shortcut={s} />
         ))}
       </div>
-      {list.length === 0 && (
-        <p className="page__empty">Brak skrótów w tym filtrze.</p>
-      )}
+      {list.length === 0 && <p className="page__empty">{t.shortcuts.empty}</p>}
     </div>
   )
 }

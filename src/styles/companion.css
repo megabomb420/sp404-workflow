@@ -1,0 +1,63 @@
+/* Companion tools use the same chassis, LCD ink and amber controls as NOW. */
+.shell__modes { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 16px; flex-shrink: 0; border-bottom: 1px solid var(--hairline-soft); background: var(--bg-panel); }
+.firmware-switch, .tool-actions, .screen-picker { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.shell__modes .chip { font-size: 11px; min-height: 32px; padding: 5px 10px; }
+.firmware-notice { padding: 14px; margin-bottom: 16px; border-color: var(--accent-dim); }
+.firmware-notice p { font-size: 13px; margin-bottom: 10px; color: var(--ink-dim); }
+.awake-status { flex-shrink: 0; color: var(--led); font-size: 10px; padding: 4px 16px; background: var(--surface-inset); }
+.offline-update { flex-shrink: 0; background: var(--accent-soft); padding: 8px 16px; text-align: left; font-size: 12px; color: var(--accent); }
+.companion-tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 18px 0; }
+.companion-tools .now-escape__item { min-height: 80px; }
+.screen-picker { margin: 16px 0; }
+.screen-picker .chip { white-space: normal; text-align: left; }
+.screen-guide, .compare-goal, .compare-method, .groove-timeline, .groove-controls, .kit-create, .kit-editor { padding: 18px; margin: 16px 0; min-width: 0; }
+.screen-guide h2, .groove-controls h2, .compare-method h2 { font-size: 18px; color: var(--accent); margin-bottom: 12px; }
+.screen-guide p, .compare-method p, .backup-panel > p { margin: 12px 0; color: var(--ink-dim); font-size: 14px; }
+.knob-map { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 18px 0; }
+.knob-map > div { border: 1px solid var(--hairline); background: var(--surface-inset); border-radius: var(--radius-s); padding: 12px 8px; }
+.knob-map dt { font-size: 11px; color: var(--accent); margin-bottom: 8px; }
+.knob-map dd { font-size: 13px; overflow-wrap: anywhere; }
+.source-evidence { margin-top: 12px; }
+.source-evidence .srctag { flex-wrap: wrap; }
+.source-review { margin-top: 6px; color: var(--ink-dim); font-size: 11px; }
+.source-review summary { cursor: pointer; font-family: var(--font-mono); padding: 5px 0; }
+.source-review p { margin: 8px 0; font-size: 12px; }
+.kit-create > label { display: block; font-size: 12px; margin-bottom: 10px; color: var(--accent); }
+.kit-create input, .kit-editor input:not([type=checkbox]) { min-width: 0; flex: 1 1 150px; width: 100%; min-height: 44px; padding: 10px; border: 1px solid var(--hairline); border-radius: var(--radius-s); background: var(--surface-inset); }
+.kit-picker { margin: 20px 0 12px; }
+.kit-picker summary { cursor: pointer; font-size: 12px; color: var(--accent); padding: 8px 0; }
+.kit-pick { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--hairline-soft); font-size: 13px; }
+.kit-pick input { width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--accent); }
+.kit-delete { color: var(--danger); padding: 10px 0; font-size: 12px; }
+.kit-items { list-style: none; display: grid; gap: 18px; }
+.kit-item { min-width: 0; }
+.kit-order { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 0; }
+.kit-order > span { margin-right: auto; font-size: 11px; color: var(--ink-dim); }
+.kit-order .chip { min-width: 44px; }
+.kit-missing { padding: 14px; overflow-wrap: anywhere; }
+.groove-timeline svg { display: block; width: 100%; height: auto; }
+.groove-legend { margin: 10px 0 16px; font-size: 11px; color: var(--ink-dim); }
+.groove-steps { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 7px; }
+.groove-step { min-height: 44px; border-radius: var(--radius-s); border: 1px solid var(--hairline); background: var(--surface-inset); color: var(--ink-dim); font-family: var(--font-mono); font-size: 12px; box-shadow: var(--shadow-key); }
+.groove-step.is-on { background: var(--led-dim); color: var(--ink); }
+.groove-step.is-selected { border: 2px solid var(--accent); color: var(--accent); }
+.groove-scope { border-left: 2px solid var(--accent); padding: 8px 12px; margin: 14px 0; font-size: 13px; }
+.lab-slider { display: grid; grid-template-columns: 1fr auto; gap: 12px; margin: 22px 0; font-family: var(--font-mono); font-size: 12px; }
+.lab-slider output { color: var(--accent); }
+.lab-slider input { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); min-height: 32px; }
+.compare-methods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.compare-method { margin-top: 0; }
+.compare-method ol { padding-left: 20px; font-size: 14px; }
+.compare-method li { padding: 6px 0 6px 4px; }
+.backup-panel { padding-bottom: 18px; }
+.backup-panel > p, .backup-panel > .tool-actions, .backup-panel > [role=status] { margin-left: 16px; margin-right: 16px; }
+.backup-preview { padding: 16px; margin: 16px; border: 1px solid var(--accent-dim); border-radius: var(--radius-s); }
+.backup-preview p { font-size: 13px; margin: 10px 0; color: var(--ink-dim); }
+.shell--hardware .shell__main { font-size: 18px; }
+.shell--hardware .chip, .shell--hardware .hwbtn { min-height: 52px; }
+.shell--hardware .shell__modes .chip { min-height: 36px; }
+.shell--hardware .wf-step__action { font-size: 21px; line-height: 1.55; }
+.shell--hardware .wf-check p { font-size: 17px; }
+.shell--hardware .home-map, .shell--hardware .goal-card__blurb { display: none; }
+@media (max-width: 540px) { .compare-methods { grid-template-columns: 1fr; } }
+@media (max-width: 360px) { .shell__modes { padding-inline: 10px; gap: 5px; } .shell__modes .chip { padding-inline: 8px; font-size: 10px; } .knob-map { gap: 5px; } .knob-map > div { padding: 10px 6px; } .companion-tools { grid-template-columns: 1fr; } }

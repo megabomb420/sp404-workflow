@@ -48,6 +48,44 @@ export function calculateLoopFit(bpm: number, bars: number, actualSeconds?: numb
   }
 }
 
+export const TAP_MIN_INTERVAL_MS = 200 // 300 BPM
+export const TAP_MAX_INTERVAL_MS = 2000 // 30 BPM
+export const TAP_IDLE_RESET_MS = 2000
+export const TAP_MAX_INTERVALS = 8
+
+export interface TapTempoEstimate {
+  bpm: number
+  intervals: number
+  stable: boolean
+}
+
+/**
+ * Szacunek BPM ze stuknięć. Punkt startowy do wpisania na SP — nie odczyt tempa z maszyny.
+ * Interwały spoza 30–300 BPM są odrzucane, liczy się mediana ostatnich ośmiu.
+ */
+export function estimateTapBpm(timestampsMs: readonly number[]): TapTempoEstimate | null {
+  if (timestampsMs.length < 2) return null
+  const intervals: number[] = []
+  for (let i = 1; i < timestampsMs.length; i += 1) {
+    const delta = timestampsMs[i] - timestampsMs[i - 1]
+    if (delta >= TAP_MIN_INTERVAL_MS && delta <= TAP_MAX_INTERVAL_MS) intervals.push(delta)
+  }
+  const used = intervals.slice(-TAP_MAX_INTERVALS).sort((a, b) => a - b)
+  if (used.length === 0) return null
+  const middle = used.length >> 1
+  const median = used.length % 2 === 1 ? used[middle] : (used[middle - 1] + used[middle]) / 2
+  return {
+    bpm: Math.round((60000 / median) * 10) / 10,
+    intervals: used.length,
+    stable: used.length >= 4,
+  }
+}
+
+export function formatTapBpm(bpm: number): string {
+  const rounded = Math.round(bpm * 10) / 10
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
+}
+
 export function formatLoopSeconds(value: number): string {
   const rounded = Math.round(value * 1000) / 1000
   const minutes = Math.floor(rounded / 60)

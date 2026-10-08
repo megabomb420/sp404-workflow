@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from '@/lib/rr'
 import { DOOM, doomSource, doomShortcuts, doomTopics, doomWorkflows } from '../data/doom'
 import { ShortcutCard } from '../components/content/ShortcutCard'
 import { ButtonSequence } from '../components/content/ButtonSequence'

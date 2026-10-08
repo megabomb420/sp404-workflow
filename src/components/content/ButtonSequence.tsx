@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react'
 import cx from '../../utils/cx'
 
 /**
@@ -59,7 +60,7 @@ function KeyCap({ token, tone }: { token: string; tone: 'pad' | 'mod' | 'knob' |
   )
 }
 
-export function renderKey(token: string): JSX.Element {
+export function renderKey(token: string): ReactElement {
   const t = token.trim()
   if (isPad(t)) {
     const num = t.split(' ')[1]

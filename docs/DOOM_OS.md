@@ -12,12 +12,12 @@ Quickstart i changelog 0.6.1 różnią się opisem przełączania metronomu. Apl
 
 ## Integracja
 
-- Ekran NOW ma kartę DOOM OS; mapa 16 padów zachowuje dotychczasowe przypisania i dodatkowy odsyłacz w BROWSE.
+- Ekran NOW ma kartę DOOM OS i narzędzia; mapa 16 padów zachowuje dotychczasowe przypisania.
 - Moduł zawiera start, sterowanie z filtrem kategorii / tekstu / ulubionych oraz wersje i instrukcję instalacji autora.
-- Skróty DOOM OS mają osobną kategorię. ALL w dotychczasowym cheat sheet obejmuje system Roland. MY KIT obsługuje oba zestawy i zachowuje oznaczenie źródła.
+- Skróty DOOM OS mają osobną kategorię. ALL i lista workflow korzystają z globalnego wyboru firmware. MY KIT obsługuje oba systemy, własne uporządkowane zestawy i zachowuje oznaczenie źródła.
 - Globalna wyszukiwarka otwiera konkretną czynność DOOM OS. Zapytania zawierające DOOM / DOOMOS ograniczają wyniki do tego firmware.
 - Trzy workflow wykorzystują istniejący odtwarzacz, potwierdzanie rezultatu, wznowienie i zapis ulubionych. Nieudany krok otwiera pomoc DOOM OS zamiast stockowych procedur Rescue.
-- Etykieta DOOM OS / MANUAL oznacza oparcie na dokumentacji Klangfeld Labs. Nie oznacza weryfikacji przez Roland ani testu na fizycznym samplerze.
+- Etykieta Z DOKUMENTACJI wraz ze źródłem DOOM OS oznacza oparcie na manualu Klangfeld Labs. Szczegóły źródła pokazują datę przeglądu oraz brak testu na fizycznym samplerze.
 - Treść, wyszukiwanie i zapis lokalny są częścią PWA i działają offline po pełnym załadowaniu. Łącza do autora, firmware i patchera wymagają internetu.
 
-Treść znajduje się w `src/data/doom.ts`. Przed aktualizacją wersji sprawdź niezależnie Quickstart, stronę projektu i changelog. Test integracyjny: `npm run doom-test` po buildzie, z serwerem podglądu na porcie 4173 lub ustawionym `TEST_BASE_URL`.
+Treść znajduje się w `src/data/doom.ts`. Przed aktualizacją wersji sprawdź niezależnie Quickstart, stronę projektu i changelog. Test integracyjny: `npm run test:companion` po `npm run build:pages:cf`; test sam uruchamia podgląd statyczny na porcie 4175. `COMPANION_URL` wybiera istniejący serwer. Starsze dane pod `spw.state.v1` są normalizowane bez utraty postępu i ulubionych.

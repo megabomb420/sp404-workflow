@@ -2,14 +2,16 @@ import { useRef, useState } from 'react'
 import { useStore } from '../../state/store'
 import type { AppState } from '../../state/model'
 import { exportBackup, importBackup } from '../../utils/backup'
+import { useLocale } from '@/i18n/locale'
 
 export function BackupPanel() {
   const { state, dispatch } = useStore()
+  const { locale, setLocale } = useLocale()
   const input = useRef<HTMLInputElement>(null)
-  const [pending, setPending] = useState<{ state: AppState; createdAt: string } | null>(null)
+  const [pending, setPending] = useState<{ state: AppState; createdAt: string; locale?: 'pl' | 'en' } | null>(null)
   const [message, setMessage] = useState('')
   const exportFile = () => {
-    const url = URL.createObjectURL(new Blob([exportBackup(state)], { type: 'application/json' }))
+    const url = URL.createObjectURL(new Blob([exportBackup(state, locale)], { type: 'application/json' }))
     const a = document.createElement('a'); a.href = url; a.download = `sp-workflow-${new Date().toISOString().slice(0, 10)}.json`
     document.body.append(a); a.click(); a.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000)
     setMessage('Kopia została przygotowana do pobrania.')
@@ -28,7 +30,7 @@ export function BackupPanel() {
       <strong>Podgląd kopii</strong>
       <p>{pending.state.kits.length} zestawów · {Object.values(pending.state.favorites).reduce((n, items) => n + items.length, 0)} ulubionych · {pending.state.progress.completedWorkflows.length} ukończonych workflow.</p>
       <p>Przywrócenie zastąpi obecne dane aplikacji na tym urządzeniu. Możesz najpierw pobrać aktualną kopię.</p>
-      <div className="tool-actions"><button type="button" className="chip" onClick={() => { dispatch({ type: 'IMPORT_STATE', state: { ...pending.state, ui: { ...pending.state.ui, onboarded: true } } }); setPending(null); setMessage('Kopia została przywrócona.') }}>PRZYWRÓĆ DANE Z KOPII</button><button type="button" className="chip" onClick={() => setPending(null)}>ANULUJ</button></div>
+      <div className="tool-actions"><button type="button" className="chip" onClick={() => { dispatch({ type: 'IMPORT_STATE', state: { ...pending.state, ui: { ...pending.state.ui, onboarded: true } } }); if (pending.locale) setLocale(pending.locale); setPending(null); setMessage('Kopia została przywrócona.') }}>PRZYWRÓĆ DANE Z KOPII</button><button type="button" className="chip" onClick={() => setPending(null)}>ANULUJ</button></div>
     </div>}
     {message && <p role="status">{message}</p>}
   </section>
