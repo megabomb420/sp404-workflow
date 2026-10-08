@@ -55,7 +55,7 @@ function walk(dir, prefix = '') {
   });
 }
 const files = walk(outDir).filter(name => !['sw.js', '_redirects', '.nojekyll', '404.html', '_shell.html'].includes(name));
-const version = createHash('sha256').update(files.map(name => name + readFileSync(join(outDir, name))).join('|')).digest('hex').slice(0, 16);
+const version = createHash('sha256').update(readFileSync(new URL(import.meta.url))).update(files.map(name => name + readFileSync(join(outDir, name))).join('|')).digest('hex').slice(0, 16);
 writeFileSync(join(outDir, 'sw.js'), `
 const CACHE = 'spw-static-${version}';
 const BASE = ${JSON.stringify(base)};
@@ -66,7 +66,12 @@ self.addEventListener('fetch', event => {
   const request = event.request, url = new URL(request.url);
   if (request.method !== 'GET' || url.origin !== self.location.origin || !url.pathname.startsWith(BASE) || url.pathname.includes('/api/')) return;
   if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).catch(() => caches.open(CACHE).then(cache => cache.match(BASE + 'index.html'))));
+    // Pages redirects index.html to /. Navigation requests use manual redirect
+    // mode, which rejects a cached response whose redirected flag is true.
+    event.respondWith(fetch(request).catch(async () => {
+      const shell = await (await caches.open(CACHE)).match(BASE + 'index.html');
+      return shell ? new Response(shell.body, { status: shell.status, statusText: shell.statusText, headers: shell.headers }) : Response.error();
+    }));
     return;
   }
   if (FILES.includes(url.pathname)) event.respondWith(caches.open(CACHE).then(cache => cache.match(request).then(hit => hit || fetch(request))));

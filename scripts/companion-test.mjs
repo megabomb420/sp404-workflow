@@ -10,6 +10,8 @@ let server
 if (!process.env.COMPANION_URL) {
   server = createServer(async (req, res) => {
     try {
+      // Match Cloudflare's pretty-URL redirect when the worker caches the shell.
+      if (new URL(req.url, 'http://localhost').pathname === '/index.html') { res.writeHead(308, { Location: '/' }).end(); return }
       let file = resolve(root, '.' + decodeURIComponent(new URL(req.url, 'http://localhost').pathname))
       if (file !== root && !file.startsWith(root + sep)) { res.writeHead(403).end(); return }
       try { if (!(await stat(file)).isFile()) file = resolve(root, 'index.html') } catch { file = resolve(root, 'index.html') }
