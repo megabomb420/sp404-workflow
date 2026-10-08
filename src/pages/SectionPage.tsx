@@ -5,6 +5,7 @@ import { SectionRenderer } from '../components/content/SectionRenderer'
 import { sectionsById } from '../data/sections'
 import { useDisplay } from '../state/display'
 import { useStore } from '../state/store'
+import { FirmwareNotice } from '../components/content/FirmwareSwitch'
 
 export function SectionPage() {
   const { id } = useParams<{ id: string }>()
@@ -27,6 +28,7 @@ export function SectionPage() {
 
   return (
     <div className="page">
+      <FirmwareNotice firmware="roland" />
       <SectionHeader
         title={section.title}
         short={section.short}

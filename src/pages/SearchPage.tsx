@@ -25,7 +25,7 @@ export function SearchPage() {
   const setQ = (value: string) => setParams(value ? { q: value } : {}, { replace: true })
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const results = useMemo(() => searchIndex(q, 40, state.progress.activeWorkflowId), [q, state.progress.activeWorkflowId])
+  const results = useMemo(() => searchIndex(q, 40, state.progress.activeWorkflowId, state.settings.firmware), [q, state.progress.activeWorkflowId, state.settings.firmware])
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -50,6 +50,7 @@ export function SearchPage() {
 
   return (
     <div className="page page--search">
+      <p className="firmware-caption u-mono">WYNIKI: {/\bdoom(?:os)?\b/i.test(q) || state.settings.firmware === 'doom' ? 'DOOM OS' : 'ROLAND'} · zmień firmware u góry</p>
       <label className="searchbox searchbox--big panel-surface">
         <span className="searchbox__icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="20" height="20">

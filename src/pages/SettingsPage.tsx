@@ -7,6 +7,9 @@ import { useStore } from '../state/store'
 import { buzz } from '../utils/haptics'
 import { usePWAInstall } from '../utils/pwaInstall'
 import cx from '../utils/cx'
+import { BackupPanel } from '../components/content/BackupPanel'
+import { FirmwareSwitch } from '../components/content/FirmwareSwitch'
+import type { BooleanSetting } from '../state/model'
 
 function Toggle({
   label,
@@ -44,7 +47,7 @@ export function SettingsPage() {
     setDisplay({ title: 'SETTINGS', sub: 'ustawienia', right: '' })
   }, [setDisplay])
 
-  const setSetting = (key: keyof typeof state.settings, value: boolean) => {
+  const setSetting = (key: BooleanSetting, value: boolean) => {
     buzz(8)
     dispatch({ type: 'SET_SETTING', key, value })
   }
@@ -60,9 +63,12 @@ export function SettingsPage() {
   return (
     <div className="page">
       <h1 className="page__title u-label">SETTINGS</h1>
+      <section className="setgroup panel-surface"><h2 className="setgroup__title u-label">TWÓJ FIRMWARE</h2><FirmwareSwitch /><p>Wybór dopasowuje wyszukiwanie, skróty i workflow. Nie zmienia systemu na samplerze.</p></section>
 
       <section className="setgroup panel-surface">
         <h2 className="setgroup__title u-label">INTERFEJS</h2>
+        <Toggle label="TRYB PRZY SP" sub="Większy tekst i przyciski, mniej opisów podczas workflow" checked={state.settings.hardwareMode} onChange={(v) => setSetting('hardwareMode', v)} />
+        <Toggle label="UTRZYMUJ EKRAN WŁĄCZONY" sub="Gdy aplikacja jest widoczna; zależy od obsługi w przeglądarce i zgody urządzenia" checked={state.settings.keepScreenAwake} onChange={(v) => setSetting('keepScreenAwake', v)} />
         <Toggle
           label="HAPTYKA"
           sub="Delikatna wibracja przy padach (jeśli telefon wspiera)"
@@ -98,14 +104,14 @@ export function SettingsPage() {
 
         {confirmReset === 'favs' ? (
           <div className="setgroup__confirm">
-            <p>Wyczyścić ulubione?</p>
+            <p>Wyczyścić ulubione i własne zestawy MY KIT?</p>
             <HardwareButton label="TAK, WYCZYŚĆ" tone="danger" onClick={() => doReset('favs')} />
             <HardwareButton label="ANULUJ" onClick={() => setConfirmReset(null)} />
           </div>
         ) : (
           <button type="button" className="setrow" onClick={() => setConfirmReset('favs')}>
             <span className="toggle__label u-label">RESET FAVORITES</span>
-            <span className="toggle__sub">Wszystkie gwiazdki w MY KIT</span>
+            <span className="toggle__sub">Gwiazdki i własne zestawy MY KIT</span>
           </button>
         )}
 
@@ -122,6 +128,7 @@ export function SettingsPage() {
         </button>
       </section>
 
+      <BackupPanel />
       <section className="setgroup panel-surface">
         <h2 className="setgroup__title u-label">INSTALACJA</h2>
         {canInstall ? (

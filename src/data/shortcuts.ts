@@ -1,4 +1,5 @@
 import { Shortcut, ShortcutCategory } from './types'
+import { doomShortcuts } from './doom'
 
 /**
  * Skróty klawiszowe SP-404MKII — transkrypcja z "List of shortcut keys"
@@ -11,7 +12,7 @@ import { Shortcut, ShortcutCategory } from './types'
 
 export const shortcutCategories: ShortcutCategory[] = [
   'SAMPLING', 'EDIT', 'PATTERN', 'RESAMPLE', 'FX', 'ROUTING',
-  'SKIP BACK', 'COPY', 'MUTE', 'UNDO', 'CHROMATIC', 'UTILITY',
+  'SKIP BACK', 'COPY', 'MUTE', 'UNDO', 'CHROMATIC', 'UTILITY', 'DOOM OS',
 ]
 
 export const shortcuts: Shortcut[] = [
@@ -768,5 +769,5 @@ export const shortcuts: Shortcut[] = [
 ]
 
 export const shortcutsById: Record<string, Shortcut> = Object.fromEntries(
-  shortcuts.map((s) => [s.id, s]),
+  [...shortcuts, ...doomShortcuts].map((s) => [s.id, s]),
 )

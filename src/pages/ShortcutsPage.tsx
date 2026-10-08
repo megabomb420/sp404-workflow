@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ShortcutCard } from '../components/content/ShortcutCard'
 import { shortcuts, shortcutCategories } from '../data/shortcuts'
+import { doomShortcuts } from '../data/doom'
 import { useDisplay } from '../state/display'
 import { useStore } from '../state/store'
 import cx from '../utils/cx'
@@ -10,29 +11,31 @@ type Filter = 'ALL' | (typeof shortcutCategories)[number]
 
 export function ShortcutsPage() {
   const { setDisplay } = useDisplay()
-  const { isFav } = useStore()
+  const { isFav, state } = useStore()
   const [filter, setFilter] = useState<Filter>('ALL')
   const [favOnly, setFavOnly] = useState(false)
   const [params, setParams] = useSearchParams()
-  const selected = shortcuts.find((s) => s.id === params.get('id'))
+  const selected = [...shortcuts, ...doomShortcuts].find((s) => s.id === params.get('id'))
 
   useEffect(() => {
-    setDisplay({ title: 'SHORTCUTS', sub: 'cheat sheet', right: String(shortcuts.length) })
-  }, [setDisplay])
+    const doom = filter === 'DOOM OS' || selected?.category === 'DOOM OS' || (filter === 'ALL' && state.settings.firmware === 'doom')
+    setDisplay({ title: doom ? 'DOOM OS' : 'SHORTCUTS', sub: doom ? 'osobny firmware · cheat sheet' : 'cheat sheet', right: String(doom ? doomShortcuts.length : shortcuts.length) })
+  }, [setDisplay, filter, selected, state.settings.firmware])
 
   const list = useMemo(() => {
-    return shortcuts.filter((s) => {
+    return (filter === 'DOOM OS' || selected?.category === 'DOOM OS' || (filter === 'ALL' && state.settings.firmware === 'doom') ? doomShortcuts : shortcuts).filter((s) => {
       if (selected) return s.id === selected.id
       if (favOnly && !isFav('shortcuts', s.id)) return false
       if (filter !== 'ALL' && s.category !== filter) return false
       return true
     })
-  }, [filter, favOnly, isFav, selected])
+  }, [filter, favOnly, isFav, selected, state.settings.firmware])
 
   return (
     <div className="page">
       <h1 className="page__title u-label">SHORTCUTS</h1>
       <p className="page__lede">Każda funkcja, dokładne przyciski. Filtruj po kategorii lub pokaż tylko ulubione.</p>
+      <p className="page__lede">ALL dopasowuje skróty do wybranego firmware. DOOM OS ma też <a href="#/doom-os">własny przewodnik →</a>.</p>
 
       {selected && <button className="chip" onClick={() => { setParams({}); setFilter('ALL'); setFavOnly(false) }}>← WSZYSTKIE SKRÓTY</button>}
       {!selected && <div className="chipbar" role="toolbar" aria-label="filtry kategorii">

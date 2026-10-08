@@ -6,6 +6,7 @@ import { useStore } from '../state/store'
 import { homePads, sectionsById } from '../data/sections'
 import { workflows, workflowsById } from '../data/workflows'
 import { actionsById } from '../data/actions'
+import { doomWorkflows } from '../data/doom'
 
 const featured = workflows.filter((workflow) => workflow.featured)
 
@@ -13,6 +14,7 @@ export function HomePage() {
   const navigate = useNavigate()
   const { setDisplay } = useDisplay()
   const { state, storageAvailable } = useStore()
+  const goals = state.settings.firmware === 'doom' ? doomWorkflows : featured
   const reviewCount = Object.entries(state.practice).filter(([id, stat]) => actionsById[id] && stat.needsReview).length
 
   useEffect(() => {
@@ -55,7 +57,7 @@ export function HomePage() {
       <section className="now-goals" aria-labelledby="now-goals-title">
         <h2 id="now-goals-title" className="now-section-title u-label">ZACZNIJ OD CELU</h2>
         <div className="now-goals__grid">
-          {featured.map((workflow, index) => (
+          {goals.map((workflow, index) => (
             <Link key={workflow.id} to={`/workflow/${workflow.id}`} className="goal-card panel-surface">
               <span className="goal-card__n u-mono">0{index + 1}</span>
               <span className="goal-card__title u-label">{workflow.title}</span>
@@ -67,6 +69,9 @@ export function HomePage() {
       </section>
 
       <div className="now-escape">
+        <Link to="/screen" className="now-escape__item panel-surface"><span className="u-label">JESTEM NA TYM EKRANIE</span><small>przyciski i pokrętła pasujące do widoku SP</small></Link>
+        <Link to="/groove" className="now-escape__item panel-surface"><span className="u-label">GROOVE LAB</span><small>velocity · nudge · długość nuty</small></Link>
+        <Link to="/compare" className="now-escape__item panel-surface"><span className="u-label">DWA SPOSOBY</span><small>ten sam rezultat w Roland i DOOM OS</small></Link>
         <Link to={reviewCount ? '/muscle?review=1' : '/muscle'} className="now-escape__item panel-surface">
           <span className="u-label">POĆWICZ NA SP</span>
           <small>{reviewCount ? `${reviewCount} akcji do powtórki po ostatnich trudnościach` : 'krótka sesja z akcjami workflow'}</small>
@@ -85,6 +90,12 @@ export function HomePage() {
         </Link>
       </div>
 
+      <Link to="/doom-os" className="doom-entry panel-surface">
+        <span className="doom-entry__led" aria-hidden="true" />
+        <span><strong className="u-label">DOOM OS</strong><small>siatka kroków · mikser · automatyka FX</small><span className="u-mono">CUSTOM FIRMWARE · 0.6.2 ALPHA</span></span>
+        <span aria-hidden="true">→</span>
+      </Link>
+
       <details className="browse panel-surface">
         <summary>
           <span>
@@ -101,6 +112,7 @@ export function HomePage() {
             <Link to="/muscle" className="chip u-label" role="listitem">MUSCLE MEMORY</Link>
             <Link to="/sources" className="chip u-label" role="listitem">SOURCES</Link>
             <Link to="/glossary" className="chip u-label" role="listitem">GLOSSARY</Link>
+            <Link to="/doom-os" className="chip u-label" role="listitem">DOOM OS</Link>
           </div>
         </div>
       </details>

@@ -2,11 +2,15 @@ import { useLayoutEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { MiniDisplay } from '../components/hardware/MiniDisplay'
 import { BottomDock } from '../components/nav/BottomDock'
+import { FirmwareSwitch } from '../components/content/FirmwareSwitch'
+import { ScreenAwake } from '../components/content/ScreenAwake'
+import { useStore } from '../state/store'
 
 /** Shell: LCD u góry, treść w środku, dock na dole (safe-area). */
 export function Layout() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { state, dispatch } = useStore()
 
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
@@ -14,7 +18,7 @@ export function Layout() {
     return () => window.cancelAnimationFrame(frame)
   }, [location.key, location.pathname, location.search])
   return (
-    <div className="shell">
+    <div className={`shell${state.settings.hardwareMode ? ' hardware-mode' : ''}`}>
       <header className="shell__top">
         <button
           type="button"
@@ -34,6 +38,11 @@ export function Layout() {
         </button>
         <MiniDisplay />
       </header>
+      <div className="shell-tools">
+        <FirmwareSwitch />
+        <button type="button" className="chip u-mono" aria-pressed={state.settings.hardwareMode} onClick={() => dispatch({ type: 'SET_SETTING', key: 'hardwareMode', value: !state.settings.hardwareMode })}>PRZY SP {state.settings.hardwareMode ? 'ON' : 'OFF'}</button>
+      </div>
+      <ScreenAwake />
 
       <main className="shell__main">
         <Outlet />

@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { SourceTag } from '../components/content/SourceTag'
 import { MANUAL_VERSION } from '../data/types'
 import { useDisplay } from '../state/display'
+import { DOOM, doomSource } from '../data/doom'
+import { Link } from 'react-router-dom'
 
 export function SourcesPage() {
   const { setDisplay } = useDisplay()
@@ -59,6 +61,13 @@ export function SourcesPage() {
       <section className="sbody">
         <h2 className="sbody__h u-label">WERYFIKACJA</h2>
         <p>Podczas aktualizacji 2026-09-14 ponownie sprawdzono wybrane instrukcje resamplingu patternu, routingu Mix / BOUNCE i ustawiania BPM. Nie był to ponowny audyt całej biblioteki ani test wszystkich procedur na sprzęcie. Jeśli ekran SP się nie zgadza, przerwij krok i sprawdź dokumentację swojej wersji firmware.</p>
+      </section>
+      <section className="sbody">
+        <h2 className="sbody__h u-label">DOOM OS · OSOBNY FIRMWARE</h2>
+        <SourceTag source={doomSource} kind="verified" />
+        <p>Moduł DOOM OS opracowano po polsku na podstawie Quickstart Klangfeld Labs {DOOM.manualVersion}. Przegląd źródeł: {DOOM.reviewed}. Bieżące wydanie autora: {DOOM.version}, build {DOOM.build}, dla systemu Roland {DOOM.firmware}.</p>
+        <p>DOOM OS / MANUAL oznacza instrukcję z dokumentacji autora. Nie jest to oznaczenie Roland ani potwierdzenie testu na sprzęcie. Quickstart i changelog różnią się opisem trybów metronomu; aplikacja zaleca sprawdzenie trybu na ekranie SP.</p>
+        <p><a href={DOOM.repoUrl} target="_blank" rel="noreferrer">Repozytorium autora ↗</a> · <a href={DOOM.changelogUrl} target="_blank" rel="noreferrer">Changelog ↗</a> · <Link to="/doom-os">Przewodnik DOOM OS →</Link></p>
       </section>
     </div>
   )

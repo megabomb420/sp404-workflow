@@ -11,8 +11,11 @@
 export const MANUAL_VERSION = '5.50'
 
 export interface Source {
+  reviewedAt?: string
+  hardwareTestedAt?: string
+  firmwareVersion?: string
   /** identyfikator manuala */
-  manual: 'RM5.50'
+  manual: 'RM5.50' | 'DOOM0.6.1' | 'DOOM0.6.2'
   /** numer strony w manualu (strony drukowane) */
   page?: number
   /** nazwa sekcji/zakładki w manualu (np. dla treści z edycji HTML 5.50) */
@@ -26,9 +29,10 @@ export type VerifiedKind = 'verified' | 'tip'
 /** Etykieta źródła — wyświetlana jako mała pilka przy treści. */
 export function sourceLabel(s: Source | undefined): string | null {
   if (!s) return null
-  if (s.section) return `${s.manual} · ${s.section}`
+  const manual = s.manual.startsWith('DOOM') ? s.manual.replace('DOOM', 'DOOM OS ') : s.manual
+  if (s.section) return `${manual} · ${s.section}`
   if (s.page) return `PDF v5 · p.${s.page}`
-  return s.manual
+  return manual
 }
 
 /* ============================ SHORTCUT ============================ */
@@ -46,6 +50,7 @@ export type ShortcutCategory =
   | 'UNDO'
   | 'CHROMATIC'
   | 'UTILITY'
+  | 'DOOM OS'
 
 export interface Shortcut {
   id: string
@@ -126,6 +131,7 @@ export function isWorkflowActionRef(step: WorkflowEntry): step is WorkflowAction
 
 export interface Workflow {
   id: string
+  environment?: 'doom'
   title: string
   /** kategoria wyświetlana na liście */
   category: string

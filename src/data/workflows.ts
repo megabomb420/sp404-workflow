@@ -1,7 +1,9 @@
 import { Workflow } from './types'
 import { byId } from '../utils/byId'
+import { doomWorkflows } from './doom'
 
 export const workflows: Workflow[] = [
+  ...doomWorkflows,
   /* ============================ NOW · GOLDEN PATHS ============================ */
 
   {

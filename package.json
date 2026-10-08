@@ -14,6 +14,7 @@
     "offline-test": "node scripts/offline-test.mjs",
     "explorer-test": "node scripts/explorer-test.mjs",
     "recent-test": "node scripts/recent-test.mjs",
+    "doom-test": "node scripts/doom-test.mjs",
     "regression-test": "node scripts/regression-test.mjs"
   },
   "dependencies": {

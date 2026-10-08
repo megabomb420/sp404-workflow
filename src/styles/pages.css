@@ -410,3 +410,43 @@ a.chip { text-decoration: none; }
   .now-goals__grid, .now-escape { grid-template-columns: 1fr; }
   .goal-card:first-child { grid-column: auto; }
 }
+/* DOOM OS — ten sam panel sprzętowy, jawny kontekst osobnego firmware. */
+.doom-entry {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  margin-bottom: 18px;
+  border-left: 3px solid var(--accent);
+  text-decoration: none;
+}
+.doom-entry > span:nth-child(2) { flex: 1; min-width: 0; }
+.doom-entry strong, .doom-entry small, .doom-entry .u-mono { display: block; }
+.doom-entry strong { font-size: 18px; }
+.doom-entry small { color: var(--ink-dim); margin: 5px 0 8px; line-height: 1.5; }
+.doom-entry .u-mono { font-size: 10px; color: var(--accent); }
+.doom-entry__led { width: 8px; height: 8px; flex: 0 0 8px; background: var(--accent); border-radius: 50%; }
+.doom-head { padding: 22px 18px; border-top: 3px solid var(--accent); margin-bottom: 16px; }
+.doom-head__eyebrow { color: var(--ink-dim); font-size: 10px; letter-spacing: .08em; }
+.doom-head .page__title { margin: 12px 0 8px; }
+.doom-head p { color: var(--ink-dim); line-height: 1.65; margin-bottom: 14px; }
+.doom-head__version { color: var(--accent); font-size: 11px; }
+.doom-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.doom-tabs .chip { min-height: var(--touch); }
+.doom-open, .doom-knobs, .doom-help, .doom-install, .doom-context { padding: 18px; margin-bottom: 20px; }
+.doom-open h2, .doom-knobs h2, .doom-help h2, .doom-install h2 { font-size: 14px; margin: 0 0 14px; }
+.doom-open p, .doom-help p, .doom-install p, .doom-context p { color: var(--ink-dim); font-size: 13px; line-height: 1.75; }
+.doom-knobs dl { margin: 0 0 18px; }
+.doom-knobs dl > div { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--hairline-soft); }
+.doom-knobs dt { color: var(--accent); font-size: 10px; line-height: 1.8; }
+.doom-knobs dd { margin: 0; color: var(--ink-dim); font-size: 13px; line-height: 1.7; }
+.doom-install__steps { padding-left: 22px; color: var(--ink); font-size: 13px; line-height: 1.8; }
+.doom-install__steps li { padding: 6px 0 6px 4px; overflow-wrap: anywhere; }
+.doom-context { border-left: 3px solid var(--accent); }
+.doom-context > strong { display: block; color: var(--accent); font-size: 10px; line-height: 1.8; }
+.doom-context__link { display: inline-flex; align-items: center; min-height: var(--touch); font-size: 12px; }
+.doom-count { color: var(--ink-dim); font-size: 11px; margin: 18px 0; }
+.doom-sources { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--hairline); }
+.doom-sources p { font-size: 11px; color: var(--ink-dim); line-height: 1.8; }
+.doom-page .searchbox { margin-bottom: 16px; }
+.doom-page .srctag__src { overflow-wrap: anywhere; }

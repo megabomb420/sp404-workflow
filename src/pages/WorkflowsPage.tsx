@@ -14,13 +14,13 @@ export function WorkflowsPage() {
 
   const groups = useMemo(() => {
     const map = new Map<string, typeof workflows>()
-    for (const w of workflows) {
+    for (const w of workflows.filter((item) => (item.environment === 'doom') === (state.settings.firmware === 'doom'))) {
       const list = map.get(w.category) ?? []
       list.push(w)
       map.set(w.category, list)
     }
     return [...map.entries()]
-  }, [])
+  }, [state.settings.firmware])
 
   return (
     <div className="page">

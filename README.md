@@ -37,6 +37,7 @@ Companion app do **Rolanda SP-404MKII** do używania *obok* samplera — na tele
 - **Sekcja SIDECHAIN** (funkcja z firmware **5.50**) z prawdziwymi parametrami, 3 presetami startowymi i **interaktywnym eksploratorem** (pokrętła + wykres duckingu)
 - **Rescue / FIX IT** — cztery rodziny obserwacji, pojedyncze testy z odpowiedzią „pomogło / bez zmian”, biblioteka 20 porad, powrót do przerwanego kroku bez automatycznego zaliczenia
 - **Loop Fit Lab** — lokalne obliczenia czasu frazy 4/4, szacowanego BPM i przesunięcia swobodnej pętli; walidacja, zapis wejść i powrót do sesji
+- **DOOM OS** — osobny polski przewodnik po custom firmware: sterowanie z filtrami, pierwszy pattern, live recording i automatyka FX. Współdzieli wyszukiwarkę, MY KIT i zapis postępu; opis sterowania z Quickstart 0.6.1 alpha, informacje o wydaniu 0.6.2 alpha / Roland 5.52 sprawdzone 2026-10-08. Źródła: [Klangfeld Labs](https://klangfeldlabs.com/doom-os/manual/) i changelog autora. Instrukcje nie były testowane na sprzęcie.
 - **PWA**: instalacja na ekran główny; główne funkcje działają offline po pełnym pierwszym załadowaniu. Zewnętrzne manuale wymagają internetu
 
 ## 🚀 Live & instalacja
@@ -73,6 +74,7 @@ npm run offline-test   # działanie offline po pierwszym załadowaniu
 npm run explorer-test  # interaktywne pokrętła SIDE CHAIN
 npm run recent-test    # historia otwartych sekcji
 npm run regression-test # sesje, Rescue, trainer, błędne dane, 320–768 px, offline
+npm run doom-test      # DOOM OS: źródła, filtry, deep linki, MY KIT, postęp i offline
 npm run shots          # screenshoty ekranów + kontrola horizontal overflow
 ```
 

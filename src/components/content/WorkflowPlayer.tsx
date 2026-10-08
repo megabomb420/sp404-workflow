@@ -77,6 +77,10 @@ export function WorkflowPlayer({ workflow }: WorkflowPlayerProps) {
   }
 
   const openRescue = () => {
+    if (workflow.environment === 'doom') {
+      navigate('/doom-os?id=doom-help')
+      return
+    }
     if (actionRecord) dispatch({ type: 'QUEUE_PRACTICE', id: actionRecord.id })
     const ids = actionRecord?.recoveryIds ?? []
     const params = new URLSearchParams()
@@ -193,8 +197,8 @@ export function WorkflowPlayer({ workflow }: WorkflowPlayerProps) {
           onClick={confirmAndNext}
         />
         <HardwareButton
-          label="TO SIĘ NIE STAŁO"
-          sublabel="otwórz Rescue w tym kontekście"
+          label={workflow.environment === 'doom' ? 'SPRAWDŹ STEROWANIE' : 'TO SIĘ NIE STAŁO'}
+          sublabel={workflow.environment === 'doom' ? 'pomoc dla bieżącego ekranu DOOM OS' : 'otwórz Rescue w tym kontekście'}
           tone="danger"
           wide
           onClick={openRescue}

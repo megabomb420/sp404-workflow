@@ -16,6 +16,10 @@ import { SettingsPage } from '../pages/SettingsPage'
 import { SourcesPage } from '../pages/SourcesPage'
 import { OnboardingPage } from '../pages/OnboardingPage'
 import { LoopFitPage } from '../pages/LoopFitPage'
+import { DoomPage } from '../pages/DoomPage'
+import { ScreenPage } from '../pages/ScreenPage'
+import { GroovePage } from '../pages/GroovePage'
+import { ComparePage } from '../pages/ComparePage'
 
 function Gate() {
   const { state } = useStore()
@@ -45,6 +49,10 @@ function Gate() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/sources" element={<SourcesPage />} />
         <Route path="/loop-fit" element={<LoopFitPage />} />
+        <Route path="/doom-os" element={<DoomPage />} />
+        <Route path="/screen" element={<ScreenPage />} />
+        <Route path="/groove" element={<GroovePage />} />
+        <Route path="/compare" element={<ComparePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

@@ -6,7 +6,9 @@ import { workflows } from './workflows'
 import { troubleshooting } from './troubleshooting'
 import { glossary } from './glossary'
 import { mfxEffects } from './mfx'
+import { doomShortcuts, doomTopics } from './doom'
 import { normalizeSearch as normalize } from '../utils/search'
+import type { Firmware } from '../state/model'
 
 /** Sugestie wyświetlane przy pustym polu. */
 export const SEARCH_SUGGESTIONS = [
@@ -16,6 +18,7 @@ export const SEARCH_SUGGESTIONS = [
   'jak pociąć loop',
   'nie słychać USB',
   'REMAIN + PAD',
+  'DOOM OS',
 ]
 
 let cache: SearchEntry[] | null = null
@@ -23,6 +26,13 @@ let cache: SearchEntry[] | null = null
 export function buildSearchIndex(): SearchEntry[] {
   if (cache) return cache
   const idx: SearchEntry[] = []
+  idx.push({ kind: 'section', id: 'doom-os', title: 'DOOM OS', preview: 'Osobny firmware: graficzny sequencer, piano roll, mikser i automatyka FX. Polski przewodnik offline.', route: '/doom-os', sectionLabel: 'DOOM OS · CUSTOM FIRMWARE', tags: ['doom', 'doomos', 'doom os', 'manual', 'instrukcja', 'custom firmware', '5.52'] })
+  for (const shortcut of doomShortcuts) {
+    idx.push({ kind: 'shortcut', id: shortcut.id, title: `DOOM OS · ${shortcut.name}`, preview: shortcut.description,
+      route: `/doom-os?id=${encodeURIComponent(shortcut.id)}`, buttons: shortcut.buttons, path: shortcut.path,
+      sectionLabel: `DOOM OS · ${doomTopics.find((topic) => topic.id === shortcut.topic)?.label}`,
+      tags: shortcut.tags })
+  }
 
   idx.push({
     kind: 'tool',
@@ -152,16 +162,19 @@ function expandedQuery(value: string): string {
   return [query, ...expansions].join(' ')
 }
 
-export function searchIndex(query: string, limit = 40, contextWorkflowId?: string | null): SearchEntry[] {
+export function searchIndex(query: string, limit = 40, contextWorkflowId?: string | null, firmware: Firmware = 'roland'): SearchEntry[] {
   const q = normalize(query)
   if (!q) return []
   const idx = buildSearchIndex()
+  const doomQuery = /\bdoom(?:os)?\b/.test(q)
   const scored: Array<{ e: SearchEntry; score: number }> = []
   const stop = new Set(['jak', 'na', 'do', 'to', 'sie', 'mi', 'jest', 'chce', 'nie', 'co', 'albo', 'ze'])
   const queryTokens = [...new Set(q.split(' ').filter((token) => token.length > 1 && !stop.has(token)))]
   const aliases = [...new Set(expandedQuery(query).split(' ').filter((token) => token.length > 1 && !stop.has(token) && !queryTokens.includes(token)))]
 
   for (const e of idx) {
+    if (doomQuery && !e.sectionLabel.startsWith('DOOM OS')) continue
+    if (!doomQuery && e.kind !== 'tool' && (e.sectionLabel.startsWith('DOOM OS') ? firmware !== 'doom' : firmware === 'doom')) continue
     let score = Infinity
     const title = normalize(e.title)
     if (title === q) score = 0
