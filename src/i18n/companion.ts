@@ -3,6 +3,7 @@ import { useLocale, type Locale } from './locale'
 
 // Shared copy for companion tools. Content IDs, URLs and hardware labels remain stable.
 export const companionEnglish: Record<string, string> = Object.fromEntries(String.raw`
+Utknąłeś? Krótkie wyzwanie, szkic i pomysł do rozwinięcia.|Stuck? A short prompt, a sketch and an idea to develop.
 Plik nie jest poprawną kopią JSON.|The file is not a valid JSON backup.
 To nie jest obsługiwana kopia SP Workflow.|This is not a supported SP Workflow backup.
 Kopia jest niekompletna. Obecne dane pozostają bez zmian.|The backup is incomplete. Current data is unchanged.

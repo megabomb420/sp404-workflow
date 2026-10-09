@@ -16,6 +16,7 @@ import { workflowsEn } from '../i18n/en/workflows'
 import { doomControlsEn } from '../i18n/en/doom'
 import { companionText } from '../i18n/companion'
 import { normalizeSearch as normalize } from '../utils/search'
+import { beatChallenges, beatReasons } from './beatBlock'
 
 
 /** Sugestie wyświetlane przy pustym polu. */
@@ -33,6 +34,7 @@ let cache: SearchEntry[] | null = null
 export function buildSearchIndex(): SearchEntry[] {
   if (cache) return cache
   const idx: SearchEntry[] = []
+  idx.push({ kind: 'tool', id: 'beat-block', title: 'BEAT BLOCK', preview: 'Utknąłeś? Krótkie wyzwanie, szkic i pomysł do rozwinięcia.', route: '/beat-block', sectionLabel: 'OFFLINE TOOL', tags: ['beat block', 'writers block', 'writer block', 'creative block', 'utknąłem', 'brak pomysłu', 'nudny beat', 'wyzwanie', 'challenge', 'inspiration', 'inspiracja', ...beatReasons.flatMap(reason => [...reason.label]), ...beatChallenges.flatMap(challenge => [...challenge.title, ...challenge.goal])] })
   idx.push({ kind: 'tool', id: 'listen', title: 'ODSŁUCH SP', preview: 'Publiczne demonstracje FX, resamplingu i sidechainu Rolanda.', route: '/listen', sectionLabel: 'ONLINE AUDIO', tags: ['listen', 'audio', 'demo', 'roland', 'fx', 'effects', 'resample', 'sidechain', 'odsłuch', 'przed po', 'before after'] })
   idx.push({ kind: 'tool', id: 'doom-os', title: 'DOOM OS', preview: `Manual ${DOOM.manualVersion} · sterowanie, patterny i automatyka`, route: '/doom-os', sectionLabel: 'DOOM OS', tags: ['doom', 'doom os', 'custom firmware', 'klangfeld', 'manual', 'mixer', 'automation'] })
   idx.push({ kind: 'tool', id: 'screen', title: 'JESTEM NA EKRANIE', preview: 'Wybierz ekran SP i znajdź pokrętła oraz czynności.', route: '/screen', sectionLabel: 'OFFLINE TOOL', tags: ['ekran', 'screen', 'ctrl', 'pokrętła', 'knobs', 'tr rec', 'mixer'] })

@@ -1,4 +1,4 @@
-# SP WORKFLOW R5
+# SP WORKFLOW R6
 
 Offline companion for the **Roland SP-404MKII**.
 
@@ -6,11 +6,13 @@ Polish and English companion, firmware-aware pad navigation on NOW, local progre
 
 **Live:** [sp-workflow.pages.dev](https://sp-workflow.pages.dev/) · mirror: [megabomb420.github.io/sp404-workflow](https://megabomb420.github.io/sp404-workflow/)
 
-Look for the amber **R5** badge on the LCD.
+Look for the amber **R6** badge on the LCD.
 
 The companion includes the DOOM OS guide (78 controls and 3 workflows), a Roland/DOOM instruction filter, screen context with knob mappings, custom ordered MY KIT sets, Groove Lab with synthetic audio, three method comparisons, larger controls, optional screen wake lock, and backup/restore including language.
 
 R5 adds guided DOOM troubleshooting that returns to the same workflow step, MY KIT session notes (project, bank/pad, BPM and free text), official Roland listening demonstrations for effects, resampling and sidechain, and practice reviews scheduled after 1/3/7/14/30 days (10 minutes after a missed answer). Reviews appear inside the app; no external notification service is used. Notes and review dates are included in backups. The full DOOM companion and new tools are available in English. The top pad-hiding toggle is removed; all 16 pads stay visible, with DOOM-specific destinations when that firmware is selected.
+
+R6 adds **BEAT BLOCK**, entered through “UTKNĄŁEM / I’M STUCK” on NOW. Four stuck points lead to 12 creative prompts with a goal, a constraint and three practical steps. Guides follow the session’s Roland/DOOM choice. The optional timer survives leaving the page and reloading, supports pause/resume, and lets the player continue after time runs out. A sketch saves its next idea, project, bank/pad and BPM to a new or existing MY KIT set, preserving earlier notes. This saves notes; the audio remains on the sampler. Sessions, drafts and recent prompts stay local, are included in backups, and work offline in Polish and English.
 
 All companion data stays local. Import shows a preview before replacing existing data. Older `spw.state.v1` data migrates without losing favorites or progress. See [DOOM_OS.md](docs/DOOM_OS.md) for source versions and limitations. External manuals, firmware downloads and listening videos require a connection; the integrated guide, listening notes and tools work offline after caching. Official videos load only when the user opens a player; they are streamed from their publishers and are not bundled or cached. Source reviews do not imply testing on physical hardware.
 

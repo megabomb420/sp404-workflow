@@ -1,4 +1,5 @@
 import type { PracticeStat } from '../utils/practice'
+import { defaultBeatSession, normalizeBeatSession, type BeatSession } from '../utils/beatBlock.ts'
 
 export type Firmware = 'roland' | 'doom'
 export interface Settings {
@@ -32,6 +33,7 @@ export interface AppState {
   loopFit: { bpm: string; bars: number; actual: string }
   kits: KitSet[]
   groove: GrooveState
+  beatBlock: BeatSession
 }
 export const DEFAULTS: AppState = {
   settings: { reducedMotion: false, uiSound: false, haptics: true, firmware: 'roland', hardwareMode: false, keepScreenAwake: false },
@@ -39,6 +41,7 @@ export const DEFAULTS: AppState = {
   progress: { completedWorkflows: [], workflowStep: {}, doneSteps: {}, activeWorkflowId: null },
   ui: { lastSection: null, recent: [], recentSearches: [], onboarded: false },
   practice: {}, loopFit: { bpm: '90', bars: 4, actual: '' }, kits: [],
+  beatBlock: defaultBeatSession(),
   groove: { bpm: 90, selected: 0, scope: 'note', notes: Array.from({ length: 16 }, (_, i) => ({ on: i % 2 === 0, velocity: i % 4 === 0 ? 110 : 72, nudge: 0, length: .5 })) },
 }
 export const record = (value: unknown): Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
@@ -64,6 +67,8 @@ export function normalizeState(value: unknown): AppState {
     kits.push({ id: set.id, name: set.name.trim().slice(0, 60), items, ...(set.notes ? { notes: { project: noteText('project', 100), bankPad: noteText('bankPad', 100), bpm: noteText('bpm', 20), text: noteText('text', 2000) } } : {}) })
   }
   const bool = (key: BooleanSetting) => typeof settings[key] === 'boolean' ? settings[key] as boolean : DEFAULTS.settings[key]
+  const beatBlock = normalizeBeatSession(parsed.beatBlock)
+  if (beatBlock.phase === 'saved' && !kits.some(kit => kit.id === beatBlock.savedKitId)) { beatBlock.phase = 'finish'; beatBlock.savedKitId = null }
   return {
     settings: { reducedMotion: bool('reducedMotion'), uiSound: bool('uiSound'), haptics: bool('haptics'), hardwareMode: bool('hardwareMode'), keepScreenAwake: bool('keepScreenAwake'), firmware: settings.firmware === 'doom' ? 'doom' : 'roland' },
     favorites: { shortcuts: strings(favorites.shortcuts), workflows: strings(favorites.workflows), troubleshooting: strings(favorites.troubleshooting) },
@@ -72,6 +77,7 @@ export function normalizeState(value: unknown): AppState {
     practice: Object.fromEntries(Object.entries(record(parsed.practice)).map(([id, v]) => { const stat = record(v); return [id, { correct: count(stat.correct), review: count(stat.review), needsReview: stat.needsReview === true, streak: count(stat.streak), lastPracticedAt: timestamp(stat.lastPracticedAt), dueAt: timestamp(stat.dueAt) }] })),
     loopFit: { bpm: typeof loop.bpm === 'string' ? loop.bpm.slice(0, 100) : '90', bars: typeof loop.bars === 'number' && [.5, 1, 2, 4, 8, 16].includes(loop.bars) ? loop.bars : 4, actual: typeof loop.actual === 'string' ? loop.actual.slice(0, 100) : '' },
     kits,
+    beatBlock,
     groove: { bpm: number(groove.bpm, 40, 200, 90), selected: Math.floor(number(groove.selected, 0, 15, 0)), scope: groove.scope === 'track' ? 'track' : 'note', notes: Array.from({ length: 16 }, (_, i) => {
       const note = record(Array.isArray(groove.notes) ? groove.notes[i] : undefined), fallback = DEFAULTS.groove.notes[i]
       return { on: typeof note.on === 'boolean' ? note.on : fallback.on, velocity: Math.round(number(note.velocity, 1, 127, fallback.velocity)), length: number(note.length, .125, 16, fallback.length), nudge: number(note.nudge, -.45, .45, 0) }

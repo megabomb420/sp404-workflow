@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useReducer, useSt
 import { setHapticsEnabled } from '../utils/haptics'
 import { DEFAULTS, normalizeState } from './model'
 import { assessPractice, queuePractice } from '../utils/practice'
+import { reduceBeatSession, saveBeatSketch, type BeatAction } from '../utils/beatBlock'
 import type { AppState, BooleanSetting, Favorites, Firmware, GrooveState, KitItem, KitSet } from './model'
 export type { AppState, Settings, Favorites, Progress, UIState, KitItem, KitSet, Firmware } from './model'
 
@@ -14,6 +15,8 @@ function loadState(): AppState {
 /* ============================ ACTIONS ============================ */
 
 export type Action =
+  | BeatAction
+  | { type: 'SAVE_BEAT_SKETCH'; newKitId: string; name: string; note: string }
   | { type: 'SET_FIRMWARE'; value: Firmware }
   | { type: 'IMPORT_STATE'; state: AppState }
   | { type: 'CREATE_KIT'; kit: KitSet }
@@ -47,13 +50,19 @@ function toggle(list: string[], id: string): string[] {
 
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
+    case 'BEAT_CHOOSE': case 'BEAT_TIMER': case 'BEAT_START': case 'BEAT_PAUSE': case 'BEAT_RESUME': case 'BEAT_FINISH': case 'BEAT_BACK': case 'BEAT_RESET': case 'BEAT_DRAFT':
+      return { ...state, beatBlock: reduceBeatSession(state.beatBlock, action) }
+    case 'SAVE_BEAT_SKETCH': {
+      const result = saveBeatSketch(state.beatBlock, state.kits, action)
+      return result ? { ...state, beatBlock: result.session, kits: result.kits } : state
+    }
     case 'SET_FIRMWARE': return { ...state, settings: { ...state.settings, firmware: action.value } }
     case 'IMPORT_STATE': return normalizeState(action.state)
     case 'SET_GROOVE': return { ...state, groove: { ...state.groove, ...action.value } }
     case 'CREATE_KIT': return state.kits.length >= 30 ? state : { ...state, kits: [...state.kits, action.kit] }
     case 'RENAME_KIT': return { ...state, kits: state.kits.map((kit) => kit.id === action.id ? { ...kit, name: action.name.trim().slice(0, 60) || kit.name } : kit) }
     case 'SET_KIT_NOTES': return { ...state, kits: state.kits.map(kit => kit.id === action.id ? { ...kit, notes: action.notes } : kit) }
-    case 'DELETE_KIT': return { ...state, kits: state.kits.filter((kit) => kit.id !== action.id) }
+    case 'DELETE_KIT': return { ...state, kits: state.kits.filter((kit) => kit.id !== action.id), beatBlock: state.beatBlock.savedKitId === action.id ? { ...state.beatBlock, phase: 'finish', savedKitId: null } : state.beatBlock }
     case 'TOGGLE_KIT_ITEM': return { ...state, kits: state.kits.map((kit) => {
       if (kit.id !== action.kitId) return kit
       const has = kit.items.some((item) => item.kind === action.item.kind && item.id === action.item.id)
@@ -141,7 +150,7 @@ function reducer(state: AppState, action: Action): AppState {
     case 'RESET_PROGRESS':
       return { ...state, progress: DEFAULTS.progress, practice: {} }
     case 'RESET_FAVORITES':
-      return { ...state, favorites: DEFAULTS.favorites, kits: [] }
+      return { ...state, favorites: DEFAULTS.favorites, kits: [], beatBlock: state.beatBlock.phase === 'saved' ? { ...state.beatBlock, phase: 'finish', savedKitId: null } : state.beatBlock }
     case 'RESET_ALL':
       return DEFAULTS
     case 'SET_SETTING':

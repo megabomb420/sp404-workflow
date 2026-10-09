@@ -16,7 +16,7 @@ import { localizeCompanion } from '@/i18n/companion'
 export function HomePage() {
   const navigate = useNavigate()
   const { setDisplay } = useDisplay()
-  const { state, storageAvailable } = useStore()
+  const { state, dispatch, storageAvailable } = useStore()
   const t = useT()
   const { locale } = useLocale()
   const padsSource = useLocalizedHomePads()
@@ -61,6 +61,10 @@ export function HomePage() {
           <span className="continue-card__go" aria-hidden="true">→</span>
         </Link>
       ) : null}
+      <Link className="beat-entry panel-surface" to="/beat-block" onClick={() => { if (state.beatBlock.phase === 'saved') dispatch({ type: 'BEAT_RESET' }) }}>
+        <span className="u-label">{['ready', 'active', 'finish'].includes(state.beatBlock.phase) ? (locale === 'en' ? 'BACK TO BEAT BLOCK' : 'WRÓĆ DO BEAT BLOCK') : (locale === 'en' ? 'I’M STUCK' : 'UTKNĄŁEM')}</span>
+        <span className="u-mono">BEAT BLOCK · 5–10 MIN <span aria-hidden="true">→</span></span>
+      </Link>
 
       <section className="now-goals" aria-labelledby="now-goals-title">
         <h2 id="now-goals-title" className="now-section-title u-label">{t.home.goals}</h2>

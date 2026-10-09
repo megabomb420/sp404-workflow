@@ -3,6 +3,7 @@ import { createServer } from 'node:http'
 import { readFile, stat, mkdir } from 'node:fs/promises'
 import { resolve, extname, sep } from 'node:path'
 import { chromium } from 'playwright'
+import { testBeatBlock } from './beat-block-test.mjs'
 
 const root = resolve('dist/client')
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png' }
@@ -194,4 +195,5 @@ try {
   await context.setOffline(false)
   assert.deepEqual(errors, [])
   console.log('PASS 320/390/768px layouts, dock/scroll, offline reload of guide/lazy tools, zero browser exceptions')
+  await testBeatBlock(browser, base)
 } finally { await browser.close(); if (server) await new Promise(done => server.close(done)) }

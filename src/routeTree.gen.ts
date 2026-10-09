@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BeatBlockRouteImport } from './routes/beat-block'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as DoomOsRouteImport } from './routes/doom-os'
 import { Route as FixItRouteImport } from './routes/fix-it'
@@ -32,6 +33,11 @@ import { Route as WorkflowIdRouteImport } from './routes/workflow.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BeatBlockRoute = BeatBlockRouteImport.update({
+  id: '/beat-block',
+  path: '/beat-block',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompareRoute = CompareRouteImport.update({
@@ -127,6 +133,7 @@ const WorkflowIdRoute = WorkflowIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/beat-block': typeof BeatBlockRoute
   '/compare': typeof CompareRoute
   '/doom-os': typeof DoomOsRoute
   '/fix-it': typeof FixItRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/beat-block': typeof BeatBlockRoute
   '/compare': typeof CompareRoute
   '/doom-os': typeof DoomOsRoute
   '/fix-it': typeof FixItRoute
@@ -170,6 +178,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/beat-block': typeof BeatBlockRoute
   '/compare': typeof CompareRoute
   '/doom-os': typeof DoomOsRoute
   '/fix-it': typeof FixItRoute
@@ -193,6 +202,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/beat-block'
     | '/compare'
     | '/doom-os'
     | '/fix-it'
@@ -214,6 +224,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/beat-block'
     | '/compare'
     | '/doom-os'
     | '/fix-it'
@@ -235,6 +246,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/beat-block'
     | '/compare'
     | '/doom-os'
     | '/fix-it'
@@ -257,6 +269,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BeatBlockRoute: typeof BeatBlockRoute
   CompareRoute: typeof CompareRoute
   DoomOsRoute: typeof DoomOsRoute
   FixItRoute: typeof FixItRoute
@@ -284,6 +297,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/beat-block': {
+      id: '/beat-block'
+      path: '/beat-block'
+      fullPath: '/beat-block'
+      preLoaderRoute: typeof BeatBlockRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/compare': {
@@ -417,6 +437,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BeatBlockRoute: BeatBlockRoute,
   CompareRoute: CompareRoute,
   DoomOsRoute: DoomOsRoute,
   FixItRoute: FixItRoute,
