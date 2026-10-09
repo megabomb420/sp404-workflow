@@ -13,10 +13,11 @@ export function KitStudio({ kit }: { kit: KitSet }) {
   const [songOpen, setSongOpen] = useState(tab === 'song')
   const [abOpen, setAbOpen] = useState(tab === 'ab')
   const songRef = useRef<HTMLDetailsElement>(null), abRef = useRef<HTMLDetailsElement>(null)
+  const nextRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    if (tab !== 'song' && tab !== 'ab') return
-    if (tab === 'song') setSongOpen(true); else setAbOpen(true)
-    const frame = requestAnimationFrame(() => (tab === 'song' ? songRef : abRef).current?.scrollIntoView({ block: 'start', behavior: 'instant' }))
+    if (tab !== 'song' && tab !== 'ab' && tab !== 'next') return
+    if (tab === 'song') setSongOpen(true); else if (tab === 'ab') setAbOpen(true)
+    const frame = requestAnimationFrame(() => (tab === 'next' ? nextRef : tab === 'song' ? songRef : abRef).current?.scrollIntoView({ block: 'start', behavior: 'instant' }))
     return () => cancelAnimationFrame(frame)
   }, [tab])
   const jump = (target: 'song' | 'ab') => {
@@ -31,7 +32,7 @@ export function KitStudio({ kit }: { kit: KitSet }) {
   const updatePart = (id: string, changes: Partial<SongPart>) => patch({ song: studio.song.map(part => part.id === id ? { ...part, ...changes } : part) })
   const newPart = (role: SongPart['role']): SongPart => ({ id: crypto.randomUUID(), role, pattern: '', bars: 4, note: '' })
   return <section className="kit-studio" aria-label={en ? 'Develop this sketch' : 'Rozwijaj ten szkic'}>
-    <div className="sketch-next panel-surface">
+    <div ref={nextRef} className="sketch-next panel-surface">
       <div className="studio-heading"><h2 className="u-label">{en ? 'NEXT STEP' : 'NASTĘPNY KROK'}</h2><span className="u-mono">{studio.firmware === 'doom' ? 'DOOM OS' : 'ROLAND'}</span></div>
       <label>{en ? 'What will you do next?' : 'Co zrobisz przy następnej sesji?'}<textarea maxLength={1000} rows={2} value={studio.nextStep} placeholder={en ? 'Make a transition before the drums return…' : 'Zrób przejście przed powrotem perkusji…'} onChange={e => patch({ nextStep: e.target.value })} /></label>
       <div className="tool-actions"><button className="chip" type="button" onClick={() => dispatch({ type: 'ACTIVATE_KIT', id: kit.id })}>{en ? 'PIN TO NOW' : 'POKAŻ NA NOW'}</button><button className="chip" type="button" onClick={() => patch({ finished: !studio.finished })}>{studio.finished ? (en ? 'REOPEN SKETCH' : 'ROZWIJAJ PONOWNIE') : (en ? 'MARK AS FINISHED' : 'OZNACZ GOTOWY')}</button></div>

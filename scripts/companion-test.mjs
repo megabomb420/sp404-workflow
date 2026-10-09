@@ -5,6 +5,7 @@ import { resolve, extname, sep } from 'node:path'
 import { chromium } from 'playwright'
 import { testBeatBlock } from './beat-block-test.mjs'
 import { testKitStudio } from './kit-studio-test.mjs'
+import { testNow } from './now-test.mjs'
 
 const root = resolve('dist/client')
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png' }
@@ -52,7 +53,7 @@ try {
   assert.equal((await stored()).favorites.shortcuts[0], 'tr-rec')
   assert.equal((await stored()).progress.workflowStep['phone-to-pad'], 2)
   assert.equal((await stored()).settings.firmware, 'roland')
-  assert.equal(await page.locator('.companion-tools a').count(), 5)
+  assert.equal(await page.locator('.companion-tools a').count(), 6)
   assert.equal(await page.locator('.shell__modes > button').count(), 0)
   assert.equal(await page.locator('.goal-card').count(), 3)
   await mode('doom')
@@ -198,4 +199,5 @@ try {
   console.log('PASS 320/390/768px layouts, dock/scroll, offline reload of guide/lazy tools, zero browser exceptions')
   await testBeatBlock(browser, base)
   await testKitStudio(browser, base)
+  await testNow(browser, base)
 } finally { await browser.close(); if (server) await new Promise(done => server.close(done)) }

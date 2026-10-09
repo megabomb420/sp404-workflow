@@ -1,3 +1,3 @@
 /** Visible app revision — bump this whenever the preview must prove it refreshed. */
-export const APP_REV = 'R7'
+export const APP_REV = 'R8'
 export const APP_REV_DATE = '09.10.2026'

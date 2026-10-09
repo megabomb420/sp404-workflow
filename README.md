@@ -1,4 +1,4 @@
-# SP WORKFLOW R6
+# SP WORKFLOW R8
 
 Offline companion for the **Roland SP-404MKII**.
 
@@ -6,7 +6,7 @@ Polish and English companion, firmware-aware pad navigation on NOW, local progre
 
 **Live:** [sp-workflow.pages.dev](https://sp-workflow.pages.dev/) · mirror: [megabomb420.github.io/sp404-workflow](https://megabomb420.github.io/sp404-workflow/)
 
-Look for the amber **R6** badge on the LCD.
+Look for the amber **R8** badge on the LCD.
 
 The companion includes the DOOM OS guide (78 controls and 3 workflows), a Roland/DOOM instruction filter, screen context with knob mappings, custom ordered MY KIT sets, Groove Lab with synthetic audio, three method comparisons, larger controls, optional screen wake lock, and backup/restore including language.
 
@@ -24,3 +24,11 @@ Validation: `npm run typecheck`, `npm test`, `npm run build:pages:cf`, and `node
 MY KIT przechowuje następny krok, SONG MAP (do 8 fragmentów: kolejność, pattern/wariacja, takty, uwagi) i warianty A/B (lokalizacja na SP, zmiana, wybór i uzasadnienie). Zapis BEAT BLOCK przypina szkic do NOW z projektem, bankiem/padem i BPM. Gotowy szkic można odpiąć przez „OZNACZ GOTOWY” i ponownie otworzyć. Dane działają lokalnie, offline i są zawarte w kopiach zapasowych; starsze zestawy zachowują notatki. SONG MAP i A/B służą do planowania i odsłuchu na SP.
 
 R7 poprawia czytelność padów i opisów, usuwa powtórzony nagłówek onboardingu i dodaje podgląd padów. BEAT BLOCK pokazuje jeden bieżący krok, zapamiętuje jego pozycję i ma bardziej zwarty timer oraz łatwiej dostępne zakończenie szkicu. Wszystkie nowe ekrany mają wersję PL/EN.
+
+## R8 · simpler NOW
+
+NOW shows a single continuation card: the active sketch takes priority, with a smaller link to an unfinished guide when both exist. Sketch titles, project metadata and next-step previews use at most two lines; full text remains in MY KIT. “Resume sketch” opens the next-step panel through `tab=next`; existing `tab=song` and `tab=ab` links remain supported. The LCD shows RESUME for an unfinished sketch, guide or BEAT BLOCK session.
+
+The order is continuation, BEAT BLOCK entry, the always-expanded 16-pad map, then a closed-by-default “Paths and tools” section with suggested workflows and six companion tools. FIX IT and training remain on pads 14 and 15, with due review counts and direct review entry on pad 15. The duplicated FIX IT/training tiles and recent-section list are removed from NOW. Stored data and backup format remain compatible; PL/EN, Roland/DOOM and offline paths are covered by the browser checks.
+
+Next iterations should address one concrete issue observed across three sessions beside the SP. Add another feature when an existing tool cannot handle a recurring need.
