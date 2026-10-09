@@ -1,15 +1,17 @@
 import { beatChallenges, beatReasons, type BeatReason } from '../data/beatBlock.ts'
 import type { Firmware, KitSet } from '../state/model'
+import { defaultStudio } from './kitStudio.ts'
 
 export interface BeatDraft { name: string; project: string; bankPad: string; bpm: string; idea: string; targetKitId: string }
 export interface BeatSession {
   reason: BeatReason | null; challengeId: string | null; firmware: Firmware
   phase: 'choose' | 'ready' | 'active' | 'finish' | 'saved'
+  step: number
   timerEnabled: boolean; remainingMs: number; runningSince: number | null
   recent: string[]; draft: BeatDraft; savedKitId: string | null
 }
 const emptyDraft = (): BeatDraft => ({ name: '', project: '', bankPad: '', bpm: '', idea: '', targetKitId: '' })
-export const defaultBeatSession = (): BeatSession => ({ reason: null, challengeId: null, firmware: 'roland', phase: 'choose', timerEnabled: false, remainingMs: 0, runningSince: null, recent: [], draft: emptyDraft(), savedKitId: null })
+export const defaultBeatSession = (): BeatSession => ({ reason: null, challengeId: null, firmware: 'roland', phase: 'choose', step: 0, timerEnabled: false, remainingMs: 0, runningSince: null, recent: [], draft: emptyDraft(), savedKitId: null })
 const record = (v: unknown): Record<string, unknown> => v !== null && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {}
 const text = (v: unknown, max: number) => typeof v === 'string' ? v.slice(0, max) : ''
 const validTime = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v >= 0 && v <= 8_640_000_000_000_000
@@ -23,6 +25,7 @@ export function normalizeBeatSession(value: unknown): BeatSession {
   const draft = record(raw.draft)
   return {
     reason: challenge.reason, challengeId: challenge.id, firmware: raw.firmware === 'doom' ? 'doom' : 'roland', phase,
+    step: typeof raw.step === 'number' && Number.isInteger(raw.step) ? Math.max(0, Math.min(raw.step, challenge.steps.length - 1)) : 0,
     timerEnabled: raw.timerEnabled === true, remainingMs,
     runningSince: phase === 'active' && raw.timerEnabled === true && remainingMs > 0 && validTime(raw.runningSince) ? raw.runningSince : null,
     recent, savedKitId: typeof raw.savedKitId === 'string' && /^[a-zA-Z0-9-]{1,100}$/.test(raw.savedKitId) ? raw.savedKitId : null,
@@ -38,6 +41,7 @@ export function beatClock(ms: number): string {
 }
 export type BeatAction =
   | { type: 'BEAT_CHOOSE'; id: string; firmware: Firmware }
+  | { type: 'BEAT_STEP'; step: number }
   | { type: 'BEAT_TIMER'; enabled: boolean; now: number }
   | { type: 'BEAT_START' | 'BEAT_PAUSE' | 'BEAT_RESUME' | 'BEAT_FINISH'; now: number }
   | { type: 'BEAT_BACK' | 'BEAT_RESET' }
@@ -45,6 +49,7 @@ export type BeatAction =
 
 export function reduceBeatSession(session: BeatSession, action: BeatAction): BeatSession {
   switch (action.type) {
+    case 'BEAT_STEP': { const challenge = beatChallenges.find(c => c.id === session.challengeId); return session.phase === 'active' && challenge && Number.isInteger(action.step) ? { ...session, step: Math.max(0, Math.min(action.step, challenge.steps.length - 1)) } : session }
     case 'BEAT_CHOOSE': {
       const challenge = beatChallenges.find(item => item.id === action.id)
       if (!challenge) return session
@@ -72,9 +77,11 @@ export function saveBeatSketch(session: BeatSession, kits: KitSet[], input: { ne
   if (note.length > 2000) return null
   const item = challenge.kitItem[session.firmware]
   const kit: KitSet = {
+    ...existing,
     id: existing?.id ?? input.newKitId, name: existing?.name ?? input.name.trim().slice(0, 60),
     items: existing?.items.some(entry => entry.kind === item.kind && entry.id === item.id) ? existing.items : [...(existing?.items ?? []), item].slice(0, 200),
     notes: { project: session.draft.project.trim() || existing?.notes?.project || '', bankPad: session.draft.bankPad.trim() || existing?.notes?.bankPad || '', bpm: session.draft.bpm.trim() || existing?.notes?.bpm || '', text: note },
+    studio: { ...(existing?.studio ?? defaultStudio(session.firmware)), firmware: session.firmware, nextStep: session.draft.idea.trim(), finished: false },
   }
   return { session: { ...session, phase: 'saved', savedKitId: kit.id }, kits: existing ? kits.map(entry => entry.id === existing.id ? kit : entry) : [...kits, kit] }
 }

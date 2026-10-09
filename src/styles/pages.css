@@ -362,6 +362,14 @@ a.chip { text-decoration: none; }
 .ob__dot { width: 8px; height: 8px; border-radius: 50%; background: #2c2e33; }
 .ob__dot.is-active { background: var(--accent); box-shadow: 0 0 8px rgba(232, 150, 44, 0.7); }
 .ob__skip { color: var(--ink-faint); font-size: 12px; letter-spacing: 0.1em; padding: 8px; }
+.ob__content { padding: 20px 8px; }
+.ob__title { font-size: 27px; }
+.ob__preview { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 24px; }
+.ob__preview-pad { min-width: 0; height: 34px; display: flex; align-items: center; gap: 4px; padding: 5px; border: 1px solid var(--hairline); border-radius: 5px; background: linear-gradient(var(--surface-raised), var(--surface)); font-family: var(--font-label); font-size: 10px; color: var(--ink-dim); }
+.ob__preview-pad small { font-size: 9px; color: var(--ink-faint); }
+.ob__preview-pad.is-lit { border-color: var(--accent-dim); color: var(--accent); }
+.ob__brand { letter-spacing: .12em; }
+.now-section-title, .now-escape__item small { font-size: 12px; color: var(--ink-dim); }
 
 /* ---------- desktop polish ---------- */
 
@@ -395,8 +403,8 @@ a.chip { text-decoration: none; }
   padding: 2px 0 4px;
 }
 .home-map .padgrid { gap: 6px; }
-.home-map .pad { padding: 7px 6px 8px; min-height: 0; aspect-ratio: 1 / 1.15; }
-.home-map .pad__label { font-size: clamp(8px, 2.4vw, 10px); line-height: 1.08; letter-spacing: 0; }
+.home-map .pad { padding: 9px 7px; min-height: 112px; aspect-ratio: auto; }
+.home-map .pad__label { font-size: 12px; line-height: 1.2; letter-spacing: 0; -webkit-line-clamp: 3; }
 
 
 
@@ -431,10 +439,10 @@ a.chip { text-decoration: none; }
 .goal-card { min-height: 0; padding: 10px; display: flex; flex-direction: column; color: var(--ink); }
 .goal-card:first-child { grid-column: 1 / -1; border-color: var(--accent-dim); background: linear-gradient(135deg, var(--accent-soft), var(--surface)); }
 
-.goal-card__n { color: var(--accent); font-size: 10px; }
+.goal-card__n { color: var(--ink-dim); font-size: 11px; }
 .goal-card__title { font-size: 16px; line-height: 1.05; margin-top: 7px; }
 .goal-card__blurb { color: var(--ink-dim); font-size: 12px; line-height: 1.4; margin-top: 6px; }
-.goal-card__meta { color: var(--ink-faint); font-size: 8px; letter-spacing: 0.07em; margin-top: auto; padding-top: 8px; }
+.goal-card__meta { color: var(--ink-dim); font-size: 11px; letter-spacing: 0; margin-top: auto; padding-top: 8px; }
 
 
 .now-escape { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }

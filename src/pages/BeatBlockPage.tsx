@@ -65,8 +65,7 @@ export function BeatBlockPage() {
       <article ref={challengeRef} className={cx('beat-challenge panel-surface', session.phase !== 'ready' && 'beat-challenge--working')} aria-labelledby="beat-challenge-title">
         <div className="beat-challenge__meta u-mono"><span>{session.firmware === 'doom' ? 'DOOM OS' : 'ROLAND'} · {challenge.minutes} MIN</span><SourceTag kind="tip" /></div>
         <h2 id="beat-challenge-title" className="u-label">{challenge.title[lang]}</h2>
-        <p className="beat-challenge__goal">{challenge.goal[lang]}</p>
-        <div className="beat-constraint"><span className="u-label">{en ? 'YOUR CONSTRAINT' : 'TWOJE OGRANICZENIE'}</span><p>{challenge.constraint[lang]}</p></div>
+        {session.phase === 'ready' ? <><p className="beat-challenge__goal">{challenge.goal[lang]}</p><div className="beat-constraint"><span className="u-label">{en ? 'YOUR CONSTRAINT' : 'TWOJE OGRANICZENIE'}</span><p>{challenge.constraint[lang]}</p></div></> : session.phase === 'active' ? <details className="beat-context"><summary>{en ? 'GOAL AND CONSTRAINT' : 'CEL I OGRANICZENIE'}</summary><p className="beat-challenge__goal">{challenge.goal[lang]}</p><div className="beat-constraint"><p>{challenge.constraint[lang]}</p></div></details> : null}
 
         {session.phase === 'ready' && <>
           <label className="beat-timer-choice"><input type="checkbox" checked={session.timerEnabled} onChange={event => dispatch({ type: 'BEAT_TIMER', enabled: event.target.checked, now: Date.now() })} /><span>{en ? `Use a timer · ${challenge.minutes} minutes (optional)` : `Z timerem · ${challenge.minutes} minut (opcjonalnie)`}</span></label>
@@ -81,10 +80,12 @@ export function BeatBlockPage() {
               <div className="tool-actions">{remaining > 0 && <button className="chip" type="button" onClick={() => dispatch({ type: session.runningSince === null ? 'BEAT_RESUME' : 'BEAT_PAUSE', now: Date.now() })}>{session.runningSince === null ? (en ? 'RESUME TIMER' : 'WZNÓW TIMER') : (en ? 'PAUSE TIMER' : 'ZATRZYMAJ TIMER')}</button>}<button className="wf-text-action" type="button" onClick={() => dispatch({ type: 'BEAT_TIMER', enabled: false, now: Date.now() })}>{en ? 'Continue without a timer' : 'Kontynuuj bez timera'}</button></div>
             </> : <p className="beat-small">{en ? 'No timer. Work at your own pace.' : 'Bez timera. Pracuj we własnym tempie.'}</p>}
           </section>
-          <ol className="beat-steps">{challenge.steps.map((step, index) => <li key={index}>
+          <div className="beat-step-progress u-mono">{en ? 'CURRENT STEP' : 'BIEŻĄCY KROK'} · {session.step + 1}/{challenge.steps.length}</div>
+          <ol className="beat-steps">{challenge.steps.map((step, index) => <li key={index} hidden={session.step !== index}>
             <span className="beat-steps__number u-mono">0{index + 1}</span><div><p>{(session.firmware === 'doom' && step.doomCopy ? step.doomCopy : step.copy)[lang]}</p><Link className="wf-text-action" to={step.help[session.firmware]}>{en ? 'OPEN THE GUIDE →' : 'OTWÓRZ INSTRUKCJĘ →'}</Link></div>
           </li>)}</ol>
-          <div className="beat-actions"><HardwareButton label={en ? 'I HAVE A SKETCH' : 'MAM SZKIC'} tone="accent" onClick={() => dispatch({ type: 'BEAT_FINISH', now: Date.now() })} /><button className="chip" type="button" onClick={() => { if (session.draft.idea.trim()) setSwitchPending(true); else choose(challenge.reason) }}>{en ? 'ANOTHER PROMPT' : 'INNE WYZWANIE'}</button></div>
+          <div className="beat-step-nav"><button className="chip" type="button" disabled={session.step === 0} onClick={() => dispatch({ type: 'BEAT_STEP', step: session.step - 1 })}>{en ? 'PREVIOUS STEP' : 'POPRZEDNI KROK'}</button>{session.step < challenge.steps.length - 1 && <button className="chip" type="button" onClick={() => dispatch({ type: 'BEAT_STEP', step: session.step + 1 })}>{en ? 'NEXT STEP →' : 'NASTĘPNY KROK →'}</button>}</div>
+          <div className="beat-actions beat-actions--finish"><HardwareButton label={en ? 'I HAVE A SKETCH' : 'MAM SZKIC'} tone="accent" onClick={() => dispatch({ type: 'BEAT_FINISH', now: Date.now() })} /><button className="chip" type="button" onClick={() => { if (session.draft.idea.trim()) setSwitchPending(true); else choose(challenge.reason) }}>{en ? 'ANOTHER PROMPT' : 'INNE WYZWANIE'}</button></div>
           {switchPending && <aside className="beat-switch-confirm" role="alert"><p>{en ? 'Changing the prompt will discard this unsaved note. Keep it by finishing and saving to MY KIT.' : 'Zmiana wyzwania wyczyści tę niezapisaną notatkę. Zachowasz ją po zakończeniu i zapisaniu w MY KIT.'}</p><div className="tool-actions"><button className="chip" type="button" onClick={() => choose(challenge.reason)}>{en ? 'CHANGE THE PROMPT' : 'ZMIEŃ WYZWANIE'}</button><button className="chip" type="button" onClick={() => setSwitchPending(false)}>{en ? 'KEEP THIS SESSION' : 'ZOSTAŃ W TEJ SESJI'}</button></div></aside>}
         </>}
 

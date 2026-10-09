@@ -19,3 +19,8 @@ All companion data stays local. Import shows a preview before replacing existing
 Validation: `npm run typecheck`, `npm test`, `npm run build:pages:cf`, and `node scripts/companion-test.mjs` against a static preview (`COMPANION_URL`, default `http://127.0.0.1:4175`). Cloudflare deploy uses the root-domain build; GitHub Pages uses `/sp404-workflow/`.
 
 `npm run test:tooling` separately runs the inherited app-builder template checks. They currently include unrelated failing assumptions about a generic brand identity, ignored `.grok/skills` files, the absent migrations directory, and Windows symlink/shell behavior; application and companion checks run independently.
+# R7 · szkic → utwór
+
+MY KIT przechowuje następny krok, SONG MAP (do 8 fragmentów: kolejność, pattern/wariacja, takty, uwagi) i warianty A/B (lokalizacja na SP, zmiana, wybór i uzasadnienie). Zapis BEAT BLOCK przypina szkic do NOW z projektem, bankiem/padem i BPM. Gotowy szkic można odpiąć przez „OZNACZ GOTOWY” i ponownie otworzyć. Dane działają lokalnie, offline i są zawarte w kopiach zapasowych; starsze zestawy zachowują notatki. SONG MAP i A/B służą do planowania i odsłuchu na SP.
+
+R7 poprawia czytelność padów i opisów, usuwa powtórzony nagłówek onboardingu i dodaje podgląd padów. BEAT BLOCK pokazuje jeden bieżący krok, zapamiętuje jego pozycję i ma bardziej zwarty timer oraz łatwiej dostępne zakończenie szkicu. Wszystkie nowe ekrany mają wersję PL/EN.

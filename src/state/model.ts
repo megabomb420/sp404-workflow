@@ -1,4 +1,5 @@
 import type { PracticeStat } from '../utils/practice'
+import { defaultStudio, normalizeStudio, type KitStudio } from '../utils/kitStudio.ts'
 import { defaultBeatSession, normalizeBeatSession, type BeatSession } from '../utils/beatBlock.ts'
 
 export type Firmware = 'roland' | 'doom'
@@ -14,14 +15,14 @@ export type BooleanSetting = Exclude<keyof Settings, 'firmware'>
 export interface Favorites { shortcuts: string[]; workflows: string[]; troubleshooting: string[] }
 export interface KitItem { kind: keyof Favorites; id: string }
 export interface KitNotes { project: string; bankPad: string; bpm: string; text: string }
-export interface KitSet { id: string; name: string; items: KitItem[]; notes?: KitNotes }
+export interface KitSet { id: string; name: string; items: KitItem[]; notes?: KitNotes; studio?: KitStudio }
 export interface Progress {
   completedWorkflows: string[]
   workflowStep: Record<string, number>
   doneSteps: Record<string, string[]>
   activeWorkflowId: string | null
 }
-export interface UIState { lastSection: string | null; recent: string[]; recentSearches: string[]; onboarded: boolean }
+export interface UIState { lastSection: string | null; recent: string[]; recentSearches: string[]; onboarded: boolean; activeKitId: string | null }
 export interface GrooveNote { on: boolean; velocity: number; nudge: number; length: number }
 export interface GrooveState { bpm: number; selected: number; scope: 'note' | 'track'; notes: GrooveNote[] }
 export interface AppState {
@@ -39,7 +40,7 @@ export const DEFAULTS: AppState = {
   settings: { reducedMotion: false, uiSound: false, haptics: true, firmware: 'roland', hardwareMode: false, keepScreenAwake: false },
   favorites: { shortcuts: [], workflows: [], troubleshooting: [] },
   progress: { completedWorkflows: [], workflowStep: {}, doneSteps: {}, activeWorkflowId: null },
-  ui: { lastSection: null, recent: [], recentSearches: [], onboarded: false },
+  ui: { lastSection: null, recent: [], recentSearches: [], onboarded: false, activeKitId: null },
   practice: {}, loopFit: { bpm: '90', bars: 4, actual: '' }, kits: [],
   beatBlock: defaultBeatSession(),
   groove: { bpm: 90, selected: 0, scope: 'note', notes: Array.from({ length: 16 }, (_, i) => ({ on: i % 2 === 0, velocity: i % 4 === 0 ? 110 : 72, nudge: 0, length: .5 })) },
@@ -64,16 +65,19 @@ export function normalizeState(value: unknown): AppState {
     }
     const notes = record(set.notes)
     const noteText = (key: string, max: number) => typeof notes[key] === 'string' ? (notes[key] as string).slice(0, max) : ''
-    kits.push({ id: set.id, name: set.name.trim().slice(0, 60), items, ...(set.notes ? { notes: { project: noteText('project', 100), bankPad: noteText('bankPad', 100), bpm: noteText('bpm', 20), text: noteText('text', 2000) } } : {}) })
+    kits.push({ id: set.id, name: set.name.trim().slice(0, 60), items, ...(set.studio ? { studio: normalizeStudio(set.studio) } : {}), ...(set.notes ? { notes: { project: noteText('project', 100), bankPad: noteText('bankPad', 100), bpm: noteText('bpm', 20), text: noteText('text', 2000) } } : {}) })
   }
   const bool = (key: BooleanSetting) => typeof settings[key] === 'boolean' ? settings[key] as boolean : DEFAULTS.settings[key]
   const beatBlock = normalizeBeatSession(parsed.beatBlock)
   if (beatBlock.phase === 'saved' && !kits.some(kit => kit.id === beatBlock.savedKitId)) { beatBlock.phase = 'finish'; beatBlock.savedKitId = null }
+  // R6 already kept the last saved sketch. Give it the new resume card once.
+  const legacySketch = ui.activeKitId === undefined && beatBlock.phase === 'saved' ? kits.find(kit => kit.id === beatBlock.savedKitId) : undefined
+  if (legacySketch && !legacySketch.studio) legacySketch.studio = { ...defaultStudio(beatBlock.firmware), nextStep: beatBlock.draft.idea }
   return {
     settings: { reducedMotion: bool('reducedMotion'), uiSound: bool('uiSound'), haptics: bool('haptics'), hardwareMode: bool('hardwareMode'), keepScreenAwake: bool('keepScreenAwake'), firmware: settings.firmware === 'doom' ? 'doom' : 'roland' },
     favorites: { shortcuts: strings(favorites.shortcuts), workflows: strings(favorites.workflows), troubleshooting: strings(favorites.troubleshooting) },
     progress: { completedWorkflows: strings(progress.completedWorkflows), workflowStep: Object.fromEntries(Object.entries(record(progress.workflowStep)).map(([id, v]) => [id, count(v)])), doneSteps: Object.fromEntries(Object.entries(record(progress.doneSteps)).map(([id, v]) => [id, strings(v)])), activeWorkflowId: text(progress.activeWorkflowId) },
-    ui: { lastSection: text(ui.lastSection), recent: strings(ui.recent).slice(0, 4), recentSearches: strings(ui.recentSearches).slice(0, 8), onboarded: ui.onboarded === true },
+    ui: { lastSection: text(ui.lastSection), recent: strings(ui.recent).slice(0, 4), recentSearches: strings(ui.recentSearches).slice(0, 8), onboarded: ui.onboarded === true, activeKitId: kits.some(k => k.id === ui.activeKitId) ? ui.activeKitId as string : legacySketch?.id ?? null },
     practice: Object.fromEntries(Object.entries(record(parsed.practice)).map(([id, v]) => { const stat = record(v); return [id, { correct: count(stat.correct), review: count(stat.review), needsReview: stat.needsReview === true, streak: count(stat.streak), lastPracticedAt: timestamp(stat.lastPracticedAt), dueAt: timestamp(stat.dueAt) }] })),
     loopFit: { bpm: typeof loop.bpm === 'string' ? loop.bpm.slice(0, 100) : '90', bars: typeof loop.bars === 'number' && [.5, 1, 2, 4, 8, 16].includes(loop.bars) ? loop.bars : 4, actual: typeof loop.actual === 'string' ? loop.actual.slice(0, 100) : '' },
     kits,

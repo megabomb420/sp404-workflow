@@ -3,6 +3,7 @@ import { setHapticsEnabled } from '../utils/haptics'
 import { DEFAULTS, normalizeState } from './model'
 import { assessPractice, queuePractice } from '../utils/practice'
 import { reduceBeatSession, saveBeatSketch, type BeatAction } from '../utils/beatBlock'
+import { normalizeStudio, defaultStudio, type KitStudio } from '../utils/kitStudio'
 import type { AppState, BooleanSetting, Favorites, Firmware, GrooveState, KitItem, KitSet } from './model'
 export type { AppState, Settings, Favorites, Progress, UIState, KitItem, KitSet, Firmware } from './model'
 
@@ -22,6 +23,8 @@ export type Action =
   | { type: 'CREATE_KIT'; kit: KitSet }
   | { type: 'RENAME_KIT'; id: string; name: string }
   | { type: 'SET_KIT_NOTES'; id: string; notes: import('./model').KitNotes }
+  | { type: 'PATCH_KIT_STUDIO'; id: string; patch: Partial<KitStudio> }
+  | { type: 'ACTIVATE_KIT'; id: string }
   | { type: 'DELETE_KIT'; id: string }
   | { type: 'TOGGLE_KIT_ITEM'; kitId: string; item: KitItem }
   | { type: 'MOVE_KIT_ITEM'; kitId: string; index: number; direction: -1 | 1 }
@@ -50,11 +53,11 @@ function toggle(list: string[], id: string): string[] {
 
 function reducer(state: AppState, action: Action): AppState {
   switch (action.type) {
-    case 'BEAT_CHOOSE': case 'BEAT_TIMER': case 'BEAT_START': case 'BEAT_PAUSE': case 'BEAT_RESUME': case 'BEAT_FINISH': case 'BEAT_BACK': case 'BEAT_RESET': case 'BEAT_DRAFT':
+    case 'BEAT_STEP': case 'BEAT_CHOOSE': case 'BEAT_TIMER': case 'BEAT_START': case 'BEAT_PAUSE': case 'BEAT_RESUME': case 'BEAT_FINISH': case 'BEAT_BACK': case 'BEAT_RESET': case 'BEAT_DRAFT':
       return { ...state, beatBlock: reduceBeatSession(state.beatBlock, action) }
     case 'SAVE_BEAT_SKETCH': {
       const result = saveBeatSketch(state.beatBlock, state.kits, action)
-      return result ? { ...state, beatBlock: result.session, kits: result.kits } : state
+      return result ? { ...state, beatBlock: result.session, kits: result.kits, ui: { ...state.ui, activeKitId: result.session.savedKitId } } : state
     }
     case 'SET_FIRMWARE': return { ...state, settings: { ...state.settings, firmware: action.value } }
     case 'IMPORT_STATE': return normalizeState(action.state)
@@ -62,7 +65,9 @@ function reducer(state: AppState, action: Action): AppState {
     case 'CREATE_KIT': return state.kits.length >= 30 ? state : { ...state, kits: [...state.kits, action.kit] }
     case 'RENAME_KIT': return { ...state, kits: state.kits.map((kit) => kit.id === action.id ? { ...kit, name: action.name.trim().slice(0, 60) || kit.name } : kit) }
     case 'SET_KIT_NOTES': return { ...state, kits: state.kits.map(kit => kit.id === action.id ? { ...kit, notes: action.notes } : kit) }
-    case 'DELETE_KIT': return { ...state, kits: state.kits.filter((kit) => kit.id !== action.id), beatBlock: state.beatBlock.savedKitId === action.id ? { ...state.beatBlock, phase: 'finish', savedKitId: null } : state.beatBlock }
+    case 'PATCH_KIT_STUDIO': return { ...state, kits: state.kits.map(kit => kit.id === action.id ? { ...kit, studio: normalizeStudio({ ...(kit.studio ?? defaultStudio(state.settings.firmware)), ...action.patch }) } : kit) }
+    case 'ACTIVATE_KIT': return !state.kits.some(kit => kit.id === action.id) ? state : { ...state, ui: { ...state.ui, activeKitId: action.id }, kits: state.kits.map(kit => kit.id === action.id ? { ...kit, studio: { ...(kit.studio ?? defaultStudio(state.settings.firmware)), finished: false } } : kit) }
+    case 'DELETE_KIT': return { ...state, kits: state.kits.filter((kit) => kit.id !== action.id), ui: { ...state.ui, activeKitId: state.ui.activeKitId === action.id ? null : state.ui.activeKitId }, beatBlock: state.beatBlock.savedKitId === action.id ? { ...state.beatBlock, phase: 'finish', savedKitId: null } : state.beatBlock }
     case 'TOGGLE_KIT_ITEM': return { ...state, kits: state.kits.map((kit) => {
       if (kit.id !== action.kitId) return kit
       const has = kit.items.some((item) => item.kind === action.item.kind && item.id === action.item.id)
@@ -150,7 +155,7 @@ function reducer(state: AppState, action: Action): AppState {
     case 'RESET_PROGRESS':
       return { ...state, progress: DEFAULTS.progress, practice: {} }
     case 'RESET_FAVORITES':
-      return { ...state, favorites: DEFAULTS.favorites, kits: [], beatBlock: state.beatBlock.phase === 'saved' ? { ...state.beatBlock, phase: 'finish', savedKitId: null } : state.beatBlock }
+      return { ...state, favorites: DEFAULTS.favorites, kits: [], ui: { ...state.ui, activeKitId: null }, beatBlock: state.beatBlock.phase === 'saved' ? { ...state.beatBlock, phase: 'finish', savedKitId: null } : state.beatBlock }
     case 'RESET_ALL':
       return DEFAULTS
     case 'SET_SETTING':

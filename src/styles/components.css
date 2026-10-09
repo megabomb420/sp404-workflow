@@ -107,7 +107,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.pad__sub { font-size: 9px; color: var(--ink-dim); line-height: 1.1; letter-spacing: 0.04em; }
+.pad__sub { font-size: 11px; color: var(--ink-dim); line-height: 1.3; letter-spacing: 0; }
 .pad__led { position: absolute; top: 9px; right: 9px; }
 .pad--accent .pad__label { color: var(--accent); }
 .pad--danger .pad__label { color: var(--danger); }

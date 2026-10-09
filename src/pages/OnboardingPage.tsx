@@ -33,12 +33,12 @@ export function OnboardingPage() {
       <div className="ob__lcd" aria-hidden="true">
         <span className="ob__brand u-label">{t.appName}</span>
         <span className="lcd__rev u-mono">{APP_REV}</span>
-        <span className="ob__kick u-mono">{slide.kick}</span>
-        <span className="ob__kick u-mono">{slide.kick}</span>
+        <span className="ob__kick u-mono">{String(i + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}</span>
       </div>
       <div className="ob__content">
         <h1 className="ob__title u-label">{slide.title}</h1>
         <p className="ob__body">{slide.body}</p>
+        <div className="ob__preview" aria-hidden="true">{Array.from({ length: 16 }, (_, pad) => <span key={pad} className={cx('ob__preview-pad', [0, 1, 4, 15].includes(pad) && 'is-lit')}><small className="u-mono">{String(pad + 1).padStart(2, '0')}</small>{({ 0: 'SAMPLE', 1: 'PATTERN', 4: 'FX', 15: 'MY KIT' } as Record<number, string>)[pad]}</span>)}</div>
       </div>
       <div className="ob__foot">
         {i === 0 ? <LangSwitch /> : null}

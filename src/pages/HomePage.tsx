@@ -43,11 +43,19 @@ export function HomePage() {
 
   const activeId = state.progress.activeWorkflowId
   const active = activeId ? workflowsById[activeId] : undefined
+  const sketch = state.kits.find(kit => kit.id === state.ui.activeKitId && !kit.studio?.finished)
   const activeStep = active ? Math.min(state.progress.workflowStep[active.id] ?? 0, active.steps.length - 1) : 0
   const recent = state.ui.recent.map((id) => sectionsById[id]).filter((section): section is NonNullable<typeof section> => !!section)
 
   return (
     <div className="page home home--now">
+      {sketch && <section className="resume-sketch panel-surface" aria-label={locale === 'en' ? 'Resume your beat' : 'Wróć do mojego beatu'}>
+        <span className="u-label">{locale === 'en' ? 'BACK TO MY BEAT' : 'WRÓĆ DO MOJEGO BEATU'}</span>
+        <h2>{sketch.name}</h2>
+        <p className="resume-sketch__meta u-mono">{[sketch.studio?.firmware === 'doom' ? 'DOOM OS' : 'ROLAND', sketch.notes?.project && `${locale === 'en' ? 'Project' : 'Projekt'} ${sketch.notes.project}`, sketch.notes?.bankPad, sketch.notes?.bpm && `${sketch.notes.bpm} BPM`].filter(Boolean).join(' · ')}</p>
+        <p className="resume-sketch__step">{sketch.studio?.nextStep || (locale === 'en' ? 'Choose the next step for this sketch.' : 'Wybierz następny krok dla tego szkicu.')}</p>
+        <div className="tool-actions"><Link className="chip sketch-primary" to={`/kit?set=${sketch.id}`}>{locale === 'en' ? 'RESUME SKETCH →' : 'WRÓĆ DO SZKICU →'}</Link><Link className="chip" to={`/kit?set=${sketch.id}&tab=song`}>SONG MAP →</Link></div>
+      </section>}
       {active ? (
         <Link to={`/workflow/${active.id}`} className="continue-card panel-surface">
           <span className="continue-card__signal" aria-hidden="true" />

@@ -14,6 +14,7 @@ import cx from '../utils/cx'
 import { useLocale } from '@/i18n/locale'
 import { localizeShortcut, localizeTrouble, localizeWorkflow } from '@/i18n/content'
 import { KitNotes } from '@/components/content/KitNotes'
+import { KitStudio } from '@/components/content/KitStudio'
 
 function ItemCard({ item }: { item: KitItem }) {
   const c = useC()
@@ -48,8 +49,9 @@ export function KitPage() {
     <p className="page__lede">{c("Zapisuj czynności przez ★, potem ułóż własne zestawy do sesji lub grania na żywo. Zestaw może łączyć oba firmware.")}</p>
     <div className="chipbar" role="toolbar" aria-label={c("zestawy MY KIT")}>
       <button type="button" className={cx('chip', !selected && 'is-active')} aria-pressed={!selected} onClick={() => setParams({})}>{c("WSZYSTKIE ULUBIONE")}</button>
-      {state.kits.map((kit) => <button type="button" key={kit.id} className={cx('chip', selected?.id === kit.id && 'is-active')} aria-pressed={selected?.id === kit.id} onClick={() => setParams({ set: kit.id })}>{kit.name}</button>)}
+      {state.kits.map((kit) => <button type="button" key={kit.id} className={cx('chip', selected?.id === kit.id && 'is-active')} aria-pressed={selected?.id === kit.id} onClick={() => setParams({ set: kit.id, ...(params.get('tab') ? { tab: params.get('tab')! } : {}) })}>{kit.name}</button>)}
     </div>
+    {!selected && <p className="page__lede">{locale === 'en' ? 'Choose or create a set to plan a song, compare A/B versions and keep your next step on NOW.' : 'Wybierz lub utwórz zestaw, żeby zaplanować utwór, porównać wersje A/B i zachować następny krok na NOW.'}</p>}
     <form className="kit-create panel-surface" onSubmit={(event) => {
       event.preventDefault(); if (!name.trim() || state.kits.length >= 30) return
       const id = crypto.randomUUID(); dispatch({ type: 'CREATE_KIT', kit: { id, name: name.trim(), items: [] } }); setName(''); setParams({ set: id })
@@ -70,6 +72,7 @@ export function KitPage() {
       {remove ? <div className="tool-actions"><span>{c("Usunąć zestaw „")}{selected.name}{c("”? Ulubione zostaną.")}</span><button className="chip" type="button" onClick={() => { dispatch({ type: 'DELETE_KIT', id: selected.id }); setParams({}) }}>{c("TAK, USUŃ ZESTAW")}</button><button className="chip" type="button" onClick={() => setRemove(false)}>{c("ANULUJ")}</button></div> : <button className="kit-delete" type="button" onClick={() => setRemove(true)}>{c("usuń ten zestaw")}</button>}
     </section>}
     {selected && <KitNotes kit={selected} />}
+    {selected && <KitStudio key={selected.id} kit={selected} />}
     <p className="page__lede">{items.length}  {c("pozycji")}{selected ? ` · ${selected.name}` : ` ${c('w ulubionych')}`}</p>
     {!items.length && <div className="kit-empty panel-surface"><span className="kit-empty__star" aria-hidden="true">☆</span><p>{selected ? c("Dodaj czynności z ulubionych powyżej. Potem ustaw ich kolejność strzałkami.") : c("Zapisz pierwszą czynność przez ★ przy skrócie, workflow lub poradzie FIX IT.")}</p><Link className="chip" to="/shortcuts">{c("PRZEGLĄDAJ SKRÓTY")}</Link></div>}
     <ol className="kit-items">

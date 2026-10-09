@@ -52,6 +52,8 @@ function localizeEntry(entry: SearchEntry, locale: ReturnType<typeof useLocale>[
     if (term) return { ...entry, preview: localizeGlossary(term, locale).definition }
   }
   if (entry.id === 'loop-fit') return { ...entry, preview: t.search.toolPreview }
+  if (entry.id === 'song-map') return { ...entry, preview: 'From loop to song: section order, patterns and bars in MY KIT.' }
+  if (entry.id === 'kit-ab') return { ...entry, preview: 'Note two versions on your SP, their changes and your preferred sound.' }
   if (entry.kind === 'tool' && entry.id === 'doom-os') return { ...entry, preview: 'DOOM OS guide · controls, patterns and automation' }
   if (entry.kind === 'mfx') return { ...entry, preview: t.search.mfxPreview }
   if (entry.kind === 'tool') return localizeCompanion(entry, locale)

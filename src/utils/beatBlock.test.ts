@@ -4,6 +4,7 @@ import { beatChallenges, beatReasons, pickBeatChallenge } from '../data/beatBloc
 import { defaultBeatSession, normalizeBeatSession, reduceBeatSession, beatRemaining, beatClock, saveBeatSketch } from './beatBlock.ts'
 import { DEFAULTS, normalizeState } from '../state/model.ts'
 import { exportBackup, importBackup } from './backup.ts'
+import { defaultStudio } from './kitStudio.ts'
 
 const now = 1_800_000_000_000
 function draft(idea = 'Keep the late kick') {
@@ -75,4 +76,26 @@ test('R5 migration and backup preserve drafts; removed saved kits leave a recove
   assert.equal(orphan.beatBlock.phase, 'finish'); assert.equal(orphan.beatBlock.draft.idea, 'Keep the late kick')
   const invalid = normalizeBeatSession({ challengeId: 'not-real', phase: 'active', remainingMs: Infinity, runningSince: -1, recent: ['fake', 'three-sounds', 'three-sounds'] })
   assert.equal(invalid.phase, 'choose'); assert.equal(invalid.runningSince, null); assert.deepEqual(invalid.recent, ['three-sounds'])
+})
+test('saving another BEAT BLOCK idea preserves the song map and A/B comparison', () => {
+  const studio = { ...defaultStudio('roland'), nextStep: 'Old next step', finished: true, song: [{ id: 'intro', role: 'intro' as const, pattern: 'A1', bars: 8, note: 'Keep intro' }], winner: 'a' as const, decision: 'Keep the swing' }
+  const old = { id: 'existing', name: 'Song', items: [], studio }
+  const session = reduceBeatSession(draft(), { type: 'BEAT_DRAFT', field: 'targetKitId', value: old.id })
+  const saved = saveBeatSketch(session, [old], { newKitId: 'unused', name: 'unused', note: 'New session' })!
+  assert.deepEqual(saved.kits[0].studio?.song, studio.song); assert.equal(saved.kits[0].studio?.winner, 'a'); assert.equal(saved.kits[0].studio?.decision, studio.decision)
+  assert.equal(saved.kits[0].studio?.nextStep, 'Keep the late kick'); assert.equal(saved.kits[0].studio?.finished, false); assert.equal(saved.kits[0].studio?.firmware, 'doom')
+})
+test('BEAT BLOCK step survives reload and cannot leave the prompt bounds', () => {
+  let session = reduceBeatSession(defaultBeatSession(), { type: 'BEAT_CHOOSE', id: 'three-sounds', firmware: 'roland' })
+  session = reduceBeatSession(session, { type: 'BEAT_START', now })
+  session = reduceBeatSession(session, { type: 'BEAT_STEP', step: 1 })
+  assert.equal(normalizeBeatSession(session).step, 1)
+  assert.equal(reduceBeatSession(session, { type: 'BEAT_STEP', step: 99 }).step, 2)
+  assert.equal(reduceBeatSession(session, { type: 'BEAT_STEP', step: -2 }).step, 0)
+})
+test('the last R6 saved sketch gains a resume card without replacing old notes', () => {
+  const migrated = normalizeState({ ui: { onboarded: true }, beatBlock: { ...draft(), phase: 'saved', savedKitId: 'r6' }, kits: [{ id: 'r6', name: 'R6 sketch', items: [], notes: { project: '03', bankPad: 'B4', bpm: '92', text: 'Original' } }] })
+  assert.equal(migrated.ui.activeKitId, 'r6'); assert.equal(migrated.kits[0].studio?.nextStep, 'Keep the late kick'); assert.equal(migrated.kits[0].notes?.text, 'Original')
+  const explicitlyUnpinned = normalizeState({ ...migrated, ui: { ...migrated.ui, activeKitId: null } })
+  assert.equal(explicitlyUnpinned.ui.activeKitId, null)
 })
