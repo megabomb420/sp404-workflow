@@ -7,15 +7,13 @@ import { useT } from '@/i18n/useT'
 import { useStore } from '@/state/store'
 import { FirmwareSwitch } from '@/components/content/FirmwareSwitch'
 import { ScreenAwake } from '@/components/content/ScreenAwake'
-import { useLocale } from '@/i18n/locale'
 import { OfflineCache } from '@/components/nav/OfflineCache'
 
 export function Layout() {
   const navigate = useNavigate()
   const location = useLocation()
   const t = useT()
-  const { storageAvailable, state, dispatch } = useStore()
-  const { locale } = useLocale()
+  const { storageAvailable, state } = useStore()
   const atHome = location.pathname === '/'
   const mainRef = useRef<HTMLElement>(null)
 
@@ -51,7 +49,6 @@ export function Layout() {
       </header>
       <div className="shell__modes">
         <FirmwareSwitch />
-        <button type="button" className="chip u-mono" aria-pressed={state.settings.hardwareMode} onClick={() => dispatch({ type: 'SET_SETTING', key: 'hardwareMode', value: !state.settings.hardwareMode })}>{locale === 'en' ? 'AT THE SP' : 'PRZY SP'} {state.settings.hardwareMode ? 'ON' : 'OFF'}</button>
       </div>
 
       {!storageAvailable ? (

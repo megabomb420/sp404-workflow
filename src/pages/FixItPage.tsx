@@ -7,8 +7,18 @@ import { useT } from '@/i18n/useT'
 import { useDisplay } from '@/state/display'
 import { workflowReturnRoute } from '@/utils/session'
 import { normalizeSearch } from '@/utils/search'
+import { DoomRescue } from '@/components/content/DoomRescue'
+import { useStore } from '@/state/store'
+import { workflowsById as workflowCatalog } from '@/data/workflows'
 
 export function FixItPage() {
+  const { state } = useStore(), [params] = useSearchParams()
+  const from = workflowCatalog[params.get('from') ?? '']
+  const firmware = from ? (from.environment ?? 'roland') : params.get('firmware') ?? (params.get('ids') ? 'roland' : state.settings.firmware)
+  return firmware === 'doom' ? <DoomRescue /> : <RolandFixItPage />
+}
+
+function RolandFixItPage() {
   const { setDisplay } = useDisplay()
   const [params] = useSearchParams()
   const seededIds = useMemo(() => (params.get('ids') ?? '').split(',').filter(Boolean), [params])

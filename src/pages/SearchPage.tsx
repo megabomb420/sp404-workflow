@@ -14,6 +14,7 @@ import { workflowsById } from '@/data/workflows'
 import { sectionsById } from '@/data/sections'
 import { useDisplay } from '@/state/display'
 import { useStore } from '@/state/store'
+import { localizeCompanion } from '@/i18n/companion'
 
 function localizeEntry(entry: SearchEntry, locale: ReturnType<typeof useLocale>['locale'], t: ReturnType<typeof useT>): SearchEntry {
   if (locale === 'pl') {
@@ -27,7 +28,7 @@ function localizeEntry(entry: SearchEntry, locale: ReturnType<typeof useLocale>[
   }
   if (entry.kind === 'shortcut' && shortcutsById[entry.id]) {
     const item = localizeShortcut(shortcutsById[entry.id], locale)
-    return { ...entry, preview: item.description }
+    return { ...entry, title: item.name, preview: item.description, buttons: item.buttons }
   }
   if (entry.kind === 'troubleshooting' && troubleshootingById[entry.id]) {
     const item = localizeTrouble(troubleshootingById[entry.id], locale)
@@ -51,7 +52,9 @@ function localizeEntry(entry: SearchEntry, locale: ReturnType<typeof useLocale>[
     if (term) return { ...entry, preview: localizeGlossary(term, locale).definition }
   }
   if (entry.id === 'loop-fit') return { ...entry, preview: t.search.toolPreview }
+  if (entry.kind === 'tool' && entry.id === 'doom-os') return { ...entry, preview: 'DOOM OS guide · controls, patterns and automation' }
   if (entry.kind === 'mfx') return { ...entry, preview: t.search.mfxPreview }
+  if (entry.kind === 'tool') return localizeCompanion(entry, locale)
   return entry
 }
 

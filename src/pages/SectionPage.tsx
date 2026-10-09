@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { Navigate, useParams } from '@/lib/rr'
+import { Navigate, Link, useParams } from '@/lib/rr'
+import { useLocale } from '@/i18n/locale'
 import { SectionHeader } from '@/components/content/SectionHeader'
 import { SectionRenderer } from '@/components/content/SectionRenderer'
 import { useLocalizedSection } from '@/i18n/content'
@@ -13,6 +14,7 @@ export function SectionPage() {
   const { setDisplay } = useDisplay()
   const { dispatch } = useStore()
   const t = useT()
+  const { locale } = useLocale()
 
   useEffect(() => {
     if (!section) return
@@ -30,6 +32,7 @@ export function SectionPage() {
   return (
     <div className="page">
       <SectionHeader title={section.title} short={section.short} meta={t.section.meta(String(section.pad).padStart(2, '0'))} />
+      {['effects', 'resample', 'sidechain'].includes(section.id) && <Link className="chip listening-link" to={`/listen?topic=${section.id === 'effects' ? 'fx' : section.id}`}>{locale === 'en' ? 'LISTEN TO A ROLAND DEMONSTRATION →' : 'POSŁUCHAJ DEMONSTRACJI ROLANDA →'}</Link>}
       <SectionRenderer section={section} />
     </div>
   )

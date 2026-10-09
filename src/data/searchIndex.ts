@@ -13,6 +13,8 @@ import { glossaryEn } from '../i18n/en/glossary'
 import { shortcutsEn } from '../i18n/en/shortcuts'
 import { troubleshootingEn } from '../i18n/en/troubleshooting'
 import { workflowsEn } from '../i18n/en/workflows'
+import { doomControlsEn } from '../i18n/en/doom'
+import { companionText } from '../i18n/companion'
 import { normalizeSearch as normalize } from '../utils/search'
 
 
@@ -31,6 +33,7 @@ let cache: SearchEntry[] | null = null
 export function buildSearchIndex(): SearchEntry[] {
   if (cache) return cache
   const idx: SearchEntry[] = []
+  idx.push({ kind: 'tool', id: 'listen', title: 'ODSŁUCH SP', preview: 'Publiczne demonstracje FX, resamplingu i sidechainu Rolanda.', route: '/listen', sectionLabel: 'ONLINE AUDIO', tags: ['listen', 'audio', 'demo', 'roland', 'fx', 'effects', 'resample', 'sidechain', 'odsłuch', 'przed po', 'before after'] })
   idx.push({ kind: 'tool', id: 'doom-os', title: 'DOOM OS', preview: `Manual ${DOOM.manualVersion} · sterowanie, patterny i automatyka`, route: '/doom-os', sectionLabel: 'DOOM OS', tags: ['doom', 'doom os', 'custom firmware', 'klangfeld', 'manual', 'mixer', 'automation'] })
   idx.push({ kind: 'tool', id: 'screen', title: 'JESTEM NA EKRANIE', preview: 'Wybierz ekran SP i znajdź pokrętła oraz czynności.', route: '/screen', sectionLabel: 'OFFLINE TOOL', tags: ['ekran', 'screen', 'ctrl', 'pokrętła', 'knobs', 'tr rec', 'mixer'] })
   idx.push({ kind: 'tool', id: 'groove', title: 'GROOVE LAB', preview: 'Velocity, nudge i długość nuty w interaktywnej siatce.', route: '/groove', sectionLabel: 'OFFLINE TOOL', tags: ['groove', 'velocity', 'nudge', 'length', 'timing', 'długość nuty'] })
@@ -92,7 +95,7 @@ export function buildSearchIndex(): SearchEntry[] {
       buttons: sc.buttons,
       path: sc.path,
       sectionLabel: sc.category,
-      tags: [sc.name, sc.nameEn ?? '', ...sc.tags, shortcutsEn[sc.id]?.description ?? ''],
+      tags: [sc.name, sc.nameEn ?? '', ...sc.tags, shortcutsEn[sc.id]?.description ?? '', ...stringValues(doomControlsEn[sc.id])],
     })
   }
 
@@ -104,7 +107,7 @@ export function buildSearchIndex(): SearchEntry[] {
       preview: w.blurb ?? `${w.steps.length} kroków · ${w.difficulty}`,
       route: `/workflow/${w.id}`,
       sectionLabel: w.category,
-      tags: [w.title, w.category, workflowsEn[w.id]?.title ?? '', workflowsEn[w.id]?.blurb ?? ''],
+      tags: [w.title, w.category, workflowsEn[w.id]?.title ?? '', workflowsEn[w.id]?.blurb ?? '', companionText(w.title, 'en'), companionText(w.blurb ?? '', 'en')],
     })
   }
 

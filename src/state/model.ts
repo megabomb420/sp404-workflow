@@ -1,3 +1,5 @@
+import type { PracticeStat } from '../utils/practice'
+
 export type Firmware = 'roland' | 'doom'
 export interface Settings {
   reducedMotion: boolean
@@ -10,7 +12,8 @@ export interface Settings {
 export type BooleanSetting = Exclude<keyof Settings, 'firmware'>
 export interface Favorites { shortcuts: string[]; workflows: string[]; troubleshooting: string[] }
 export interface KitItem { kind: keyof Favorites; id: string }
-export interface KitSet { id: string; name: string; items: KitItem[] }
+export interface KitNotes { project: string; bankPad: string; bpm: string; text: string }
+export interface KitSet { id: string; name: string; items: KitItem[]; notes?: KitNotes }
 export interface Progress {
   completedWorkflows: string[]
   workflowStep: Record<string, number>
@@ -25,7 +28,7 @@ export interface AppState {
   favorites: Favorites
   progress: Progress
   ui: UIState
-  practice: Record<string, { correct: number; review: number; needsReview: boolean }>
+  practice: Record<string, PracticeStat>
   loopFit: { bpm: string; bars: number; actual: string }
   kits: KitSet[]
   groove: GrooveState
@@ -41,6 +44,7 @@ export const DEFAULTS: AppState = {
 export const record = (value: unknown): Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
 const strings = (value: unknown): string[] => Array.isArray(value) ? [...new Set(value.filter((v): v is string => typeof v === 'string' && v.length <= 200))].slice(0, 1000) : []
 const count = (value: unknown) => typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 ? value : 0
+const timestamp = (value: unknown): number | null => typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 && value <= 8_640_000_000_000_000 ? value : null
 const text = (value: unknown): string | null => typeof value === 'string' && value.length <= 200 ? value : null
 const number = (value: unknown, min: number, max: number, fallback: number) => typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max ? value : fallback
 export function normalizeState(value: unknown): AppState {
@@ -55,7 +59,9 @@ export function normalizeState(value: unknown): AppState {
       const entry = record(item)
       if (['shortcuts', 'workflows', 'troubleshooting'].includes(String(entry.kind)) && text(entry.id) && !items.some((i) => i.kind === entry.kind && i.id === entry.id)) items.push({ kind: entry.kind as keyof Favorites, id: entry.id as string })
     }
-    kits.push({ id: set.id, name: set.name.trim().slice(0, 60), items })
+    const notes = record(set.notes)
+    const noteText = (key: string, max: number) => typeof notes[key] === 'string' ? (notes[key] as string).slice(0, max) : ''
+    kits.push({ id: set.id, name: set.name.trim().slice(0, 60), items, ...(set.notes ? { notes: { project: noteText('project', 100), bankPad: noteText('bankPad', 100), bpm: noteText('bpm', 20), text: noteText('text', 2000) } } : {}) })
   }
   const bool = (key: BooleanSetting) => typeof settings[key] === 'boolean' ? settings[key] as boolean : DEFAULTS.settings[key]
   return {
@@ -63,7 +69,7 @@ export function normalizeState(value: unknown): AppState {
     favorites: { shortcuts: strings(favorites.shortcuts), workflows: strings(favorites.workflows), troubleshooting: strings(favorites.troubleshooting) },
     progress: { completedWorkflows: strings(progress.completedWorkflows), workflowStep: Object.fromEntries(Object.entries(record(progress.workflowStep)).map(([id, v]) => [id, count(v)])), doneSteps: Object.fromEntries(Object.entries(record(progress.doneSteps)).map(([id, v]) => [id, strings(v)])), activeWorkflowId: text(progress.activeWorkflowId) },
     ui: { lastSection: text(ui.lastSection), recent: strings(ui.recent).slice(0, 4), recentSearches: strings(ui.recentSearches).slice(0, 8), onboarded: ui.onboarded === true },
-    practice: Object.fromEntries(Object.entries(record(parsed.practice)).map(([id, v]) => { const stat = record(v); return [id, { correct: count(stat.correct), review: count(stat.review), needsReview: stat.needsReview === true }] })),
+    practice: Object.fromEntries(Object.entries(record(parsed.practice)).map(([id, v]) => { const stat = record(v); return [id, { correct: count(stat.correct), review: count(stat.review), needsReview: stat.needsReview === true, streak: count(stat.streak), lastPracticedAt: timestamp(stat.lastPracticedAt), dueAt: timestamp(stat.dueAt) }] })),
     loopFit: { bpm: typeof loop.bpm === 'string' ? loop.bpm.slice(0, 100) : '90', bars: typeof loop.bars === 'number' && [.5, 1, 2, 4, 8, 16].includes(loop.bars) ? loop.bars : 4, actual: typeof loop.actual === 'string' ? loop.actual.slice(0, 100) : '' },
     kits,
     groove: { bpm: number(groove.bpm, 40, 200, 90), selected: Math.floor(number(groove.selected, 0, 15, 0)), scope: groove.scope === 'track' ? 'track' : 'note', notes: Array.from({ length: 16 }, (_, i) => {

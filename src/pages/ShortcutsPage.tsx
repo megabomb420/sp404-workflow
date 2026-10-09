@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ShortcutCard } from '@/components/content/ShortcutCard'
 import { shortcutCategories } from '@/data/shortcuts'
-import { useLocalizedShortcuts } from '@/i18n/content'
+import { useLocalizedShortcuts, localizeShortcut } from '@/i18n/content'
+import { useLocale } from '@/i18n/locale'
 import { useT } from '@/i18n/useT'
 import { useDisplay } from '@/state/display'
 import { useStore } from '@/state/store'
@@ -19,8 +20,9 @@ export function ShortcutsPage() {
   const [favOnly, setFavOnly] = useState(false)
   const [params, setParams] = useSearchParams()
   const t = useT()
+  const { locale } = useLocale()
   const { list: stockShortcuts } = useLocalizedShortcuts()
-  const shortcuts = useMemo(() => [...stockShortcuts, ...doomShortcuts], [stockShortcuts])
+  const shortcuts = useMemo(() => [...stockShortcuts, ...doomShortcuts.map(item => localizeShortcut(item, locale))], [stockShortcuts, locale])
   const selected = shortcuts.find((s) => s.id === params.get('id'))
 
   useEffect(() => {

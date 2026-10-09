@@ -1,3 +1,5 @@
+import { useLocale } from '@/i18n/locale'
+import { useC } from '@/i18n/companion'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from '@/lib/rr'
 import { useStore } from '../state/store'
@@ -9,6 +11,8 @@ import { doomSource } from '../data/doom'
 import cx from '../utils/cx'
 
 export function GroovePage() {
+  const c = useC()
+  const { locale } = useLocale()
   const { state, dispatch } = useStore()
   const { setDisplay } = useDisplay()
   const groove = state.groove, note = groove.notes[groove.selected]
@@ -55,9 +59,9 @@ export function GroovePage() {
 
   return <div className="page groove-page">
     <h1 className="page__title u-label">GROOVE LAB</h1>
-    <p className="page__lede">Zobacz i odsłuchaj wpływ velocity, przesunięcia i długości nuty. To model edukacyjny z syntetycznym dźwiękiem. Zmiany zapisują się lokalnie.</p>
+    <p className="page__lede">{c("Zobacz i odsłuchaj wpływ velocity, przesunięcia i długości nuty. To model edukacyjny z syntetycznym dźwiękiem. Zmiany zapisują się lokalnie.")}</p>
     <section className="groove-timeline panel-surface">
-      <svg viewBox="0 0 880 180" role="img" aria-label={`Siatka 16 kroków. Wybrany krok ${groove.selected + 1}, velocity ${note.velocity}, przesunięcie ${Math.round(note.nudge * 15000 / groove.bpm)} milisekund, długość ${note.length} kroku.`}>
+      <svg viewBox="0 0 880 180" role="img" aria-label={locale === 'en' ? `16-step grid. Selected step ${groove.selected + 1}, velocity ${note.velocity}, nudge ${Math.round(note.nudge * 15000 / groove.bpm)} milliseconds, length ${note.length} steps.` : `Siatka 16 kroków. Wybrany krok ${groove.selected + 1}, velocity ${note.velocity}, przesunięcie ${Math.round(note.nudge * 15000 / groove.bpm)} milisekund, długość ${note.length} kroku.`}>
         <defs><clipPath id="groove-clip"><rect x="24" y="0" width="832" height="180" /></clipPath></defs>
         {Array.from({ length: 17 }, (_, i) => <line key={i} x1={24 + i * 52} x2={24 + i * 52} y1="12" y2="146" stroke={i % 4 === 0 ? 'var(--ink-faint)' : 'var(--hairline)'} strokeDasharray={i % 4 ? '3 4' : undefined} />)}
         <g clipPath="url(#groove-clip)">{groove.notes.map((n, i) => n.on && <g key={i} fill={i === groove.selected ? 'var(--accent)' : 'var(--led)'}>
@@ -69,26 +73,26 @@ export function GroovePage() {
         {playing && <line className="groove-playhead" x1={24 + cursor * 52} x2={24 + cursor * 52} y1="8" y2="146" stroke="var(--ink)" strokeWidth="2" />}
         {[1, 2, 3, 4].map((beat, i) => <text key={beat} x={24 + i * 208} y="168" fill="var(--ink-dim)" fontSize="16">BEAT {beat}</text>)}
       </svg>
-      <p className="groove-legend">Słupek = velocity · punkt = timing · linia = długość</p>
+      <p className="groove-legend">{c("Słupek = velocity · punkt = timing · linia = długość")}</p>
       <div className="tool-actions">
-        <button className="chip" type="button" onClick={async () => { if (playing) stop(); else if (!sound || await prepareAudio()) setPlaying(true) }}>{playing ? 'STOP' : 'ODTWÓRZ'}</button>
-        <button className="chip" type="button" aria-pressed={sound} onClick={async () => { stop(); if (sound) setSound(false); else if (await prepareAudio()) setSound(true) }}>DŹWIĘK {sound ? 'ON' : 'OFF'}</button>
-        <button className="chip" type="button" onClick={() => { stop(); dispatch({ type: 'SET_GROOVE', value: DEFAULTS.groove }) }}>WZÓR STARTOWY</button>
+        <button className="chip" type="button" onClick={async () => { if (playing) stop(); else if (!sound || await prepareAudio()) setPlaying(true) }}>{playing ? 'STOP' : c("ODTWÓRZ")}</button>
+        <button className="chip" type="button" aria-pressed={sound} onClick={async () => { stop(); if (sound) setSound(false); else if (await prepareAudio()) setSound(true) }}>{c("DŹWIĘK")} {sound ? 'ON' : 'OFF'}</button>
+        <button className="chip" type="button" onClick={() => { stop(); dispatch({ type: 'SET_GROOVE', value: DEFAULTS.groove }) }}>{c("WZÓR STARTOWY")}</button>
       </div>
-      {message && <p role="status">{message}</p>}
+      {message && <p role="status">{c(message)}</p>}
     </section>
-    <div className="groove-steps" role="group" aria-label="wybór kroku">{groove.notes.map((n, i) => <button key={i} className={cx('groove-step', n.on && 'is-on', i === groove.selected && 'is-selected')} type="button" aria-pressed={i === groove.selected} aria-label={`wybierz krok ${i + 1}${n.on ? ', nuta włączona' : ', pusty'}`} onClick={() => dispatch({ type: 'SET_GROOVE', value: { selected: i } })}>{i + 1}</button>)}</div>
+    <div className="groove-steps" role="group" aria-label={c("wybór kroku")}>{groove.notes.map((n, i) => <button key={i} className={cx('groove-step', n.on && 'is-on', i === groove.selected && 'is-selected')} type="button" aria-pressed={i === groove.selected} aria-label={`${c('wybierz krok')} ${i + 1}${c(n.on ? ', nuta włączona' : ', pusty')}`} onClick={() => dispatch({ type: 'SET_GROOVE', value: { selected: i } })}>{i + 1}</button>)}</div>
     <section className="groove-controls panel-surface">
-      <h2 className="u-label">KROK {groove.selected + 1}</h2>
-      <div className="tool-actions"><button className="chip" type="button" aria-pressed={note.on} onClick={() => dispatch({ type: 'SET_GROOVE', value: { notes: groove.notes.map((n, i) => i === groove.selected ? { ...n, on: !n.on } : n) } })}>{note.on ? 'NUTA ON' : 'NUTA OFF'}</button><button className="chip" type="button" aria-pressed={groove.scope === 'track'} onClick={() => dispatch({ type: 'SET_GROOVE', value: { scope: groove.scope === 'note' ? 'track' : 'note' } })}>{groove.scope === 'track' ? 'WSZYSTKIE NUTY' : 'TYLKO TA NUTA'}</button></div>
-      {groove.scope === 'track' && <p className="groove-scope">Zmiana parametru nada wszystkim nutom tę samą wartość — jak gałka w siatce DOOM OS bez trzymania pada.</p>}
-      <label className="lab-slider">TEMPO <output>{groove.bpm} BPM</output><input type="range" aria-label="tempo laboratorium" min="40" max="200" value={groove.bpm} onChange={(e) => { stop(); dispatch({ type: 'SET_GROOVE', value: { bpm: Number(e.target.value) } }) }} /></label>
-      <label className="lab-slider">VELOCITY <output>{note.velocity}</output><input type="range" aria-label="velocity nuty" min="1" max="127" value={note.velocity} onChange={(e) => edit('velocity', Number(e.target.value))} /></label>
-      <label className="lab-slider">NUDGE <output>{Math.round(note.nudge * 15000 / groove.bpm)} ms</output><input type="range" aria-label="przesunięcie nuty" min="-.45" max=".45" step=".01" value={note.nudge} onChange={(e) => edit('nudge', Number(e.target.value))} /></label>
-      <label className="lab-slider">DŁUGOŚĆ <output>{note.length} kroku</output><input type="range" aria-label="długość nuty" min=".125" max="16" step=".125" value={note.length} onChange={(e) => edit('length', Number(e.target.value))} /></label>
-      <p className="page__lede">1 takt 4/4, 16 kroków. Ujemny nudge wyprzedza siatkę, dodatni opóźnia. Rzeczywisty czas wybrzmienia sampla zależy też od jego długości i trybu odtwarzania na SP.</p>
+      <h2 className="u-label">{c("KROK")} {groove.selected + 1}</h2>
+      <div className="tool-actions"><button className="chip" type="button" aria-pressed={note.on} onClick={() => dispatch({ type: 'SET_GROOVE', value: { notes: groove.notes.map((n, i) => i === groove.selected ? { ...n, on: !n.on } : n) } })}>{note.on ? c("NUTA ON") : c("NUTA OFF")}</button><button className="chip" type="button" aria-pressed={groove.scope === 'track'} onClick={() => dispatch({ type: 'SET_GROOVE', value: { scope: groove.scope === 'note' ? 'track' : 'note' } })}>{groove.scope === 'track' ? c("WSZYSTKIE NUTY") : c("TYLKO TA NUTA")}</button></div>
+      {groove.scope === 'track' && <p className="groove-scope">{c("Zmiana parametru nada wszystkim nutom tę samą wartość — jak gałka w siatce DOOM OS bez trzymania pada.")}</p>}
+      <label className="lab-slider">TEMPO <output>{groove.bpm} BPM</output><input type="range" aria-label={c("tempo laboratorium")} min="40" max="200" value={groove.bpm} onChange={(e) => { stop(); dispatch({ type: 'SET_GROOVE', value: { bpm: Number(e.target.value) } }) }} /></label>
+      <label className="lab-slider">VELOCITY <output>{note.velocity}</output><input type="range" aria-label={c("velocity nuty")} min="1" max="127" value={note.velocity} onChange={(e) => edit('velocity', Number(e.target.value))} /></label>
+      <label className="lab-slider">NUDGE <output>{Math.round(note.nudge * 15000 / groove.bpm)} ms</output><input type="range" aria-label={c("przesunięcie nuty")} min="-.45" max=".45" step=".01" value={note.nudge} onChange={(e) => edit('nudge', Number(e.target.value))} /></label>
+      <label className="lab-slider">{c("DŁUGOŚĆ")} <output>{note.length}  {c("kroku")}</output><input type="range" aria-label={c("długość nuty")} min=".125" max="16" step=".125" value={note.length} onChange={(e) => edit('length', Number(e.target.value))} /></label>
+      <p className="page__lede">{c("1 takt 4/4, 16 kroków. Ujemny nudge wyprzedza siatkę, dodatni opóźnia. Rzeczywisty czas wybrzmienia sampla zależy też od jego długości i trybu odtwarzania na SP.")}</p>
       <SourceTag source={doomSource} kind="tip" />
-      <Link className="chip" to="/screen?id=grid">POKRĘTŁA NA PRAWDZIWYM SP →</Link>
+      <Link className="chip" to="/screen?id=grid">{c("POKRĘTŁA NA PRAWDZIWYM SP →")}</Link>
     </section>
   </div>
 }

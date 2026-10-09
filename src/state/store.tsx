@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react'
 import { setHapticsEnabled } from '../utils/haptics'
 import { DEFAULTS, normalizeState } from './model'
+import { assessPractice, queuePractice } from '../utils/practice'
 import type { AppState, BooleanSetting, Favorites, Firmware, GrooveState, KitItem, KitSet } from './model'
 export type { AppState, Settings, Favorites, Progress, UIState, KitItem, KitSet, Firmware } from './model'
 
@@ -17,6 +18,7 @@ export type Action =
   | { type: 'IMPORT_STATE'; state: AppState }
   | { type: 'CREATE_KIT'; kit: KitSet }
   | { type: 'RENAME_KIT'; id: string; name: string }
+  | { type: 'SET_KIT_NOTES'; id: string; notes: import('./model').KitNotes }
   | { type: 'DELETE_KIT'; id: string }
   | { type: 'TOGGLE_KIT_ITEM'; kitId: string; item: KitItem }
   | { type: 'MOVE_KIT_ITEM'; kitId: string; index: number; direction: -1 | 1 }
@@ -35,8 +37,8 @@ export type Action =
   | { type: 'RESET_FAVORITES' }
   | { type: 'RESET_ALL' }
   | { type: 'SET_SETTING'; key: BooleanSetting; value: boolean }
-  | { type: 'PRACTICE_RESULT'; id: string; correct: boolean }
-  | { type: 'QUEUE_PRACTICE'; id: string }
+  | { type: 'PRACTICE_RESULT'; id: string; correct: boolean; now?: number }
+  | { type: 'QUEUE_PRACTICE'; id: string; now?: number }
   | { type: 'SET_LOOP_FIT'; value: Partial<AppState['loopFit']> }
 
 function toggle(list: string[], id: string): string[] {
@@ -50,6 +52,7 @@ function reducer(state: AppState, action: Action): AppState {
     case 'SET_GROOVE': return { ...state, groove: { ...state.groove, ...action.value } }
     case 'CREATE_KIT': return state.kits.length >= 30 ? state : { ...state, kits: [...state.kits, action.kit] }
     case 'RENAME_KIT': return { ...state, kits: state.kits.map((kit) => kit.id === action.id ? { ...kit, name: action.name.trim().slice(0, 60) || kit.name } : kit) }
+    case 'SET_KIT_NOTES': return { ...state, kits: state.kits.map(kit => kit.id === action.id ? { ...kit, notes: action.notes } : kit) }
     case 'DELETE_KIT': return { ...state, kits: state.kits.filter((kit) => kit.id !== action.id) }
     case 'TOGGLE_KIT_ITEM': return { ...state, kits: state.kits.map((kit) => {
       if (kit.id !== action.kitId) return kit
@@ -65,17 +68,8 @@ function reducer(state: AppState, action: Action): AppState {
     }) }
     case 'SET_LOOP_FIT':
       return { ...state, loopFit: { ...state.loopFit, ...action.value } }
-    case 'QUEUE_PRACTICE':
-    case 'PRACTICE_RESULT': {
-      const previous = state.practice[action.id] ?? { correct: 0, review: 0, needsReview: false }
-      const assessed = action.type === 'PRACTICE_RESULT'
-      const correct = assessed && action.correct
-      return { ...state, practice: { ...state.practice, [action.id]: {
-        correct: previous.correct + (correct ? 1 : 0),
-        review: previous.review + (assessed && !correct ? 1 : 0),
-        needsReview: !correct,
-      } } }
-    }
+    case 'QUEUE_PRACTICE': return { ...state, practice: { ...state.practice, [action.id]: queuePractice(state.practice[action.id], action.now ?? Date.now()) } }
+    case 'PRACTICE_RESULT': return { ...state, practice: { ...state.practice, [action.id]: assessPractice(state.practice[action.id], action.correct, action.now ?? Date.now()) } }
     case 'TOGGLE_FAV': {
       const list = toggle(state.favorites[action.kind], action.id)
       return { ...state, favorites: { ...state.favorites, [action.kind]: list } }

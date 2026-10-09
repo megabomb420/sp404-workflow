@@ -96,7 +96,7 @@ export function WorkflowPlayer({ workflow }: { workflow: Workflow }) {
 
   const openRescue = () => {
     if (workflow.environment === 'doom') {
-      navigate('/doom-os?id=doom-help')
+      navigate(`/fix-it?firmware=doom&from=${workflow.id}&step=${stepIndex}`)
       return
     }
     if (actionRecord) dispatch({ type: 'QUEUE_PRACTICE', id: actionRecord.id })

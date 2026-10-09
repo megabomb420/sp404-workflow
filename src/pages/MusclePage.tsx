@@ -11,6 +11,12 @@ import { useDisplay } from '@/state/display'
 import { useStore } from '@/state/store'
 import { workflowReturnRoute } from '@/utils/session'
 import cx from '@/utils/cx'
+import { doomPracticeIds, practiceDue } from '@/utils/practice'
+import { usePracticeClock } from '@/utils/usePracticeClock'
+import { useLocale } from '@/i18n/locale'
+import { doomShortcuts } from '@/data/doom'
+import { localizeShortcut } from '@/i18n/content'
+import { FirmwareNotice } from '@/components/content/FirmwareSwitch'
 
 type Mode = 'practice' | 'review' | MuscleCategory
 interface Exercise {
@@ -40,6 +46,9 @@ export function MusclePage() {
   const { list: actions, byId: actionsById } = useLocalizedActions()
   const { list: workflows } = useLocalizedWorkflows()
   const muscleTasks = useLocalizedMuscle()
+  const { locale } = useLocale()
+  const en = locale === 'en'
+  const now = usePracticeClock()
 
   const procedures = useMemo<Exercise[]>(
     () =>
@@ -77,29 +86,35 @@ export function MusclePage() {
     [muscleTasks],
   )
 
-  const allExercises = useMemo(() => [...procedures, ...recall], [procedures, recall])
-  const reviewCount = allExercises.filter((item) => state.practice[item.id]?.needsReview).length
+  const doomExercises = useMemo<Exercise[]>(() => doomShortcuts
+    .filter((item) => doomPracticeIds.has(item.id))
+    .map((original) => { const item = localizeShortcut(original, locale); return { id: item.id, task: item.name, answer: item.buttons, path: item.path, explanation: item.description, source: item.source, route: `/doom-os?id=${item.id}` } }), [locale])
+  const currentProcedures = state.settings.firmware === 'doom' ? doomExercises : procedures
+  const allExercises = useMemo(() => state.settings.firmware === 'doom' ? doomExercises : [...procedures, ...recall], [state.settings.firmware, doomExercises, procedures, recall])
+  const reviewCount = allExercises.filter((item) => practiceDue(state.practice[item.id], now)).length
+  const futureReview = allExercises.map((item) => state.practice[item.id]?.dueAt).filter((at): at is number => typeof at === 'number' && at > now).sort((a, b) => a - b)[0]
+  const formatDate = (at: number) => new Intl.DateTimeFormat(en ? 'en-IE' : 'pl-PL', { dateStyle: 'short', timeStyle: 'short' }).format(at)
 
   useEffect(() => {
     setDisplay({ title: 'MUSCLE MEMORY', sub: t.muscle.lcdSub, right: t.muscle.reviewRight(reviewCount) })
   }, [setDisplay, reviewCount, t])
 
   useEffect(() => {
-    setTask(procedures.find((item) => item.id === requested) ?? null)
+    setTask([...procedures, ...doomExercises].find((item) => item.id === requested) ?? null)
     setShown(false)
     setMode(requestedReview ? 'review' : 'practice')
-  }, [requested, requestedReview, procedures])
+  }, [requested, requestedReview, procedures, doomExercises, state.settings.firmware])
 
   const pool = useMemo<Exercise[]>(() => {
-    if (mode === 'practice') return procedures
-    if (mode === 'review') return allExercises.filter((item) => state.practice[item.id]?.needsReview)
+    if (mode === 'practice') return currentProcedures
+    if (mode === 'review') return allExercises.filter((item) => practiceDue(state.practice[item.id], now)).sort((a, b) => (state.practice[a.id]?.dueAt ?? 0) - (state.practice[b.id]?.dueAt ?? 0))
     return recall.filter((item) => item.category === mode)
-  }, [mode, state.practice, procedures, allExercises, recall])
+  }, [mode, state.practice, currentProcedures, allExercises, recall, now])
 
   const pick = (exclude = task?.id) => {
     const candidates = pool.filter((item) => item.id !== exclude)
     const choices = candidates.length ? candidates : pool
-    setTask(choices[Math.floor(Math.random() * choices.length)] ?? null)
+    setTask(choices[mode === 'review' ? 0 : Math.floor(Math.random() * choices.length)] ?? null)
     setShown(false)
   }
   const changeMode = (next: Mode) => {
@@ -109,7 +124,8 @@ export function MusclePage() {
   }
   const assess = (correct: boolean) => {
     if (!task) return
-    dispatch({ type: 'PRACTICE_RESULT', id: task.id, correct })
+    const at = Date.now()
+    dispatch({ type: 'PRACTICE_RESULT', id: task.id, correct, now: at })
     setSession((s) => ({ correct: s.correct + Number(correct), total: s.total + 1 }))
     setTask(null)
     setShown(false)
@@ -117,13 +133,14 @@ export function MusclePage() {
 
   return (
     <div className="page">
+      {task && <FirmwareNotice firmware={task.id.startsWith('doom-') ? 'doom' : 'roland'} />}
       <p className="page__lede">{t.muscle.lede}</p>
       <p className="practice-safety">{t.muscle.safety}</p>
       <div className="chipbar" role="toolbar" aria-label={t.muscle.modeAria}>
         <button className={cx('chip', mode === 'practice' && 'is-active')} onClick={() => changeMode('practice')}>{t.muscle.actions}</button>
         <button className={cx('chip', mode === 'review' && 'is-active')} onClick={() => changeMode('review')}>{t.muscle.review(reviewCount)}</button>
       </div>
-      <details className="practice-categories">
+      {state.settings.firmware === 'roland' && <details className="practice-categories">
         <summary>{t.muscle.flashcats}</summary>
         <div className="chipbar">
           {muscleCategories.map((cat) => (
@@ -132,7 +149,11 @@ export function MusclePage() {
             </button>
           ))}
         </div>
-      </details>
+      </details>}
+      <aside className="practice-schedule panel-surface">
+        <p>{en ? 'A correct answer returns after 1, 3, 7, 14, then 30 days. Try a missed answer again in 10 minutes. Reviews appear here when due.' : 'Poprawna odpowiedź wraca po 1, 3, 7, 14, potem 30 dniach. Nieudaną powtórz za 10 minut. Terminowe powtórki pojawią się tutaj.'}</p>
+        {futureReview && <p role="status">{en ? 'Next review: ' : 'Następna powtórka: '}{formatDate(futureReview)}.</p>}
+      </aside>
       <p className="practice-score u-mono" role="status">{t.muscle.score(session.correct, session.total, reviewCount)}</p>
       {!task ? (
         <div className="muscle-start panel-surface">

@@ -58,6 +58,24 @@
 .shell--hardware .shell__modes .chip { min-height: 36px; }
 .shell--hardware .wf-step__action { font-size: 21px; line-height: 1.55; }
 .shell--hardware .wf-check p { font-size: 17px; }
-.shell--hardware .home-map, .shell--hardware .goal-card__blurb { display: none; }
+.shell--hardware .goal-card__blurb { display: none; }
+.kit-notes, .practice-schedule, .rescue-guide, .listening-demo { padding: 18px; margin: 16px 0; min-width: 0; }
+.kit-notes__fields { display: grid; grid-template-columns: 1fr 1fr 80px; gap: 12px; margin: 14px 0; }
+.kit-notes label { display: flex; flex-direction: column; gap: 7px; font-size: 13px; min-width: 0; }
+.kit-notes input, .kit-notes textarea { width: 100%; min-height: 44px; padding: 10px; border: 1px solid var(--hairline); border-radius: var(--radius-s); background: var(--surface-inset); color: var(--ink); }
+.kit-notes textarea { resize: vertical; }
+.kit-notes p { margin-top: 12px; color: var(--ink-dim); font-size: 11px; }
+.practice-schedule p, .rescue-guide p, .listening-demo p { color: var(--ink-dim); font-size: 14px; line-height: 1.6; margin: 12px 0; }
+.rescue-guide__choices { display: grid; gap: 12px; }
+.rescue-guide__choices .chip { text-align: left; white-space: normal; }
+.rescue-reference { margin-top: 16px; }
+.listening-demo__source { display: block; color: var(--ink-dim); font-size: 10px; margin-bottom: 10px; }
+.listening-demo summary, .rescue-reference summary { cursor: pointer; color: var(--accent); padding: 8px 0; font-size: 13px; }
+.listening-player { margin: 16px 0; }
+.listening-player video, .listening-player iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--hairline); border-radius: var(--radius-s); background: #000; }
+.listening-demo > .chipbar { margin-top: 14px; align-items: center; }
+.listening-demo a:not(.chip) { font-size: 12px; }
+.listening-link { margin-bottom: 18px; }
+@media (max-width: 480px) { .kit-notes__fields { grid-template-columns: 1fr; } }
 @media (max-width: 540px) { .compare-methods { grid-template-columns: 1fr; } }
 @media (max-width: 360px) { .shell__modes { padding-inline: 10px; gap: 5px; } .shell__modes .chip { padding-inline: 8px; font-size: 10px; } .knob-map { gap: 5px; } .knob-map > div { padding: 10px 6px; } .companion-tools { grid-template-columns: 1fr; } }

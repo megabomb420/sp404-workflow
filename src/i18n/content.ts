@@ -32,12 +32,16 @@ import { troubleshootingEn } from './en/troubleshooting'
 import { workflowsEn } from './en/workflows'
 import { useLocale, type Locale } from './locale'
 import { pick } from './localize'
+import { doomControlsEn, doomButtonsEn } from './en/doom'
+import { localizeCompanion } from './companion'
 
 export function localizeAction(action: ActionRecord, locale: Locale): ActionRecord {
   return pick(locale, action, actionsEn[action.id])
 }
 
 export function localizeShortcut(item: Shortcut, locale: Locale): Shortcut {
+  const doom = doomControlsEn[item.id]
+  if (locale === 'en' && doom) return { ...item, ...doom, buttons: item.buttons.map(button => doomButtonsEn[button] ?? button) }
   const overlay = shortcutsEn[item.id]
   return locale === 'en' && overlay ? { ...item, description: overlay.description } : item
 }
@@ -71,6 +75,7 @@ function localizeStep(step: WorkflowStep, overlay?: { title?: string; action?: s
 
 export function localizeWorkflow(workflow: Workflow, locale: Locale): Workflow {
   if (locale !== 'en') return workflow
+  if (workflow.environment === 'doom') return localizeCompanion(workflow, locale)
   const overlay = workflowsEn[workflow.id]
   if (!overlay) return workflow
   return {

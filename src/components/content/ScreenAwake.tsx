@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useStore } from '../../state/store'
+import { useC } from '@/i18n/companion'
 
 export function ScreenAwake() {
+  const c = useC()
   const { state } = useStore()
   const [status, setStatus] = useState('')
   useEffect(() => {
@@ -23,5 +25,5 @@ export function ScreenAwake() {
     void acquire(); document.addEventListener('visibilitychange', acquire)
     return () => { cancelled = true; document.removeEventListener('visibilitychange', acquire); if (lock && !lock.released) void lock.release().catch(() => {}) }
   }, [state.settings.keepScreenAwake])
-  return status ? <p className="awake-status u-mono" role="status">{status}</p> : null
+  return status ? <p className="awake-status u-mono" role="status">{c(status)}</p> : null
 }

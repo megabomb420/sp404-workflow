@@ -7,6 +7,11 @@ import { useDisplay } from '@/state/display'
 import { useStore } from '@/state/store'
 import { actionsById } from '@/data/actions'
 import { useLocale } from '@/i18n/locale'
+import { doomPracticeIds, practiceDue } from '@/utils/practice'
+import { usePracticeClock } from '@/utils/usePracticeClock'
+import { muscleTasks } from '@/data/muscleMemory'
+import { doomPads } from '@/data/doomPads'
+import { localizeCompanion } from '@/i18n/companion'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -17,7 +22,8 @@ export function HomePage() {
   const padsSource = useLocalizedHomePads()
   const { featured, byId: workflowsById } = useLocalizedWorkflows()
   const { byId: sectionsById } = useLocalizedSections()
-  const reviewCount = Object.entries(state.practice).filter(([id, stat]) => actionsById[id] && stat.needsReview).length
+  const now = usePracticeClock()
+  const reviewCount = Object.entries(state.practice).filter(([id, stat]) => practiceDue(stat, now) && (state.settings.firmware === 'doom' ? doomPracticeIds.has(id) : (actionsById[id] && actionsById[id].safety !== 'destructive') || muscleTasks.some((item) => `recall:${item.id}` === id && !/delete|format|factory|truncate|usu[nń]|kasuj/i.test(`${item.id} ${item.task}`)))).length
 
   useEffect(() => {
     setDisplay({
@@ -27,7 +33,7 @@ export function HomePage() {
     })
   }, [setDisplay, state.progress.activeWorkflowId, t])
 
-  const pads: PadConfig[] = padsSource.map((pad) => ({
+  const pads: PadConfig[] = (state.settings.firmware === 'doom' ? localizeCompanion(doomPads, locale) : padsSource).map((pad) => ({
     pad: pad.pad,
     label: pad.label,
     sublabel: pad.sublabel,
@@ -74,7 +80,7 @@ export function HomePage() {
         <PadGrid items={pads} />
       </section>
       <section className="companion-tools" aria-label={locale === 'en' ? 'Companion tools' : 'Narzędzia przy SP'}>
-        {[['/screen', locale === 'en' ? 'ON THIS SCREEN' : 'JESTEM NA EKRANIE', 'CTRL 1 · 2 · 3'], ['/groove', 'GROOVE LAB', 'VELOCITY · NUDGE · LENGTH'], ['/compare', locale === 'en' ? 'COMPARE METHODS' : 'PORÓWNAJ SPOSOBY', 'ROLAND ↔ DOOM OS'], ['/doom-os', 'DOOM OS', locale === 'en' ? 'GUIDE · CONTROLS' : 'MANUAL · STEROWANIE']].map(([to, title, sub]) => <Link key={to} to={to} className="now-escape__item panel-surface"><span className="u-label">{title}</span><small>{sub}</small></Link>)}
+        {[['/listen', locale === 'en' ? 'LISTEN ON SP' : 'ODSŁUCH SP', 'FX · RESAMPLE · SIDECHAIN'], ['/screen', locale === 'en' ? 'ON THIS SCREEN' : 'JESTEM NA EKRANIE', 'CTRL 1 · 2 · 3'], ['/groove', 'GROOVE LAB', 'VELOCITY · NUDGE · LENGTH'], ['/compare', locale === 'en' ? 'COMPARE METHODS' : 'PORÓWNAJ SPOSOBY', 'ROLAND ↔ DOOM OS'], ['/doom-os', 'DOOM OS', locale === 'en' ? 'GUIDE · CONTROLS' : 'MANUAL · STEROWANIE']].map(([to, title, sub]) => <Link key={to} to={to} className="now-escape__item panel-surface"><span className="u-label">{title}</span><small>{sub}</small></Link>)}
       </section>
 
       <div className="now-escape">

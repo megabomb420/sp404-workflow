@@ -16,6 +16,7 @@ import { Route as FixItRouteImport } from './routes/fix-it'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as GrooveRouteImport } from './routes/groove'
 import { Route as KitRouteImport } from './routes/kit'
+import { Route as ListenRouteImport } from './routes/listen'
 import { Route as LoopFitRouteImport } from './routes/loop-fit'
 import { Route as MuscleRouteImport } from './routes/muscle'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -61,6 +62,11 @@ const GrooveRoute = GrooveRouteImport.update({
 const KitRoute = KitRouteImport.update({
   id: '/kit',
   path: '/kit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListenRoute = ListenRouteImport.update({
+  id: '/listen',
+  path: '/listen',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoopFitRoute = LoopFitRouteImport.update({
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/glossary': typeof GlossaryRoute
   '/groove': typeof GrooveRoute
   '/kit': typeof KitRoute
+  '/listen': typeof ListenRoute
   '/loop-fit': typeof LoopFitRoute
   '/muscle': typeof MuscleRoute
   '/onboarding': typeof OnboardingRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/glossary': typeof GlossaryRoute
   '/groove': typeof GrooveRoute
   '/kit': typeof KitRoute
+  '/listen': typeof ListenRoute
   '/loop-fit': typeof LoopFitRoute
   '/muscle': typeof MuscleRoute
   '/onboarding': typeof OnboardingRoute
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/glossary': typeof GlossaryRoute
   '/groove': typeof GrooveRoute
   '/kit': typeof KitRoute
+  '/listen': typeof ListenRoute
   '/loop-fit': typeof LoopFitRoute
   '/muscle': typeof MuscleRoute
   '/onboarding': typeof OnboardingRoute
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/glossary'
     | '/groove'
     | '/kit'
+    | '/listen'
     | '/loop-fit'
     | '/muscle'
     | '/onboarding'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/glossary'
     | '/groove'
     | '/kit'
+    | '/listen'
     | '/loop-fit'
     | '/muscle'
     | '/onboarding'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/glossary'
     | '/groove'
     | '/kit'
+    | '/listen'
     | '/loop-fit'
     | '/muscle'
     | '/onboarding'
@@ -251,6 +263,7 @@ export interface RootRouteChildren {
   GlossaryRoute: typeof GlossaryRoute
   GrooveRoute: typeof GrooveRoute
   KitRoute: typeof KitRoute
+  ListenRoute: typeof ListenRoute
   LoopFitRoute: typeof LoopFitRoute
   MuscleRoute: typeof MuscleRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -313,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/kit'
       fullPath: '/kit'
       preLoaderRoute: typeof KitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/listen': {
+      id: '/listen'
+      path: '/listen'
+      fullPath: '/listen'
+      preLoaderRoute: typeof ListenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/loop-fit': {
@@ -403,6 +423,7 @@ const rootRouteChildren: RootRouteChildren = {
   GlossaryRoute: GlossaryRoute,
   GrooveRoute: GrooveRoute,
   KitRoute: KitRoute,
+  ListenRoute: ListenRoute,
   LoopFitRoute: LoopFitRoute,
   MuscleRoute: MuscleRoute,
   OnboardingRoute: OnboardingRoute,
