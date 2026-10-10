@@ -2,6 +2,8 @@
 
 Status: **specyfikacja zrealizowana w R9, 10.10.2026**. Przeszło 92 testy jednostkowe i pełne sprawdzenia aplikacji, w tym wszystkie zakończenia PL/EN, widoki mobilne i offline. Przegląd źródeł zapisano w `docs/R9_SOURCE_REVIEW.md`.
 
+Numer wydania ustalony przez użytkownika: **0.9**. R9 pozostaje nazwą etapu prac opisanego w tym dokumencie.
+
 Data planu: 10.10.2026. Projekt: SP Workflow.
 Baza sprawdzona lokalnie: R8, commit `ceeb6fe8d39dac065e9058a50b8deb2212bfa56a`, gałąź `codex/doom-workflow-upgrades`.
 
@@ -331,6 +333,14 @@ Użytkownik wcześniej zlecił publikowanie aplikacji na GitHubie i Cloudflare. 
 - Zakończenie prac wymaga działającej publikacji i przejścia CI, a nie samego wysłania zmian. Nie używać force push; w razie nowych commitów na zdalnej gałęzi włączyć je bez utraty pracy.
 
 ## 13. Ocena po wydaniu
+
+### Opinia użytkownika — 10.10.2026
+
+Po publikacji R9 użytkownik potwierdził: **„Wszystko działa zajebiście.”**
+
+To pozytywna ocena obecnej wersji i punkt odniesienia przy kolejnych zmianach. Zachować obecny kierunek i prostotę aplikacji; dalsze poprawki dobierać do konkretnych potrzeb pojawiających się podczas pracy przy SP.
+
+Użytkownik doprecyzował założenie: aplikacja zaczęła jako **pomocnik skrótów przy SP**, a rozwinęła się również w **aplikację do praktycznej nauki samplera**. Ocenił to jako dobry kierunek. Zachować obie role: szybkie znalezienie skrótu oraz możliwość przejścia instrukcji i dalszego samodzielnego grania. Kolejne zmiany powinny utrzymać prosty dostęp do skrótów i wspierać naukę podczas pracy przy SP.
 
 Poprosić użytkownika o trzy zwykłe sesje przy SP, obejmujące krótką instrukcję, dłuższy workflow i powrót do szkicu. Wystarczą jego obserwacje, bez dodawania analityki do aplikacji:
 

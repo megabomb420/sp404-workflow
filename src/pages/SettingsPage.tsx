@@ -152,7 +152,7 @@ export function SettingsPage() {
         <div className="setrow">
           <span>
             <span className="toggle__label u-label">{t.settings.appRev}</span>
-            <span className="toggle__sub">{t.settings.appRevHint}</span>
+            <span className="toggle__sub">{t.settings.appRevHint(APP_REV)}</span>
           </span>
           <span className="setrow__rev u-mono">{t.settings.appRevSub(APP_REV, APP_REV_DATE)}</span>
         </div>

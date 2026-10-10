@@ -1,12 +1,14 @@
-# SP WORKFLOW R9
+# SP WORKFLOW 0.9
 
 Offline companion for the **Roland SP-404MKII**.
+
+The app combines quick access to SP shortcuts with practical learning beside the sampler. Users can look up a shortcut or follow a guide and then continue playing independently. Future changes should preserve both roles, easy access to shortcuts and a simple interface. Version **0.9** includes the completed R9 work described below and the user's positive feedback after release.
 
 Polish and English companion, firmware-aware pad navigation on NOW, local progress. Hardware labels stay as printed on the SP.
 
 **Live:** [sp-workflow.pages.dev](https://sp-workflow.pages.dev/) · mirror: [megabomb420.github.io/sp404-workflow](https://megabomb420.github.io/sp404-workflow/)
 
-Look for the amber **R9** badge on the LCD.
+Look for the amber **0.9** badge on the LCD.
 
 The companion includes the DOOM OS guide (78 controls and 3 workflows), a Roland/DOOM instruction filter, screen context with knob mappings, custom ordered MY KIT sets, Groove Lab with synthetic audio, three method comparisons, larger controls, optional screen wake lock, and backup/restore including language.
 
