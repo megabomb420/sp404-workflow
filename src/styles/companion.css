@@ -1,7 +1,9 @@
 /* Companion tools use the same chassis, LCD ink and amber controls as NOW. */
-.shell__modes { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 16px; flex-shrink: 0; border-bottom: 1px solid var(--hairline-soft); background: var(--bg-panel); }
+.shell__modes { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 12px 8px; flex-shrink: 0; border-bottom: 1px solid var(--hairline-soft); background: #161719; }
 .firmware-switch, .tool-actions, .screen-picker { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.shell__modes .chip { font-size: 11px; min-height: 32px; padding: 5px 10px; }
+.shell__modes .firmware-switch { gap: 2px; padding: 3px; border: 1px solid var(--hairline-soft); border-radius: 9px; background: var(--surface-inset); box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35); }
+.shell__modes .chip { font-size: 11px; min-height: 30px; padding: 5px 10px; border-radius: 6px; border-color: transparent; background: transparent; }
+.shell__modes .chip.is-active { border-color: #514737; background: linear-gradient(180deg, #39352d, #292620); color: #f2bb70; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 1px 3px rgba(0, 0, 0, 0.3); }
 .firmware-notice { padding: 14px; margin-bottom: 16px; border-color: var(--accent-dim); }
 .firmware-notice p { font-size: 13px; margin-bottom: 10px; color: var(--ink-dim); }
 .awake-status { flex-shrink: 0; color: var(--led); font-size: 10px; padding: 4px 16px; background: var(--surface-inset); }
@@ -122,7 +124,7 @@
 @media (max-width: 480px) { .kit-notes__fields { grid-template-columns: 1fr; } }
 
 /* R7 · sketch workspace and a shorter BEAT BLOCK working view */
-.resume-sketch { padding: 14px; margin-bottom: 14px; border-color: var(--accent-dim); }
+.resume-sketch { padding: 14px; margin-bottom: 14px; border-color: #665035; background: linear-gradient(120deg, #30281e, var(--bg-panel-raised) 55%); }
 .resume-sketch > .u-label { color: var(--accent); font-size: 12px; }
 .resume-sketch h2 { font-size: 20px; line-height: 1.25; margin: 6px 0; overflow-wrap: anywhere; }
 .resume-sketch__meta { color: var(--ink-dim); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
@@ -131,7 +133,7 @@
 .resume-sketch__workflow { display: flex; flex-direction: column; justify-content: center; gap: 4px; min-height: 44px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--hairline); color: var(--ink-dim); font-size: 12px; }
 .resume-sketch__workflow > .u-label { font-size: 11px; }
 .resume-sketch__workflow > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sketch-primary { background: var(--accent); color: var(--ink-on-accent); border-color: var(--accent); }
+.sketch-primary { background: linear-gradient(180deg, #f2b451, #dfa03a); color: var(--ink-on-accent); border-color: var(--accent); box-shadow: var(--shadow-key); }
 .home:has(.resume-sketch) .goal-card:first-child { border-color: var(--hairline); background: var(--surface); }
 .kit-studio { margin: 18px 0; }
 .sketch-next { padding: 18px; margin: 14px 0; scroll-margin-top: 12px; }
@@ -185,7 +187,9 @@
 .home--now .continue-card__k, .home--now .continue-card__body .u-mono { font-size: 11px; }
 .home--now .beat-entry { border-color: var(--hairline); margin-bottom: 12px; }
 .now-library { margin: 14px 0 0; overflow: hidden; }
-.now-library > summary { cursor: pointer; padding: 16px 14px; min-height: 52px; font-size: 13px; }
-.now-library > summary::marker { color: var(--accent); }
+.now-library > summary { cursor: pointer; padding: 16px 14px; min-height: 52px; font-size: 13px; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.now-library > summary::-webkit-details-marker { display: none; }
+.now-library > summary::after { content: '+'; font-family: var(--font-mono); font-size: 18px; font-weight: 400; color: var(--accent); }
+.now-library[open] > summary::after { content: '−'; }
 .now-library__body { padding: 4px 12px 12px; }
 .now-library .companion-tools { margin-bottom: 0; }

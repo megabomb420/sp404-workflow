@@ -14,7 +14,7 @@
   width: 100%;
   max-width: 430px;
   margin: 0 auto;
-  background: var(--bg-chassis);
+  background: linear-gradient(180deg, #191a1d, var(--bg-chassis) 220px);
   overflow: hidden;
   overscroll-behavior: none;
 }
@@ -25,7 +25,7 @@
   align-items: center;
   gap: 8px;
   padding: calc(var(--safe-t) + 8px) 10px 8px;
-  background: var(--bg-chassis);
+  background: linear-gradient(180deg, #1c1d20, #161719);
 }
 
 .shell__iconbtn,
@@ -36,8 +36,8 @@
   border-radius: 8px;
   border: 1px solid var(--hairline);
   background: linear-gradient(180deg, var(--surface-raised), var(--surface));
-  min-width: 36px;
-  min-height: 36px;
+  min-width: 40px;
+  min-height: 40px;
   display: grid;
   place-items: center;
 }
@@ -127,12 +127,13 @@
   z-index: var(--z-dock);
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  background: var(--bg-chassis);
+  background: linear-gradient(180deg, #1c1d20, #121315);
   border-top: 1px solid var(--hairline);
   padding: 6px 4px calc(8px + var(--safe-b));
 }
 
 .dock__tab {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -145,7 +146,8 @@
   touch-action: manipulation;
 }
 
-.dock__tab.is-active { color: var(--accent); }
+.dock__tab.is-active { color: var(--accent); background: linear-gradient(180deg, var(--accent-soft), transparent); }
+.dock__tab.is-active::before { content: ''; position: absolute; top: 0; width: 18px; height: 2px; border-radius: 2px; background: var(--accent); }
 .dock__tab.is-active .dock__label { color: var(--accent); }
 .dock__tab:active { transform: translateY(1px); }
 .dock__label { font-size: 9px; letter-spacing: 0.08em; }
@@ -153,7 +155,7 @@
 /* ---------- generic page ---------- */
 
 .page { padding-top: 12px; }
-.page__title { font-size: 24px; letter-spacing: 0.03em; color: var(--ink); }
+.page__title { font-size: 24px; font-stretch: 90%; letter-spacing: 0.02em; color: var(--ink); }
 .page__lede { color: var(--ink-dim); font-size: 14px; margin: 6px 0 14px; line-height: 1.45; }
 .page__empty { color: var(--ink-faint); text-align: center; padding: 28px 0; font-size: 14px; }
 
@@ -344,7 +346,7 @@ a.chip { text-decoration: none; }
 .ob__lcd {
   padding: 12px 16px;
   border-radius: 10px;
-  background: linear-gradient(180deg, #0d0e10, #101114);
+  background: radial-gradient(ellipse at 20% 0%, #1c2622, transparent 80%), #0e1412;
   box-shadow: var(--shadow-lcd);
   border: 1px solid #090a0b;
   color: #cfe8c4;
@@ -352,23 +354,21 @@ a.chip { text-decoration: none; }
   justify-content: space-between;
   align-items: center;
 }
-.ob__brand { font-size: 12px; letter-spacing: 0.22em; color: rgba(207, 232, 196, 0.55); }
+.ob__brand { font-size: 12px; letter-spacing: 0.12em; color: rgba(207, 232, 196, 0.75); }
 .ob__kick { font-size: 11px; color: var(--accent); letter-spacing: 0.16em; }
-.ob__content { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 32px 8px; }
-.ob__title { font-size: 30px; line-height: 1.1; color: var(--ink); text-transform: uppercase; letter-spacing: 0.02em; }
+.ob__content { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 20px 8px; }
+.ob__title { font-size: 30px; font-stretch: 90%; line-height: 1.15; color: var(--ink); text-transform: uppercase; letter-spacing: 0.02em; }
 .ob__body { font-size: 16px; color: var(--ink-dim); margin-top: 14px; line-height: 1.55; }
 .ob__foot { display: flex; flex-direction: column; align-items: center; gap: 16px; }
 .ob__dots { display: flex; gap: 8px; }
 .ob__dot { width: 8px; height: 8px; border-radius: 50%; background: #2c2e33; }
-.ob__dot.is-active { background: var(--accent); box-shadow: 0 0 8px rgba(232, 150, 44, 0.7); }
-.ob__skip { color: var(--ink-faint); font-size: 12px; letter-spacing: 0.1em; padding: 8px; }
-.ob__content { padding: 20px 8px; }
-.ob__title { font-size: 27px; }
-.ob__preview { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 24px; }
-.ob__preview-pad { min-width: 0; height: 34px; display: flex; align-items: center; gap: 4px; padding: 5px; border: 1px solid var(--hairline); border-radius: 5px; background: linear-gradient(var(--surface-raised), var(--surface)); font-family: var(--font-label); font-size: 10px; color: var(--ink-dim); }
+.ob__dot.is-active { width: 24px; border-radius: 4px; background: var(--accent); }
+.ob__skip { color: var(--ink-faint); font-size: 12px; letter-spacing: 0.1em; padding: 8px; min-height: 44px; }
+.ob__preview { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 24px; padding: 10px; border: 1px solid #08090b; border-radius: var(--radius-l); background: var(--surface-inset); box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.05); }
+.ob__preview-pad { min-width: 0; height: 48px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 4px; padding: 6px; border: 1px solid var(--hairline); border-top-color: #484a50; border-radius: 6px; background: linear-gradient(var(--surface-raised), var(--surface)); box-shadow: var(--shadow-key); font-family: var(--font-label); font-size: 10px; font-weight: 600; color: var(--ink-dim); }
 .ob__preview-pad small { font-size: 9px; color: var(--ink-faint); }
 .ob__preview-pad.is-lit { border-color: var(--accent-dim); color: var(--accent); }
-.ob__brand { letter-spacing: .12em; }
+.ob__foot .langsw__btn { min-width: 44px; min-height: 36px; }
 .now-section-title, .now-escape__item small { font-size: 12px; color: var(--ink-dim); }
 
 /* ---------- desktop polish ---------- */
@@ -400,11 +400,20 @@ a.chip { text-decoration: none; }
 
 
 .home-map {
-  padding: 2px 0 4px;
+  padding: 8px;
+  margin-inline: -4px;
+  border: 1px solid #08090b;
+  border-radius: var(--radius-l);
+  background: var(--surface-inset);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.05);
 }
-.home-map .padgrid { gap: 6px; }
+.home-map .padgrid { gap: 8px; }
 .home-map .pad { padding: 9px 7px; min-height: 112px; aspect-ratio: auto; }
-.home-map .pad__label { font-size: 12px; line-height: 1.2; letter-spacing: 0; -webkit-line-clamp: 3; }
+.home-map .pad__label { font-size: 12px; font-stretch: 75%; font-weight: 600; line-height: 1.2; letter-spacing: 0; overflow-wrap: normal; -webkit-line-clamp: 3; }
+@media (max-width: 360px) {
+  .home-map .pad { padding-inline: 5px; }
+  .home-map .pad__label { font-size: 11px; font-stretch: 65%; }
+}
 
 
 

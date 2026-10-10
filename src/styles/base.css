@@ -157,6 +157,7 @@ html.rm-reduce *::after {
     linear-gradient(180deg, var(--bg-panel-raised), var(--bg-panel));
   border: 1px solid var(--hairline);
   border-radius: var(--radius-m);
+  box-shadow: var(--shadow-panel);
 }
 
 /* ---------- scrollbar ---------- */

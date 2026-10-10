@@ -30,7 +30,7 @@ export function Pad({ pad, label, sublabel, tone = 'default', active, ledOn, onC
       aria-label={`${pad}. ${label}${sublabel ? ' — ' + sublabel : ''}`}
       {...rest}
     >
-      <span className="pad__num u-mono">{pad}</span>
+      <span className="pad__num u-mono">{String(pad).padStart(2, '0')}</span>
       <span className="pad__label u-label">{label}</span>
       {sublabel ? <span className="pad__sub">{sublabel}</span> : null}
       <StatusLED on={ledOn ?? active} className="pad__led" />
