@@ -14,8 +14,19 @@ export const workflows: Workflow[] = [
     minutes: 6,
     featured: true,
     startingState: 'Podłącz źródło i przygotuj pusty pad. Nie musisz znać menu SP — sprawdzimy rezultat po każdym ruchu.',
-    outcome: 'Czysto nagrany, przycięty sample, który zachowuje się właściwie pod palcem.',
+    outcome: 'Masz przycięty sample gotowy do grania na padzie.',
     blurb: 'Od wejścia i poziomu do przyciętego, gotowego do grania sampla.',
+    ending: {
+      check: 'Zagraj pad kilka razy: czy początek i wybrzmienie są takie, jak chciałeś?',
+      tryIt: 'Zagraj z tego sampla krótką frazę z pauzami.',
+      hintStepIds: ['capture-trim', 'capture-playback'],
+      next: {
+        kind: 'section',
+        id: 'pattern',
+        label: 'NAGRAJ Z TEGO PATTERN',
+        preparation: 'Przygotuj pusty pattern; użyjesz swoich sampli.',
+      },
+    },
     steps: [
       { id: 'capture-input', actionId: 'open-input-settings' },
       { id: 'capture-monitor', actionId: 'enable-ext-source' },
@@ -34,8 +45,18 @@ export const workflows: Workflow[] = [
     minutes: 5,
     featured: true,
     startingState: 'Masz grający pattern, wybrane efekty i pusty pad na nowy zapis.',
-    outcome: 'Pattern zamieniony na nowy sample z dokładnie tym przetwarzaniem, które słyszysz.',
+    outcome: 'Masz nowy sample z patternu i wybranych efektów.',
     blurb: 'Sprawdź routing, nagraj resample i porównaj wynik z oryginałem.',
+    ending: {
+      check: 'Odsłuchaj osobno pattern i nowy sample: sprawdź efekt, poziom i długość.',
+      tryIt: 'Wybierz wersję, której chcesz użyć dalej, i nazwij jedną słyszalną różnicę.',
+      hintStepIds: ['print-routing', 'print-compare'],
+      next: {
+        kind: 'kit',
+        tab: 'ab',
+        label: 'ZANOTUJ PORÓWNANIE A/B',
+      },
+    },
     steps: [
       { id: 'print-pattern', actionId: 'select-pattern-for-print' },
       { id: 'print-bus', actionId: 'check-bus-routing' },
@@ -60,8 +81,19 @@ export const workflows: Workflow[] = [
     minutes: 8,
     featured: true,
     startingState: 'Loop znajduje się na padzie. Przygotuj kilka sąsiednich pustych padów i pusty pattern.',
-    outcome: 'Loop dopasowany do tempa, pocięty i zagrany jako nowa fraza w patternie.',
+    outcome: 'Masz nową frazę z chopów zapisaną w patternie.',
     blurb: 'Ustal tempo, rozłóż cięcia na pady i zbuduj z nich nową frazę.',
+    ending: {
+      check: 'Posłuchaj dwóch obiegów patternu: czy chopy układają się w zamierzoną frazę?',
+      tryIt: 'Zagraj trzy chopy w innej kolejności, bez nagrywania.',
+      hintStepIds: ['loop-assign', 'loop-pattern'],
+      next: {
+        kind: 'workflow',
+        id: 'build-variation',
+        label: 'ZRÓB WARIANT',
+        preparation: 'Kontynuuj na przygotowanym patternie.',
+      },
+    },
     steps: [
       { id: 'loop-bpm', actionId: 'set-sample-bpm' },
       { id: 'loop-sync', actionId: 'enable-bpm-sync' },
@@ -81,6 +113,17 @@ export const workflows: Workflow[] = [
     difficulty: 'hard',
     minutes: 20,
     blurb: 'Pełny bit od zera: sample → chop → drums → pattern → FX → sidechain → resample → bounce.',
+    ending: {
+      check: 'Odsłuchaj przygotowany układ od początku do końca.',
+      tryIt: 'Wybierz jedną rzecz do następnej sesji albo zdecyduj, że ta wersja już Ci odpowiada.',
+      hintStepIds: ['arrangement', 'final-bounce'],
+      next: {
+        kind: 'kit',
+        tab: 'next',
+        label: 'ZAPISZ KOLEJNY RUCH',
+      },
+    },
+    outcome: 'Masz szkic beatu gotowy do odsłuchu i dalszych decyzji.',
     steps: [
       {
         id: 'usb-sample',
@@ -215,15 +258,14 @@ export const workflows: Workflow[] = [
       {
         id: 'final-bounce',
         title: 'FINAL BOUNCE',
-        buttons: ['PATTERN SELECT'],
-        path: ['BOUNCE'],
-        action: 'Zrób bounce finalnego układu na jeden sample.',
+        buttons: ['HOLD', 'PAD 1–16'],
+        action: 'W PATTERN SELECT naciśnij COPY, wybierz chain przez HOLD + jego pad, wskaż pusty pad sampla i zatwierdź COPY/ENTER.',
         explanation:
-          'BOUNCE konwertuje pattern do jednego sampla — idealne do udostępnienia albo dalszej obróbki.',
-        expectedResult: 'Cały bit jest na jednym padzie jako audio.',
+          'BOUNCE chainu zapisuje jego układ jako jeden sample.',
+        expectedResult: 'Wybrany chain jest na padzie jako audio.',
         commonMistake:
           'BOUNCE nadpisuje sample na padzie docelowym — wybierz pusty pad.',
-        source: { manual: 'RM5.50', page: 66 },
+        source: { manual: 'RM5.50', section: 'PATTERN CHAIN · BOUNCE', url: 'https://static.roland.com/manuals/sp-404mk2_reference_v550/en-US/7925133978493323.html', reviewedAt: '2026-10-10' },
         kind: 'verified',
       },
     ],
@@ -238,6 +280,17 @@ export const workflows: Workflow[] = [
     difficulty: 'medium',
     minutes: 10,
     blurb: 'Zbuduj 8-taktowy pattern TR-REC krok po kroku.',
+    ending: {
+      check: 'Posłuchaj przejścia między pierwszą a drugą połową patternu.',
+      tryIt: 'Zagraj nad patternem inną końcówkę, bez zapisywania zmian.',
+      hintStepIds: ['tr-rec-drums', 'duplicate'],
+      next: {
+        kind: 'kit',
+        tab: 'song',
+        label: 'ZAPLANUJ FORMĘ',
+      },
+    },
+    outcome: 'Masz grający pattern i przygotowaną drugą połowę.',
     steps: [
       {
         id: 'tempo',
@@ -319,6 +372,7 @@ export const workflows: Workflow[] = [
       },
       {
         id: 'bounce-optional',
+        optional: true,
         title: 'BOUNCE (OPCJA)',
         buttons: ['PATTERN SELECT'],
         action: 'Opcjonalnie zrób bounce patternu na sample, żeby mieć audio do dalszej obróbki.',
@@ -341,6 +395,17 @@ export const workflows: Workflow[] = [
     difficulty: 'easy',
     minutes: 2,
     blurb: 'Najprostszy sampling: REC → pad → REC (p.34).',
+    ending: {
+      check: 'Zagraj pad: czy słychać cały fragment, który chciałeś nagrać?',
+      tryIt: 'Zagraj prostą frazę rytmiczną tym jednym samplem.',
+      hintStepIds: ['record'],
+      next: {
+        kind: 'section',
+        id: 'edit',
+        label: 'DOPRACUJ SAMPLE',
+      },
+    },
+    outcome: 'Twoje nagranie jest na wybranym padzie.',
     steps: [
       {
         id: 'rec-standby',
@@ -381,6 +446,18 @@ export const workflows: Workflow[] = [
     difficulty: 'easy',
     minutes: 3,
     blurb: 'Pokrój loop na pady: SHIFT+START/END → MARK → ASSIGN TO PAD (p.45–48).',
+    ending: {
+      check: 'Odsłuchaj każdy chop: czy fragmenty zaczynają się w wybranych miejscach?',
+      tryIt: 'Zagraj nową frazę z trzech wybranych fragmentów.',
+      hintStepIds: ['assign-to-pad'],
+      next: {
+        kind: 'section',
+        id: 'pattern',
+        label: 'NAGRAJ FRAZĘ',
+        preparation: 'Przygotuj pusty pattern; użyjesz swoich sampli.',
+      },
+    },
+    outcome: 'Fragmenty loopa są rozłożone na pady.',
     steps: [
       {
         id: 'marker-screen',
@@ -424,6 +501,18 @@ export const workflows: Workflow[] = [
     difficulty: 'easy',
     minutes: 3,
     blurb: 'Złóż kit na padach, ustaw MUTE GROUP i nagraj pattern.',
+    ending: {
+      check: 'Posłuchaj patternu: czy słychać wszystkie uderzenia, które chciałeś zachować?',
+      tryIt: 'Zagraj ten rytm ręcznie, zostawiając jedną dodatkową pauzę.',
+      hintStepIds: ['drum-pattern'],
+      next: {
+        kind: 'workflow',
+        id: 'build-variation',
+        label: 'ZRÓB WARIANT RYTMU',
+        preparation: 'Kontynuuj na przygotowanym patternie.',
+      },
+    },
+    outcome: 'Pattern odtwarza Twój zestaw perkusyjny.',
     steps: [
       {
         id: 'build-kit',
@@ -464,6 +553,17 @@ export const workflows: Workflow[] = [
     difficulty: 'easy',
     minutes: 3,
     blurb: 'RESAMPLE → ROUTING Mix → REC (p.37) — zamroź sample z efektami.',
+    ending: {
+      check: 'Odsłuchaj nowy pad osobno: czy efekt jest częścią nagrania?',
+      tryIt: 'Zagraj nowym samplem krótką frazę.',
+      hintStepIds: ['routing-mix', 'resample-record'],
+      next: {
+        kind: 'kit',
+        tab: 'ab',
+        label: 'ZANOTUJ PORÓWNANIE A/B',
+      },
+    },
+    outcome: 'Masz nowy sample z nagranym przetwarzaniem.',
     steps: [
       {
         id: 'resample-on',
@@ -507,6 +607,17 @@ export const workflows: Workflow[] = [
     difficulty: 'easy',
     minutes: 2,
     blurb: 'SHIFT+PAD 16 → EFX SET → SIDE CHAIN (5.50) — ducking w 3 krokach.',
+    ending: {
+      check: 'Posłuchaj stopy i basu razem: czy obniżenie głośności trafia w zamierzony moment?',
+      tryIt: 'Porównaj krótszy i dłuższy powrót basu; wybierz ten, który pasuje do rytmu.',
+      hintStepIds: ['tune-threshold'],
+      next: {
+        kind: 'kit',
+        tab: 'ab',
+        label: 'ZANOTUJ WYBRANE BRZMIENIE',
+      },
+    },
+    outcome: 'Sidechain reaguje na wybrane źródło.',
     steps: [
       {
         id: 'open-sidechain',
@@ -548,6 +659,17 @@ export const workflows: Workflow[] = [
     difficulty: 'easy',
     minutes: 2,
     blurb: 'Graj bez REC, potem MARK → REC → pad — złap to, co już zagrałeś (p.38).',
+    ending: {
+      check: 'Zagraj zapisany pad: czy zawiera moment, który chciałeś złapać?',
+      tryIt: 'Wybierz fragment tego nagrania do rozwinięcia w kolejnej frazie.',
+      hintStepIds: ['save-skip-back'],
+      next: {
+        kind: 'section',
+        id: 'edit',
+        label: 'DOPRACUJ ZŁAPANY FRAGMENT',
+      },
+    },
+    outcome: 'Wybrany moment ze Skip Back jest na padzie.',
     steps: [
       {
         id: 'play-to-buffer',
@@ -588,27 +710,38 @@ export const workflows: Workflow[] = [
     category: 'QUICK',
     difficulty: 'easy',
     minutes: 3,
-    blurb: 'PATTERN EDIT → DUPLICATE → zmień pady (p.73) — drugi bar bez ruszania oryginału.',
+    blurb: 'Wydłuż pattern przez DUPLICATE i zmień jego drugą połowę.',
+    ending: {
+      check: 'Odsłuchaj obie części: czy zmiana w drugiej jest słyszalna?',
+      tryIt: 'Zdecyduj, czy wariant ma być przerwą, czy mocniejszym wejściem.',
+      hintStepIds: ['edit-variation'],
+      next: {
+        kind: 'kit',
+        tab: 'song',
+        label: 'UMIEŚĆ WARIANT W UTWORZE',
+      },
+    },
+    outcome: 'Masz zmienioną drugą część patternu.',
     steps: [
       {
         id: 'duplicate-pattern',
         title: 'DUPLICATE',
         buttons: ['PATTERN SELECT', 'PATTERN EDIT'],
         path: ['DUPLICATE'],
-        action: 'Zduplikuj pattern.',
-        explanation: 'DUPLICATE kopiuje pattern i dokleja go do końca.',
+        action: 'W PATTERN EDIT wybierz pattern, naciśnij VALUE i zatwierdź DUPLICATE.',
+        explanation: 'Kopia jest dopisana wewnątrz tego samego patternu.',
         expectedResult: 'Pattern jest 2x dłuższy.',
-        source: { manual: 'RM5.50', page: 73 },
+        source: { manual: 'RM5.50', page: 73, url: 'https://static.roland.com/manuals/sp-404mk2_reference_v550/en-US/7929690778499467.html', reviewedAt: '2026-10-10' },
         kind: 'verified',
       },
       {
         id: 'edit-variation',
         title: 'WARIANT',
         action: 'Zmień elementy w drugiej połowie (inny hat, brak bassu).',
-        explanation: 'Edytujesz kopię — oryginalny bar zostaje nietknięty.',
+        explanation: 'Pracuj w drugiej połowie wydłużonego patternu.',
         expectedResult: 'Wariant gra inaczej niż oryginał.',
-        commonMistake: 'Zapominasz, że DUPLICATE nadpisuje pattern — najpierw zmiany, potem słuchaj.',
-        source: { manual: 'RM5.50', page: 73 },
+        commonMistake: 'DUPLICATE nie tworzy osobnego patternu. Sprawdź, którą połowę edytujesz.',
+        source: { manual: 'RM5.50', page: 73, url: 'https://static.roland.com/manuals/sp-404mk2_reference_v550/en-US/7929690778499467.html', reviewedAt: '2026-10-10' },
         kind: 'verified',
       },
     ],
@@ -621,27 +754,37 @@ export const workflows: Workflow[] = [
     difficulty: 'easy',
     minutes: 2,
     blurb: 'PATTERN SELECT → BOUNCE do pada (p.66) — pattern zamieniony na audio.',
+    ending: {
+      check: 'Odsłuchaj nowy sample od początku do końca: czy niczego nie brakuje?',
+      tryIt: 'Wybierz jedną poprawkę na później albo zachowaj tę wersję.',
+      hintStepIds: ['bounce'],
+      next: {
+        kind: 'kit',
+        tab: 'next',
+        label: 'ZAPISZ WNIOSEK Z ODSŁUCHU',
+      },
+    },
+    outcome: 'Wybrany pattern jest zapisany jako sample.',
     steps: [
       {
         id: 'select-pattern',
         title: 'PATTERN SELECT',
-        buttons: ['PATTERN SELECT'],
-        action: 'Wejdź w tryb patternu i wybierz pattern do BOUNCE.',
-        explanation: 'BOUNCE konwertuje pattern na pojedynczy sample.',
-        expectedResult: 'Ekran wyboru patternu / zapisu sampla.',
-        source: { manual: 'RM5.50', page: 66 },
+        buttons: ['COPY'],
+        action: 'W PATTERN SELECT naciśnij COPY, a następnie pad źródłowego patternu.',
+        explanation: 'Wybierasz pattern do konwersji na audio.',
+        expectedResult: 'Źródłowy pattern jest wybrany na ekranie COPY.',
+        source: { manual: 'RM5.50', page: 66, url: 'https://static.roland.com/manuals/sp-404mk2_reference_v550/en-US/7924109978491787.html', reviewedAt: '2026-10-10' },
         kind: 'verified',
       },
       {
         id: 'bounce',
         title: 'BOUNCE',
-        buttons: ['VALUE', 'COPY'],
-        path: ['BOUNCE'],
-        action: 'Wciśnij pad docelowy i zatwierdź (VALUE/COPY).',
-        explanation: 'Docelowy pad musi być pusty — BOUNCE nadpisuje zawartość.',
+        buttons: ['PATTERN SELECT'],
+        action: 'Naciśnij PATTERN SELECT, wskaż pusty pad sampla i zatwierdź VALUE lub COPY.',
+        explanation: 'BOUNCE pomija efekty BUS 1–4. Z efektami użyj RESAMPLE.',
         expectedResult: 'Pattern jako sample na padzie.',
         commonMistake: 'BOUNCE na zajęty pad kasuje istniejący sample.',
-        source: { manual: 'RM5.50', page: 66 },
+        source: { manual: 'RM5.50', page: 66, url: 'https://static.roland.com/manuals/sp-404mk2_reference_v550/en-US/7924109978491787.html', reviewedAt: '2026-10-10' },
         kind: 'verified',
       },
     ],

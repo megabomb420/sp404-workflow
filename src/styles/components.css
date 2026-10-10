@@ -385,6 +385,39 @@
 .wf-done__actions { display: flex; gap: 10px; width: 100%; }
 .wf-done__actions .hwbtn { flex: 1; }
 
+.wf-done.wf-ending { padding: 16px; gap: 10px; align-items: stretch; text-align: left; }
+.wf-ending .wf-done__kick { font-size: 16px; line-height: 1.3; }
+.wf-ending .wf-done__kick::before { content: ''; display: inline-block; width: 8px; height: 8px; margin-right: 9px; border-radius: 50%; background: var(--led); box-shadow: 0 0 6px var(--led); }
+.wf-ending .wf-done__text { color: var(--ink); font-size: 14px; line-height: 1.45; }
+.wf-ending-task h2 { font-size: 11px; margin-bottom: 3px; color: var(--ink-dim); }
+.wf-ending-task h2 span { color: var(--ink-faint); }
+.wf-ending-task p, .wf-ending-next p { font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
+.wf-ending-hint { border-block: 1px solid var(--hairline); }
+.wf-ending-hint > summary { min-height: 44px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 11px; }
+.wf-ending-hint > summary::before { content: '+'; }
+.wf-ending-hint[open] > summary::before { content: '−'; }
+.wf-ending-hints { display: grid; gap: 14px; padding: 0 0 12px; }
+.wf-ending-hints article { min-width: 0; display: grid; gap: 8px; }
+.wf-ending-hints h3 { font-size: 12px; }
+.wf-ending-hints p { font-size: 14px; line-height: 1.5; }
+.wf-ending-warning { color: var(--ink-dim); }
+.wf-ending-next { display: grid; gap: 8px; }
+.wf-ending-next p { color: var(--ink-dim); font-size: 13px; }
+.wf-ending-primary { min-height: 48px; }
+.wf-ending-primary .hwbtn__label { white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+.wf-ending-session { display: flex; align-items: stretch; gap: 10px; }
+.wf-ending-note, .wf-ending-stop, .wf-ending-repeat { min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; font-size: 11px; line-height: 1.4; letter-spacing: .03em; text-align: center; }
+.wf-ending-note, .wf-ending-stop { flex: 1; border: 1px solid var(--hairline); border-radius: var(--radius-s); padding: 7px; }
+.wf-ending-repeat { align-self: flex-start; color: var(--ink-dim); text-align: left; }
+.wf-ending .wf-done__meta { font-size: 9px; line-height: 1.5; }
+.wf-skip { min-height: 44px; width: 100%; margin-top: 8px; }
+.wf-optional { color: var(--ink-dim); font-size: 11px; }
+.doom-context.doom-context--compact { padding: 0 12px; margin-bottom: 10px; }
+.doom-context--compact > summary { min-height: 44px; padding: 12px 0; font-size: 10px; line-height: 20px; color: var(--accent); cursor: pointer; }
+.doom-context--compact p { margin-bottom: 8px; }
+.shell--hardware .wf-ending-task p, .shell--hardware .wf-ending-next p { font-size: 17px; }
+.shell--hardware .wf-ending-note, .shell--hardware .wf-ending-stop, .shell--hardware .wf-ending-repeat { min-height: 52px; font-size: 13px; }
+
 /* ---------- callouts / lists / table / compare / preset / task ---------- */
 
 .callout {

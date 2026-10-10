@@ -6,6 +6,7 @@ import { chromium } from 'playwright'
 import { testBeatBlock } from './beat-block-test.mjs'
 import { testKitStudio } from './kit-studio-test.mjs'
 import { testNow } from './now-test.mjs'
+import { testWorkflowEndings } from './workflow-endings-test.mjs'
 
 const root = resolve('dist/client')
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png' }
@@ -200,4 +201,5 @@ try {
   await testBeatBlock(browser, base)
   await testKitStudio(browser, base)
   await testNow(browser, base)
+  await testWorkflowEndings(browser, base)
 } finally { await browser.close(); if (server) await new Promise(done => server.close(done)) }

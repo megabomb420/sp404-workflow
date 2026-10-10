@@ -1,4 +1,4 @@
-# SP WORKFLOW R8
+# SP WORKFLOW R9
 
 Offline companion for the **Roland SP-404MKII**.
 
@@ -6,7 +6,7 @@ Polish and English companion, firmware-aware pad navigation on NOW, local progre
 
 **Live:** [sp-workflow.pages.dev](https://sp-workflow.pages.dev/) · mirror: [megabomb420.github.io/sp404-workflow](https://megabomb420.github.io/sp404-workflow/)
 
-Look for the amber **R8** badge on the LCD.
+Look for the amber **R9** badge on the LCD.
 
 The companion includes the DOOM OS guide (78 controls and 3 workflows), a Roland/DOOM instruction filter, screen context with knob mappings, custom ordered MY KIT sets, Groove Lab with synthetic audio, three method comparisons, larger controls, optional screen wake lock, and backup/restore including language.
 
@@ -32,3 +32,9 @@ NOW shows a single continuation card: the active sketch takes priority, with a s
 The order is continuation, BEAT BLOCK entry, the always-expanded 16-pad map, then a closed-by-default “Paths and tools” section with suggested workflows and six companion tools. FIX IT and training remain on pads 14 and 15, with due review counts and direct review entry on pad 15. The duplicated FIX IT/training tiles and recent-section list are removed from NOW. Stored data and backup format remain compatible; PL/EN, Roland/DOOM and offline paths are covered by the browser checks.
 
 Next iterations should address one concrete issue observed across three sessions beside the SP. Add another feature when an existing tool cannot handle a recurring need.
+
+## R9 · keep playing after the guide
+
+All 16 guides end with a concrete outcome, a listening check, an optional independent exercise, collapsed hints and one relevant next action. Ongoing next guides resume their saved step; completed ones lead to next-step planning. “Done for today” returns to NOW, and notes use the existing MY KIT next-step, SONG MAP and A/B panels. Creating or selecting a set keeps the requested panel; new sets use the guide’s firmware. Existing notes, arrangements and comparisons are preserved.
+
+The final print in 8-BAR PATTERN can be skipped without counting it as performed; all required steps still need confirmation. Progress and backup formats remain compatible. DOOM version information collapses on completion to keep the next action visible on a phone. The simplified R8 NOW stays in place. Roland’s DUPLICATE and single-pattern/chain BOUNCE instructions were checked against the official 5.50 manual on 10 October 2026; the focused corrections are translated into English. See [R9 source review](docs/R9_SOURCE_REVIEW.md). Browser checks cover all endings in PL/EN, 320/390/768px layouts, larger controls, state preservation and offline completion. These are application checks; no physical-sampler test is claimed.

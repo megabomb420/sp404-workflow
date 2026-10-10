@@ -15,6 +15,8 @@ import { useLocale } from '@/i18n/locale'
 import { localizeShortcut, localizeTrouble, localizeWorkflow } from '@/i18n/content'
 import { KitNotes } from '@/components/content/KitNotes'
 import { KitStudio } from '@/components/content/KitStudio'
+import { defaultStudio } from '@/utils/kitStudio'
+import { kitWorkflowContext } from '@/utils/workflowEnding'
 
 function ItemCard({ item }: { item: KitItem }) {
   const c = useC()
@@ -34,6 +36,8 @@ export function KitPage() {
   const { setDisplay } = useDisplay()
   const { state, dispatch } = useStore()
   const [params, setParams] = useSearchParams()
+  const context = kitWorkflowContext(params, workflowsById)
+  const sourceWorkflow = context.fromWorkflow ? workflowsById[context.fromWorkflow] : undefined
   const selected = state.kits.find((kit) => kit.id === params.get('set'))
   const [name, setName] = useState('')
   const [rename, setRename] = useState('')
@@ -49,12 +53,12 @@ export function KitPage() {
     <p className="page__lede">{c("Zapisuj czynności przez ★, potem ułóż własne zestawy do sesji lub grania na żywo. Zestaw może łączyć oba firmware.")}</p>
     <div className="chipbar" role="toolbar" aria-label={c("zestawy MY KIT")}>
       <button type="button" className={cx('chip', !selected && 'is-active')} aria-pressed={!selected} onClick={() => setParams({})}>{c("WSZYSTKIE ULUBIONE")}</button>
-      {state.kits.map((kit) => <button type="button" key={kit.id} className={cx('chip', selected?.id === kit.id && 'is-active')} aria-pressed={selected?.id === kit.id} onClick={() => setParams({ set: kit.id, ...(params.get('tab') ? { tab: params.get('tab')! } : {}) })}>{kit.name}</button>)}
+      {state.kits.map((kit) => <button type="button" key={kit.id} className={cx('chip', selected?.id === kit.id && 'is-active')} aria-pressed={selected?.id === kit.id} onClick={() => setParams({ ...context, set: kit.id })}>{kit.name}</button>)}
     </div>
     {!selected && <p className="page__lede">{locale === 'en' ? 'Choose or create a set to plan a song, compare A/B versions and keep your next step on NOW.' : 'Wybierz lub utwórz zestaw, żeby zaplanować utwór, porównać wersje A/B i zachować następny krok na NOW.'}</p>}
     <form className="kit-create panel-surface" onSubmit={(event) => {
       event.preventDefault(); if (!name.trim() || state.kits.length >= 30) return
-      const id = crypto.randomUUID(); dispatch({ type: 'CREATE_KIT', kit: { id, name: name.trim(), items: [] } }); setName(''); setParams({ set: id })
+      const id = crypto.randomUUID(); dispatch({ type: 'CREATE_KIT', kit: { id, name: name.trim(), items: [], ...(sourceWorkflow ? { studio: defaultStudio(sourceWorkflow.environment ?? 'roland') } : {}) } }); setName(''); setParams({ ...context, set: id })
     }}>
       <label htmlFor="kit-name" className="u-label">{c("NOWY ZESTAW")}</label>
       <div className="tool-actions"><input id="kit-name" value={name} maxLength={60} onChange={(event) => setName(event.target.value)} placeholder={c("np. live set, sampling z telefonu")} /><button className="chip" type="submit" disabled={!name.trim() || state.kits.length >= 30}>{c("UTWÓRZ")}</button></div>

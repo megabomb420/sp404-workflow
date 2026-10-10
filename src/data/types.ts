@@ -76,6 +76,7 @@ export type Difficulty = 'easy' | 'medium' | 'hard'
 
 export interface WorkflowStep {
   id: string
+  optional?: boolean
   title: string
   /** co robimy — krótko, rozkazująco */
   action: string
@@ -119,6 +120,7 @@ export interface ActionRecord {
 export interface WorkflowActionRef {
   id: string
   actionId: string
+  optional?: boolean
   /** Kontekst właściwy tylko dla tej ścieżki. */
   context?: string
 }
@@ -127,6 +129,17 @@ export type WorkflowEntry = WorkflowStep | WorkflowActionRef
 
 export function isWorkflowActionRef(step: WorkflowEntry): step is WorkflowActionRef {
   return 'actionId' in step
+}
+
+export interface WorkflowEnding {
+  check: string
+  tryIt: string
+  hintStepIds: string[]
+  next: (
+    | { kind: 'workflow'; id: string }
+    | { kind: 'section'; id: string }
+    | { kind: 'kit'; tab: 'next' | 'song' | 'ab' }
+  ) & { label: string; preparation?: string }
 }
 
 export interface Workflow {
@@ -145,6 +158,7 @@ export interface Workflow {
   startingState?: string
   /** Muzyczny, obserwowalny rezultat całej ścieżki. */
   outcome?: string
+  ending?: WorkflowEnding
   /** Złota ścieżka eksponowana na ekranie NOW. */
   featured?: boolean
 }

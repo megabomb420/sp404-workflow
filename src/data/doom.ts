@@ -124,7 +124,18 @@ export const doomWorkflows: Workflow[] = [
     id: 'doom-first-pattern', environment: 'doom', title: 'DOOM OS · PIERWSZY PATTERN', category: 'DOOM OS', difficulty: 'easy', minutes: 5,
     blurb: 'Od pustego patternu do grającej siatki kroków.',
     startingState: 'DOOM OS jest zainstalowany. Przygotuj pusty pad patternu i bank z samplami. Te przyciski dotyczą edytora DOOM OS.',
-    outcome: 'Pattern gra, a zmiany zostały zapisane po wyjściu z edytora.',
+    outcome: 'Pattern gra i zachowuje kroki po ponownym otwarciu.',
+    ending: {
+      check: 'Otwórz ponownie pattern i sprawdź, czy słychać zapisane kroki.',
+      tryIt: 'Zmień velocity jednej nuty i zapisz, jeśli chcesz zachować nowy akcent.',
+      hintStepIds: ['note', 'save'],
+      next: {
+        kind: 'workflow',
+        id: 'doom-live-record',
+        label: 'DOGRAJ PARTIĘ',
+        preparation: 'Otwórz zapisany pattern w DOOM OS.',
+      },
+    },
     steps: [
       step('open', 'WEJDŹ DO EDYTORA', 'Trzymaj REMAIN i naciśnij SUB PAD.', 'Widzisz graficzny edytor DOOM OS.', ['REMAIN', 'SUB PAD']),
       step('new', 'WYBIERZ PUSTY PATTERN', 'Trzymaj PATTERN SELECT i naciśnij pusty pad patternu.', 'Widzisz nowy pattern.', ['PATTERN SELECT', 'PAD 1–16']),
@@ -139,7 +150,17 @@ export const doomWorkflows: Workflow[] = [
     id: 'doom-live-record', environment: 'doom', title: 'DOOM OS · PRÓBA → NAGRANIE', category: 'DOOM OS', difficulty: 'easy', minutes: 4,
     blurb: 'Przećwicz partię, potem nagraj ją do patternu.',
     startingState: 'Otwarty pattern w DOOM OS i wybrane sample. Możesz użyć patternu z poprzedniej ścieżki.',
-    outcome: 'Zagrana partia jest zapisana w patternie.',
+    outcome: 'Zagrana partia znajduje się w patternie.',
+    ending: {
+      check: 'Odsłuchaj pattern bez dogrywania: czy Twoja partia jest na swoim miejscu?',
+      tryIt: 'W trybie próby zagraj tę samą partię z innym akcentem.',
+      hintStepIds: ['rehearse', 'stop'],
+      next: {
+        kind: 'kit',
+        tab: 'song',
+        label: 'ZAPLANUJ DALSZĄ FORMĘ',
+      },
+    },
     steps: [
       step('pads', 'PRZEŁĄCZ PADY NA GRANIE', 'Naciśnij HOLD, jeśli pady nadal edytują kroki.', 'Pady odtwarzają sample.', ['HOLD']),
       step('rehearse', 'PRZEĆWICZ PARTIĘ', 'Naciśnij REC raz i zagraj frazę.', 'Ekran pokazuje REHEARSAL; partia jeszcze się nie zapisuje.', ['REC']),
@@ -152,7 +173,17 @@ export const doomWorkflows: Workflow[] = [
     id: 'doom-fx-automation', environment: 'doom', title: 'DOOM OS · NAGRAJ RUCHY FX', category: 'DOOM OS', difficulty: 'medium', minutes: 5,
     blurb: 'Zapisz ruch pokrętła i popraw go na wybranym kroku.',
     startingState: 'Otwarty pattern w DOOM OS, słyszalny sample skierowany na bus z efektem. Ustawienia zapisu automatyki mogą zastąpić wcześniejsze ruchy.',
-    outcome: 'Pattern odtwarza zapisaną automatykę efektu.',
+    outcome: 'Pattern odtwarza nagrane ruchy efektu.',
+    ending: {
+      check: 'Posłuchaj dwóch obiegów: czy ruch efektu wraca w tym samym miejscu?',
+      tryIt: 'Porównaj frazę z automatyką i bez niej; wybierz wersję do dalszej pracy.',
+      hintStepIds: ['edit'],
+      next: {
+        kind: 'kit',
+        tab: 'ab',
+        label: 'ZANOTUJ PORÓWNANIE A/B',
+      },
+    },
     steps: [
       step('fx', 'OTWÓRZ STRONĘ EFEKTU', 'Wybierz bus przez BUS FX i otwórz stronę wybranego efektu jego przyciskiem.', 'Widzisz parametry efektu i słyszysz jego działanie.', ['BUS FX']),
       step('arm', 'PRZEJDŹ Z PRÓBY DO ZAPISU', 'Na stronie efektu naciśnij REC raz dla próby, a drugi raz dla nagrywania.', 'Nagrywanie jest aktywne na stronie efektu.', ['REC ×2']),

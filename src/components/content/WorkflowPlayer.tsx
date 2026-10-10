@@ -10,6 +10,8 @@ import { SourceTag } from './SourceTag'
 import { HardwareButton } from '../hardware/HardwareButton'
 import { buzz } from '@/utils/haptics'
 import cx from '@/utils/cx'
+import { advanceWorkflow, workflowPosition } from '@/utils/workflowEnding'
+import { WorkflowEnding } from './WorkflowEnding'
 
 function resolveEntry(entry: WorkflowEntry, actionsById: Record<string, ActionRecord>): WorkflowStep {
   if (!isWorkflowActionRef(entry)) return entry
@@ -17,6 +19,7 @@ function resolveEntry(entry: WorkflowEntry, actionsById: Record<string, ActionRe
   if (!action) throw new Error(`Unknown action record: ${entry.actionId}`)
   return {
     id: entry.id,
+    optional: entry.optional,
     title: action.title,
     action: entry.context ? `${entry.context} ${action.action}` : action.action,
     buttons: action.buttons,
@@ -42,9 +45,9 @@ export function WorkflowPlayer({ workflow }: { workflow: Workflow }) {
   const storedStep = Math.max(0, Math.min(state.progress.workflowStep[workflow.id] ?? 0, total))
   const done = state.progress.doneSteps[workflow.id] ?? []
   const completed = state.progress.completedWorkflows.includes(workflow.id)
-  const allConfirmed = steps.every((item) => done.includes(item.id))
-  const stepIndex = storedStep >= total && !allConfirmed ? Math.max(0, steps.findIndex((item) => !done.includes(item.id))) : storedStep
-  const finished = stepIndex >= total && allConfirmed
+  const position = workflowPosition(steps, done, storedStep)
+  const stepIndex = position.step
+  const finished = position.finished
   const step = steps[Math.min(stepIndex, total - 1)]
   const rawStep = workflow.steps[Math.min(stepIndex, total - 1)]
   const actionRecord = rawStep && isWorkflowActionRef(rawStep) ? actionsById[rawStep.actionId] : undefined
@@ -83,15 +86,14 @@ export function WorkflowPlayer({ workflow }: { workflow: Workflow }) {
     dispatch({ type: 'SET_WORKFLOW_STEP', workflowId: workflow.id, step: Math.max(0, Math.min(idx, total)) })
   }
 
-  const confirmAndNext = () => {
+  const advance = (confirm = true) => {
     buzz(14)
-    if (!done.includes(step.id)) {
+    const next = advanceWorkflow(steps, done, stepIndex, confirm)
+    if (confirm && !done.includes(step.id)) {
       dispatch({ type: 'TOGGLE_STEP_DONE', workflowId: workflow.id, stepId: step.id })
     }
-    const remaining = steps.findIndex((item) => item.id !== step.id && !done.includes(item.id))
-    const target = stepIndex === total - 1 && remaining >= 0 ? remaining : stepIndex + 1
-    dispatch({ type: 'SET_WORKFLOW_STEP', workflowId: workflow.id, step: target })
-    if (target >= total) dispatch({ type: 'COMPLETE_WORKFLOW', workflowId: workflow.id })
+    dispatch({ type: 'SET_WORKFLOW_STEP', workflowId: workflow.id, step: next.step })
+    if (next.finished) dispatch({ type: 'COMPLETE_WORKFLOW', workflowId: workflow.id })
   }
 
   const openRescue = () => {
@@ -115,20 +117,7 @@ export function WorkflowPlayer({ workflow }: { workflow: Workflow }) {
   }
 
   if (finished) {
-    return (
-      <div className="wplayer">
-        <div className="wf-done panel-surface">
-          <div className="wf-done__led" aria-hidden="true" />
-          <span className="wf-done__kick u-label">{t.workflow.achieved}</span>
-          <p className="wf-done__text">{workflow.outcome ?? t.workflow.doneFallback(workflow.title)}</p>
-          <p className="wf-done__meta u-mono">{completed && storageAvailable ? t.workflow.progressSaved : t.workflow.sessionDone}</p>
-          <div className="wf-done__actions">
-            <HardwareButton label={t.workflow.again} onClick={reset} />
-            <HardwareButton label={t.workflow.now} tone="accent" onClick={() => navigate('/')} />
-          </div>
-        </div>
-      </div>
-    )
+    return <WorkflowEnding key={workflow.id} workflow={workflow} steps={steps} onRepeat={reset} saved={completed && storageAvailable} />
   }
 
   return (
@@ -151,12 +140,12 @@ export function WorkflowPlayer({ workflow }: { workflow: Workflow }) {
                 index < stepIndex && 'is-past',
               )}
               onClick={() => go(index)}
-              aria-label={t.workflow.stepAria(index + 1, item.title)}
+              aria-label={`${t.workflow.stepAria(index + 1, item.title)}${item.optional ? ` · ${t.workflow.optional}` : ''}`}
             >{index + 1}</button>
           ))}
         </div>
       </div>
-      <p className="wf-confirmed">{t.workflow.confirmed(steps.filter((item) => done.includes(item.id)).length, total)}</p>
+      <p className="wf-confirmed">{steps.some(item => item.optional) ? t.workflow.requiredConfirmed(position.confirmed, position.required) : t.workflow.confirmed(position.confirmed, total)}</p>
 
       {stepIndex === 0 && workflow.startingState ? (
         <details className="wf-start panel-surface">
@@ -168,6 +157,7 @@ export function WorkflowPlayer({ workflow }: { workflow: Workflow }) {
       <article className="wf-step panel-surface">
         <span className="wf-step__meta u-mono">{t.workflow.doNow(stepIndex + 1)}</span>
         <h2 className="wf-step__title u-label">{step.title}</h2>
+        {step.optional && <p className="wf-optional u-label">{t.workflow.optional}</p>}
         <p className="wf-step__action">{step.action}</p>
 
         <ButtonSequence buttons={step.buttons} path={step.path} size="md" />
@@ -212,7 +202,7 @@ export function WorkflowPlayer({ workflow }: { workflow: Workflow }) {
           sublabel={t.workflow.resultOk}
           tone="accent"
           wide
-          onClick={confirmAndNext}
+          onClick={() => advance()}
         />
         <HardwareButton
           label={t.workflow.didntHappen}
@@ -222,6 +212,7 @@ export function WorkflowPlayer({ workflow }: { workflow: Workflow }) {
           onClick={openRescue}
         />
       </div>
+      {step.optional && <button className="wf-skip chip" type="button" onClick={() => advance(false)}>{t.workflow.skipOptional}</button>}
 
       <div className="wf-nav wf-nav--quiet">
         {actionRecord && <Link className="wf-text-action" to={`/muscle?practice=${actionRecord.id}&from=${workflow.id}&step=${stepIndex}`}>{t.workflow.drill}</Link>}

@@ -12,6 +12,11 @@ export type WorkflowOverlay = {
   blurb?: string
   startingState?: string
   outcome?: string
+  ending?: {
+    check: string
+    tryIt: string
+    next: { label: string; preparation?: string }
+  }
   category?: string
   steps?: Record<string, StepOverlay>
 }
@@ -20,14 +25,29 @@ export const workflowsEn: Record<string, WorkflowOverlay> = {
   'source-to-pad': {
     title: 'SOURCE → PLAYABLE PAD',
     startingState: 'Plug in a source and have an empty pad ready. You don’t need the SP menus — we’ll check the result after every move.',
-    outcome: 'A clean, trimmed sample that behaves right under your finger.',
+    outcome: 'Your trimmed sample is ready to play on a pad.',
+    ending: {
+      check: 'Play the pad a few times: do the start and tail sound as intended?',
+      tryIt: 'Play a short phrase with this sample, leaving gaps.',
+      next: {
+        label: 'RECORD A PATTERN',
+        preparation: 'Have an empty pattern ready; you’ll use your samples.',
+      },
+    },
     blurb: 'From input and level to a trimmed sample that’s ready to play.',
   },
   'pattern-to-print': {
     title: 'PATTERN → PRINT WITH FX',
     startingState: 'You’ve got a playing pattern, effects chosen, and an empty pad for the new take.',
-    outcome: 'The pattern printed to a new sample with exactly the processing you hear.',
+    outcome: 'Your pattern and chosen effects are printed to a new sample.',
     blurb: 'Check routing, record the resample, compare it with the original.',
+    ending: {
+      check: 'Listen to the pattern and new sample separately: check the effect, level and length.',
+      tryIt: 'Choose the version to use next and name one difference you hear.',
+      next: {
+        label: 'NOTE YOUR A/B COMPARISON',
+      },
+    },
     steps: {
       'print-compare': {
         title: 'COMPARE THE RESULT',
@@ -40,12 +60,28 @@ export const workflowsEn: Record<string, WorkflowOverlay> = {
   'loop-to-pattern': {
     title: 'LOOP → CHOPS → PATTERN',
     startingState: 'The loop is on a pad. Have a few neighbouring empty pads and an empty pattern ready.',
-    outcome: 'A loop fitted to tempo, sliced, and played as a new phrase in a pattern.',
+    outcome: 'Your new phrase made from chops is recorded in a pattern.',
+    ending: {
+      check: 'Listen to two repeats: do the chops form the phrase you intended?',
+      tryIt: 'Play three chops in a different order without recording.',
+      next: {
+        label: 'MAKE A VARIATION',
+        preparation: 'Continue with the pattern you just made.',
+      },
+    },
     blurb: 'Set tempo, spread the cuts across pads, and build a new phrase from them.',
   },
   'build-a-beat': {
     title: 'BUILD A BEAT',
     blurb: 'A full beat from scratch: sample → chop → drums → pattern → FX → sidechain → resample → bounce.',
+    ending: {
+      check: 'Listen through the arrangement you prepared.',
+      tryIt: 'Choose one thing for the next session, or decide this version works for you.',
+      next: {
+        label: 'NOTE YOUR NEXT MOVE',
+      },
+    },
+    outcome: 'You have a beat sketch ready to listen to and develop.',
     steps: {
       'usb-sample': {
         title: 'USB-C SAMPLE',
@@ -121,9 +157,9 @@ export const workflowsEn: Record<string, WorkflowOverlay> = {
       },
       'final-bounce': {
         title: 'FINAL BOUNCE',
-        action: 'Bounce the final arrangement to one sample.',
-        explanation: 'BOUNCE converts a pattern into one sample — good for sharing or further processing.',
-        expectedResult: 'The whole beat is on one pad as audio.',
+        action: 'In PATTERN SELECT, press COPY, select the chain with HOLD + its pad, choose an empty sample pad and confirm with COPY/ENTER.',
+        explanation: 'Chain BOUNCE saves its arrangement as one sample.',
+        expectedResult: 'The selected chain is on a pad as audio.',
         commonMistake: 'BOUNCE overwrites the sample on the destination pad — pick an empty pad.',
       },
     },
@@ -131,6 +167,14 @@ export const workflowsEn: Record<string, WorkflowOverlay> = {
   '8-bar-pattern': {
     title: '8-BAR PATTERN',
     blurb: 'Build an 8-bar TR-REC pattern, step by step.',
+    ending: {
+      check: 'Listen to the transition between the two halves of the pattern.',
+      tryIt: 'Play a different ending over the pattern without recording changes.',
+      next: {
+        label: 'PLAN THE ARRANGEMENT',
+      },
+    },
+    outcome: 'Your pattern plays, with a second half prepared.',
     steps: {
       tempo: {
         title: 'TEMPO',
@@ -186,6 +230,14 @@ export const workflowsEn: Record<string, WorkflowOverlay> = {
   'sample-something': {
     title: 'SAMPLE SOMETHING',
     blurb: 'Simplest sampling: REC → pad → REC (p.34).',
+    ending: {
+      check: 'Play the pad: can you hear the whole passage you wanted to capture?',
+      tryIt: 'Play a simple rhythmic phrase with this one sample.',
+      next: {
+        label: 'REFINE THE SAMPLE',
+      },
+    },
+    outcome: 'Your recording is on the pad you selected.',
     steps: {
       'rec-standby': {
         title: 'REC',
@@ -210,6 +262,15 @@ export const workflowsEn: Record<string, WorkflowOverlay> = {
   'chop-a-loop': {
     title: 'CHOP A LOOP',
     blurb: 'Slice a loop onto pads: SHIFT+START/END → MARK → ASSIGN TO PAD (p.45–48).',
+    ending: {
+      check: 'Audition each chop: does it start where you intended?',
+      tryIt: 'Play a new phrase using three chosen slices.',
+      next: {
+        label: 'RECORD YOUR PHRASE',
+        preparation: 'Have an empty pattern ready; you’ll use your samples.',
+      },
+    },
+    outcome: 'Your loop slices are assigned to pads.',
     steps: {
       'marker-screen': {
         title: 'MARKER SCREEN',
@@ -235,6 +296,15 @@ export const workflowsEn: Record<string, WorkflowOverlay> = {
   'make-drums': {
     title: 'MAKE DRUMS',
     blurb: 'Build a kit on pads, set MUTE GROUP, and record a pattern.',
+    ending: {
+      check: 'Listen to the pattern: can you hear every hit you intended to keep?',
+      tryIt: 'Play the rhythm by hand, leaving one extra gap.',
+      next: {
+        label: 'VARY THE RHYTHM',
+        preparation: 'Continue with the pattern you just made.',
+      },
+    },
+    outcome: 'The pattern plays your drum kit.',
     steps: {
       'build-kit': {
         title: 'KIT',
@@ -259,6 +329,14 @@ export const workflowsEn: Record<string, WorkflowOverlay> = {
   'resample-with-fx': {
     title: 'RESAMPLE WITH FX',
     blurb: 'RESAMPLE → ROUTING Mix → REC (p.37) — freeze a sample with effects.',
+    ending: {
+      check: 'Listen to the new pad on its own: is the effect part of the recording?',
+      tryIt: 'Play a short phrase with the new sample.',
+      next: {
+        label: 'NOTE YOUR A/B COMPARISON',
+      },
+    },
+    outcome: 'You have a new sample with the processing recorded into it.',
     steps: {
       'resample-on': {
         title: 'RESAMPLE',
@@ -284,6 +362,14 @@ export const workflowsEn: Record<string, WorkflowOverlay> = {
   'add-sidechain': {
     title: 'ADD SIDECHAIN',
     blurb: 'SHIFT+PAD 16 → EFX SET → SIDE CHAIN (5.50) — ducking in 3 steps.',
+    ending: {
+      check: 'Listen to the kick and bass together: does the volume dip at the intended moment?',
+      tryIt: 'Compare a shorter and longer bass recovery; choose the one that fits the rhythm.',
+      next: {
+        label: 'NOTE YOUR CHOSEN SOUND',
+      },
+    },
+    outcome: 'The sidechain responds to your chosen source.',
     steps: {
       'open-sidechain': {
         title: 'SIDE CHAIN',
@@ -309,6 +395,14 @@ export const workflowsEn: Record<string, WorkflowOverlay> = {
   'capture-skip-back': {
     title: 'CAPTURE SKIP BACK',
     blurb: 'Play without REC, then MARK → REC → pad — catch what you already played (p.38).',
+    ending: {
+      check: 'Play the saved pad: does it contain the moment you wanted to catch?',
+      tryIt: 'Choose a part of this recording to develop into another phrase.',
+      next: {
+        label: 'REFINE THE CAPTURE',
+      },
+    },
+    outcome: 'The moment you chose from Skip Back is on a pad.',
     steps: {
       'play-to-buffer': {
         title: 'PLAY',
@@ -332,37 +426,53 @@ export const workflowsEn: Record<string, WorkflowOverlay> = {
   },
   'build-variation': {
     title: 'BUILD VARIATION',
-    blurb: 'PATTERN EDIT → DUPLICATE → change pads (p.73) — a second bar without touching the original.',
+    blurb: 'Extend the pattern with DUPLICATE and change its second half.',
+    ending: {
+      check: 'Listen to both parts: can you hear the change in the second?',
+      tryIt: 'Decide whether the variation should be a break or a stronger entrance.',
+      next: {
+        label: 'PLACE THE VARIATION',
+      },
+    },
+    outcome: 'You have a variation in the second part of the pattern.',
     steps: {
       'duplicate-pattern': {
         title: 'DUPLICATE',
-        action: 'Duplicate the pattern.',
-        explanation: 'DUPLICATE copies the pattern and appends it.',
+        action: 'In PATTERN EDIT, select the pattern, press VALUE and confirm DUPLICATE.',
+        explanation: 'The copy is appended within the same pattern.',
         expectedResult: 'The pattern is 2× longer.',
       },
       'edit-variation': {
         title: 'VARIANT',
         action: 'Change parts in the second half (different hat, no bass).',
-        explanation: 'You’re editing the copy — the original bar stays intact.',
+        explanation: 'Work in the second half of the extended pattern.',
         expectedResult: 'The variant plays differently from the original.',
-        commonMistake: 'You forget DUPLICATE overwrites the pattern — change first, then listen.',
+        commonMistake: 'DUPLICATE does not create a separate pattern. Check which half you are editing.',
       },
     },
   },
   'final-bounce': {
     title: 'FINAL BOUNCE',
     blurb: 'PATTERN SELECT → BOUNCE to a pad (p.66) — pattern turned into audio.',
+    ending: {
+      check: 'Listen to the new sample from start to finish: is anything missing?',
+      tryIt: 'Choose one improvement for later, or keep this version.',
+      next: {
+        label: 'NOTE YOUR LISTENING TAKEAWAY',
+      },
+    },
+    outcome: 'The selected pattern is saved as a sample.',
     steps: {
       'select-pattern': {
         title: 'PATTERN SELECT',
-        action: 'Enter pattern mode and pick the pattern to BOUNCE.',
-        explanation: 'BOUNCE converts a pattern into a single sample.',
-        expectedResult: 'Pattern select / sample save screen.',
+        action: 'In PATTERN SELECT, press COPY, then the source pattern pad.',
+        explanation: 'Select the pattern to convert to audio.',
+        expectedResult: 'The source pattern is selected on the COPY screen.',
       },
       bounce: {
         title: 'BOUNCE',
-        action: 'Press the destination pad and confirm (VALUE/COPY).',
-        explanation: 'The destination pad must be empty — BOUNCE overwrites what’s there.',
+        action: 'Press PATTERN SELECT, choose an empty sample pad and confirm with VALUE or COPY.',
+        explanation: 'BOUNCE bypasses BUS 1–4 effects. Use RESAMPLE to include effects.',
         expectedResult: 'The pattern as a sample on the pad.',
         commonMistake: 'BOUNCE onto an occupied pad deletes the existing sample.',
       },

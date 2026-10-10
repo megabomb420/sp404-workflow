@@ -84,6 +84,7 @@ export function localizeWorkflow(workflow: Workflow, locale: Locale): Workflow {
     blurb: overlay.blurb ?? workflow.blurb,
     startingState: overlay.startingState ?? workflow.startingState,
     outcome: overlay.outcome ?? workflow.outcome,
+    ending: workflow.ending && overlay.ending ? { ...workflow.ending, check: overlay.ending.check, tryIt: overlay.ending.tryIt, next: { ...workflow.ending.next, ...overlay.ending.next } } : workflow.ending,
     category: overlay.category ?? workflow.category,
     steps: workflow.steps.map((step) => {
       const stepOverlay = overlay.steps?.[step.id]

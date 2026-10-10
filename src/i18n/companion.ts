@@ -3,6 +3,19 @@ import { useLocale, type Locale } from './locale'
 
 // Shared copy for companion tools. Content IDs, URLs and hardware labels remain stable.
 export const companionEnglish: Record<string, string> = Object.fromEntries(String.raw`
+Pattern gra i zachowuje kroki po ponownym otwarciu.|The pattern plays and keeps its steps when reopened.
+Otwórz ponownie pattern i sprawdź, czy słychać zapisane kroki.|Reopen the pattern and check that the saved steps play.
+Zmień velocity jednej nuty i zapisz, jeśli chcesz zachować nowy akcent.|Change one note’s velocity and save if you want to keep the new accent.
+DOGRAJ PARTIĘ|RECORD ANOTHER PART
+Otwórz zapisany pattern w DOOM OS.|Open this saved pattern in DOOM OS.
+Zagrana partia znajduje się w patternie.|The part you played is recorded in the pattern.
+Odsłuchaj pattern bez dogrywania: czy Twoja partia jest na swoim miejscu?|Listen without overdubbing: is your recorded part where you intended?
+W trybie próby zagraj tę samą partię z innym akcentem.|In rehearsal mode, play the same part with a different accent.
+ZAPLANUJ DALSZĄ FORMĘ|PLAN THE ARRANGEMENT
+Pattern odtwarza nagrane ruchy efektu.|The pattern plays back your recorded effect movements.
+Posłuchaj dwóch obiegów: czy ruch efektu wraca w tym samym miejscu?|Listen to two repeats: does the effect movement return at the same point?
+Porównaj frazę z automatyką i bez niej; wybierz wersję do dalszej pracy.|Compare the phrase with and without automation; choose a version to develop.
+ZANOTUJ PORÓWNANIE A/B|NOTE YOUR A/B COMPARISON
 Utknąłeś? Krótkie wyzwanie, szkic i pomysł do rozwinięcia.|Stuck? A short prompt, a sketch and an idea to develop.
 Plik nie jest poprawną kopią JSON.|The file is not a valid JSON backup.
 To nie jest obsługiwana kopia SP Workflow.|This is not a supported SP Workflow backup.
