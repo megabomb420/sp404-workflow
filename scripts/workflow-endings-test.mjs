@@ -45,6 +45,11 @@ export async function testWorkflowEndings(browser, base, { locales = ['pl', 'en'
     const context = await browser.newContext({ viewport: { width: 390, height: 844 } })
     context.setDefaultTimeout(10000)
     await context.addInitScript(({ locale, firmware }) => {
+      if (window !== window.top) return
+      if (window.name.startsWith('spw-r9-fixture:')) {
+        localStorage.setItem('spw.state.v1', window.name.slice('spw-r9-fixture:'.length))
+        window.name = ''
+      }
       if (!localStorage.getItem('spw.state.v1')) {
         localStorage.setItem('spw.locale', locale)
         localStorage.setItem('spw.state.v1', JSON.stringify({ ui: { onboarded: true }, settings: { firmware } }))
@@ -58,7 +63,8 @@ export async function testWorkflowEndings(browser, base, { locales = ['pl', 'en'
     const kit = (mode = firmware) => ({ id: 'sketch', name: 'Keep this sketch', items: [], notes: { project: '02', bankPad: 'A3', bpm: '91', text: 'Original notes' }, studio: { firmware: mode, finished: false, nextStep: 'Keep my next step', song: [{ id: 'main', role: 'main', pattern: 'A3', bars: 4, note: 'Keep the main section' }], variants: { a: { location: 'A3', changes: 'Original' }, b: { location: 'B3', changes: 'Variant' } }, winner: 'a', decision: 'Keep this choice' } })
     const seed = async (guide = first, changes = {}, path = `/workflow/${guide.id}`) => {
       const value = { settings: { firmware }, ui: { onboarded: true, activeKitId: 'sketch' }, kits: [kit()], progress: finished(guide), ...changes }
-      await page.evaluate(value => localStorage.setItem('spw.state.v1', JSON.stringify(value)), value)
+      // Apply on the next document, after the old React store has stopped writing.
+      await page.evaluate(value => { window.name = `spw-r9-fixture:${JSON.stringify(value)}` }, value)
       await go(path)
     }
     const waitEnding = async () => {
