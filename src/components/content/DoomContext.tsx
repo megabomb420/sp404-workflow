@@ -4,7 +4,7 @@ import { DOOM } from '../../data/doom'
 
 export function DoomContext({ compact = false }: { compact?: boolean }) {
   const c = useC()
-  const version = <>DOOM OS {DOOM.version} · ROLAND {DOOM.firmware}</>
+  const version = <>DOOM OS {DOOM.version}</>
   const body = <>
     <p>{c("Te czynności wykonuj w DOOM OS. Opis sterowania pochodzi z Quickstart")} {DOOM.manualVersion}{c("; projekt jest nieoficjalnym firmware.")}</p>
     <Link to="/doom-os" className="doom-context__link">{c("Przewodnik DOOM OS →")}</Link>

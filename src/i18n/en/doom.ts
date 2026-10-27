@@ -1,3 +1,4 @@
+import { doom07Additions, doom07Updates } from '../../data/doom07'
 // Hardware labels stay as printed on the SP. Descriptions refer to the indicated DOOM view.
 const controls: Record<string, [string, string]> = {
   open: ['OPEN DOOM OS', 'Hold REMAIN and press SUB PAD. You can enter from any SP screen.'],
@@ -76,8 +77,11 @@ const tools = {
   shift: 'Move all notes by whole steps.', double: 'Double the pattern.', halve: 'Halve the pattern.', reverse: 'Reverse the pattern order.', human: 'Apply humanisation.', transp: 'Transpose notes.',
 }
 for (const [id, description] of Object.entries(tools)) controls[`tool-${id}`] = [id.toUpperCase(), `${description} Choose the tool and setting with VALUE; press to apply. EXIT cancels.`]
+for (const [id, update] of Object.entries(doom07Updates)) controls[id] = [controls[id][0], update.en]
+for (const entry of doom07Additions) controls[entry.id] = entry.en
+
 export const doomControlsEn = Object.fromEntries(Object.entries(controls).map(([id, [name, description]]) => [`doom-${id}`, { name, description }]))
 
 export const doomButtonsEn: Record<string, string> = {
-  'obróć VALUE': 'turn VALUE', 'naciśnij VALUE': 'press VALUE', 'przytrzymaj PAD kroku': 'hold step PAD', 'PAD kroku': 'step PAD', 'PAD ścieżki': 'track PAD', 'PAD jako klawisz': 'pitch PAD', 'przycisk FX': 'FX button',
+  'pusty PAD': 'empty PAD', 'obróć VALUE': 'turn VALUE', 'naciśnij VALUE': 'press VALUE', 'przytrzymaj PAD kroku': 'hold step PAD', 'PAD kroku': 'step PAD', 'PAD ścieżki': 'track PAD', 'PAD jako klawisz': 'pitch PAD', 'przycisk FX': 'FX button',
 }

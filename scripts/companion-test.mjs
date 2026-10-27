@@ -7,6 +7,7 @@ import { testBeatBlock } from './beat-block-test.mjs'
 import { testKitStudio } from './kit-studio-test.mjs'
 import { testNow } from './now-test.mjs'
 import { testWorkflowEndings } from './workflow-endings-test.mjs'
+import { testDoomBeta } from './doom-beta-test.mjs'
 
 const root = resolve('dist/client')
 const mime = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.png': 'image/png' }
@@ -50,6 +51,7 @@ const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem('spw.st
 const mode = async value => { await page.locator('.shell__modes .firmware-switch').getByRole('button', { name: value === 'doom' ? 'DOOM OS' : 'ROLAND', exact: true }).click(); await page.waitForFunction(v => JSON.parse(localStorage.getItem('spw.state.v1')).settings.firmware === v, value) }
 const range = async (label, value) => { await page.getByRole('slider', { name: label }).evaluate((el, v) => { const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set; setter.call(el, String(v)); el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })) }, value); await page.waitForTimeout(80) }
 try {
+  await testDoomBeta(browser, base)
   await go('/')
   assert.equal((await stored()).favorites.shortcuts[0], 'tr-rec')
   assert.equal((await stored()).progress.workflowStep['phone-to-pad'], 2)
@@ -64,13 +66,13 @@ try {
   assert.ok(page.url().includes('/screen?id=mixer'))
   await go('/')
   assert.ok((await page.locator('.goal-card').allTextContents()).every(t => t.includes('DOOM OS')))
-  await go('/shortcuts'); assert.equal(await page.locator('.scard').count(), 78)
+  await go('/shortcuts'); assert.equal(await page.locator('.scard').count(), 111)
   await go('/workflows'); assert.equal(await page.locator('.wfcard').count(), 3)
   await go('/search?q=nudge'); assert.ok((await page.locator('.sresult').allTextContents()).some(t => t.includes('MICROTIMING')))
   await mode('roland'); assert.ok(!(await page.locator('.sresult').allTextContents()).some(t => t.includes('MICROTIMING')))
   await go('/doom-os?id=doom-nudge'); assert.equal(await page.locator('.scard').count(), 1)
   await page.locator('.scard__star').click()
-  await page.locator('.scard .source-review summary').click(); assert.match(await page.locator('.scard .source-review').textContent(), /2026-10-08.*nie wykonano/)
+  await page.locator('.scard .source-review summary').click(); assert.match(await page.locator('.scard .source-review').textContent(), /2026-10-27.*nie wykonano/)
   await go('/screen?id=grid'); assert.match(await page.locator('.firmware-notice').textContent(), /DOOM OS/)
   assert.deepEqual(await page.locator('.knob-map dd').allTextContents(), ['VELOCITY', 'LENGTH', 'NUDGE'])
   await mode('doom'); await go('/screen?id=mixer'); assert.deepEqual(await page.locator('.knob-map dd').allTextContents(), ['PAN', 'BUS · B1 / B2 / DRY', 'LEVEL'])
@@ -191,7 +193,7 @@ try {
   await go('/'); await page.locator('.home-map').scrollIntoViewIfNeeded(); await page.screenshot({ path: 'artifacts/companion/doom-pads.png' })
   await page.waitForFunction(() => !!navigator.serviceWorker.controller, { timeout: 30000 })
   await context.setOffline(true)
-  await go('/doom-os?view=controls'); assert.equal(await page.locator('.scard').count(), 78)
+  await go('/doom-os?view=controls'); assert.equal(await page.locator('.scard').count(), 111)
   await go('/compare?goal=live'); assert.equal(await page.locator('.compare-method').count(), 2)
   await go('/listen'); assert.equal(await page.locator('.listening-demo').count(), 5); assert.equal(await page.getByRole('button', { name: 'OTWÓRZ DEMONSTRACJĘ' }).first().isDisabled(), true)
   await go('/groove'); await page.getByRole('button', { name: 'ODTWÓRZ', exact: true }).click(); await page.locator('.groove-playhead').waitFor({ state: 'attached' })

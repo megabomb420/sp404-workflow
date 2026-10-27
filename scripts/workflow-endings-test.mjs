@@ -98,7 +98,7 @@ export async function testWorkflowEndings(browser, base, { locales = ['pl', 'en'
 
     try {
       await go('/')
-      assert.equal(await page.locator('.lcd__rev').textContent(), '0.9')
+      assert.equal(await page.locator('.lcd__rev').textContent(), '0.9.1')
       for (const guide of guides) {
         await seed(guide); await waitEnding()
         assert.equal(await page.locator('.wf-ending-primary').count(), 1)

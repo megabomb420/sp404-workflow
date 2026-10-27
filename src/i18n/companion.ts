@@ -1,3 +1,4 @@
+import { doom07English } from './en/doom07'
 import { useCallback } from 'react'
 import { useLocale, type Locale } from './locale'
 
@@ -352,6 +353,8 @@ Wybierz ekran SP i znajdź pokrętła oraz czynności.|Choose an SP screen to fi
 Velocity, nudge i długość nuty w interaktywnej siatce.|Velocity, nudge and note length in an interactive grid.
 Porównaj sposoby wykonania tego samego zadania.|Compare methods for the same task.
 `.trim().split('\n').map(line => line.split('|').map(part => part.trim())))
+
+Object.assign(companionEnglish, doom07English)
 
 export function companionText(value: string, locale: Locale) {
   return locale === 'en' ? (companionEnglish[value.trim()] ?? value) : value

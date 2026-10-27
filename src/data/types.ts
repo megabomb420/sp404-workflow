@@ -15,7 +15,7 @@ export interface Source {
   hardwareTestedAt?: string
   firmwareVersion?: string
   /** identyfikator manuala */
-  manual: 'RM5.50' | 'DOOM0.6.1' | 'DOOM0.6.2'
+  manual: 'RM5.50' | 'DOOM0.6.1' | 'DOOM0.6.2' | 'DOOM0.7'
   /** numer strony w manualu (strony drukowane) */
   page?: number
   /** nazwa sekcji/zakładki w manualu (np. dla treści z edycji HTML 5.50) */

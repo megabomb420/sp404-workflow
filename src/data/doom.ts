@@ -1,37 +1,39 @@
+import { doom07Additions, doom07Topics, doom07Updates } from './doom07'
 import type { Shortcut, Source, Workflow, WorkflowStep } from './types'
 
 export const DOOM = {
-  version: '0.6.2 alpha', build: '3824', firmware: '5.52',
-  manualVersion: '0.6.1 alpha', reviewed: '2026-10-08',
-  manualUrl: 'https://klangfeldlabs.com/doom-os/manual/',
+  version: '0.7 beta', build: '—',
+  manualVersion: '0.7', reviewed: '2026-10-27',
+  manualUrl: 'https://klangfeldlabs.com/doom-os/beta/manual/',
   siteUrl: 'https://klangfeldlabs.com/doom-os/',
-  patcherUrl: 'https://klangfeldlabs.com/doom-os/patcher',
+  patcherUrl: 'https://klangfeldlabs.com/doom-os/beta/patcher/',
   repoUrl: 'https://github.com/klangfeld-labs/doom-os',
   changelogUrl: 'https://github.com/klangfeld-labs/doom-os/blob/main/CHANGELOG.md',
 } as const
 
-export const doomSource: Source = { manual: 'DOOM0.6.1', section: 'Quickstart', url: DOOM.manualUrl, reviewedAt: DOOM.reviewed, firmwareVersion: 'DOOM OS 0.6.1 / 0.6.2 alpha · Roland 5.52' }
+export const doomSource: Source = { manual: 'DOOM0.7', section: 'Quickstart', url: DOOM.manualUrl, reviewedAt: DOOM.reviewed, firmwareVersion: 'DOOM OS 0.7 beta · Quickstart' }
 
 export const doomTopics = [
   { id: 'basics', label: 'START', description: 'Wejście, patterny, tempo, zapis i pomoc.' },
   { id: 'tracks', label: 'ŚCIEŻKI', description: 'Jedna ścieżka odpowiada jednemu padowi z samplem.' },
   { id: 'notes', label: 'NUTY', description: 'W siatce 16 padów odpowiada 16 krokom wybranej ścieżki.' },
   { id: 'views', label: 'TAKTY / WIDOKI', description: 'Nawigacja zależy od widoku: siatka, zoom lub piano roll.' },
-  { id: 'piano', label: 'PIANO ROLL', description: 'PAD 5 to oryginalna wysokość; pady 1–4 obniżają, 6–16 podwyższają.' },
+  { id: 'piano', label: 'PIANO ROLL', description: 'PAD 5 to oryginalny pitch; klawiatura rośnie od lewej do prawej, od dolnego rzędu w górę.' },
   { id: 'recording', label: 'NAGRYWANIE', description: 'Pierwsze REC uruchamia próbę, drugie zapisuje grane nuty.' },
   { id: 'tools', label: 'PATTERN TOOLS', description: 'VALUE wybiera narzędzie i jego wartość; naciśnięcie zatwierdza. EXIT anuluje.' },
   { id: 'mixer', label: 'MIKSER', description: 'Tutaj CTRL 1–3 sterują panoramą, busem i poziomem.' },
   { id: 'effects', label: 'FX', description: 'Na otwartej stronie efektu CTRL 1–3 zmieniają parametry FX.' },
   { id: 'automation', label: 'AUTOMATYKA', description: 'Ruchy parametrów efektów zapisane w patternie, edytowane krok po kroku.' },
   { id: 'settings', label: 'USTAWIENIA', description: 'Opcje DOOM OS i własne kombinacje przycisków w SYSTEM.' },
+  ...doom07Topics,
 ] as const
 export type DoomTopic = typeof doomTopics[number]['id']
 export interface DoomShortcut extends Shortcut { topic: DoomTopic }
 
 function control(topic: DoomTopic, id: string, name: string, buttons: string[], description: string, path?: string[]): DoomShortcut {
-  const source: Source = ['undo', 'delete', 'record-fx'].includes(id)
-    ? { manual: 'DOOM0.6.2', section: 'Features / controls', url: id === 'undo' ? DOOM.repoUrl : DOOM.siteUrl, reviewedAt: DOOM.reviewed, firmwareVersion: 'DOOM OS 0.6.2 alpha · Roland 5.52' }
-    : doomSource
+  const source = doomSource
+  const update = doom07Updates[id]
+  if (update) { description = update.pl; buttons = update.buttons ?? buttons; path = update.path ?? path }
   return { id: `doom-${id}`, name, category: 'DOOM OS', topic, buttons, description, path,
     kind: 'verified', source, tags: ['doom', 'doom os', 'doomos', topic, name, description] }
 }
@@ -114,6 +116,7 @@ export const doomShortcuts: DoomShortcut[] = [
   control('settings', 'custom', 'WŁASNE SKRÓTY', ['SHIFT', 'PAD 13'], 'W zakładce SHORTCUT skonfiguruj własne kombinacje otwierające ekrany SP lub DOOM OS.', ['SYSTEM', 'SHORTCUT']),
   control('settings', 'utility', 'UTILITY', ['REMAIN', 'PATTERN EDIT'], 'Otwórz menu UTILITY.'),
   control('settings', 'stock', 'STOCKOWY EKRAN PATTERNU', ['REMAIN', 'RECORD SETTING'], 'Przejdź z DOOM OS do oryginalnego ekranu patternu SP.'),
+  ...doom07Additions.map(item => control(item.topic as DoomTopic, item.id, item.pl[0], item.buttons, item.pl[1], item.path)),
 ]
 
 const step = (id: string, title: string, action: string, expectedResult: string, buttons: string[], commonMistake?: string): WorkflowStep =>
@@ -143,7 +146,7 @@ export const doomWorkflows: Workflow[] = [
       step('steps', 'WSTAW KROKI', 'Stuknij pady odpowiadające miejscom, w których ma zagrać sample.', 'Wybrane kroki są zaznaczone w wierszu ścieżki.', ['PAD 1–16']),
       step('play', 'URUCHOM PATTERN', 'Naciśnij PATTERN SELECT i posłuchaj frazy.', 'Pozycja odtwarzania przesuwa się, a sample gra na wybranych krokach.', ['PATTERN SELECT']),
       step('note', 'ZMIEŃ JEDNĄ NUTĘ', 'Trzymaj pad jednego kroku i obróć CTRL 1, aby zmienić velocity.', 'Zmienia się velocity wybranej nuty.', ['PAD kroku', 'CTRL 1'], 'Bez trzymania pada CTRL 1 ustawia tę samą wartość wszystkim nutom ścieżki.'),
-      step('save', 'ZAPISZ I WYJDŹ', 'Naciśnij PATTERN SELECT, aby zatrzymać. Na głównej siatce naciśnij EXIT, aby zamknąć edytor i zapisać.', 'DOOM OS zamyka się. Po ponownym wejściu pattern zachowuje Twoje kroki.', ['EXIT']),
+      step('save', 'ZAPISZ I WYJDŹ', 'Naciśnij PATTERN SELECT, aby zatrzymać. Na głównej siatce użyj EXIT, aby zamknąć edytor i zapisać; przy Hold to Exit przytrzymaj przez ustawiony czas.', 'DOOM OS zamyka się. Po ponownym wejściu pattern zachowuje Twoje kroki.', ['EXIT']),
     ],
   },
   {

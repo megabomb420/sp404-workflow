@@ -1,4 +1,4 @@
-# SP WORKFLOW 0.9
+# SP WORKFLOW 0.9.1
 
 Offline companion for the **Roland SP-404MKII**.
 
@@ -8,11 +8,11 @@ Polish and English companion, firmware-aware pad navigation on NOW, local progre
 
 **Live:** [sp-workflow.pages.dev](https://sp-workflow.pages.dev/) · mirror: [megabomb420.github.io/sp404-workflow](https://megabomb420.github.io/sp404-workflow/)
 
-Look for the amber **0.9** badge on the LCD.
+Look for the amber **0.9.1** badge on the LCD.
 
 The 0.9 visual polish adds an inset pad tray, clearer pad labels and numbering, softer LCD texture, a segmented firmware selector, a visible active navigation marker, and consistent panel and button depth. Shortcut descriptions are easier to read, and onboarding previews the same pad materials. The expanded 16-pad layout and existing workflows remain in place; all fonts and visual details work offline.
 
-The companion includes the DOOM OS guide (78 controls and 3 workflows), a Roland/DOOM instruction filter, screen context with knob mappings, custom ordered MY KIT sets, Groove Lab with synthetic audio, three method comparisons, larger controls, optional screen wake lock, and backup/restore including language.
+The companion includes the DOOM OS guide (111 controls and 3 workflows), a Roland/DOOM instruction filter, screen context with knob mappings, custom ordered MY KIT sets, Groove Lab with synthetic audio, three method comparisons, larger controls, optional screen wake lock, and backup/restore including language.
 
 R5 adds guided DOOM troubleshooting that returns to the same workflow step, MY KIT session notes (project, bank/pad, BPM and free text), official Roland listening demonstrations for effects, resampling and sidechain, and practice reviews scheduled after 1/3/7/14/30 days (10 minutes after a missed answer). Reviews appear inside the app; no external notification service is used. Notes and review dates are included in backups. The full DOOM companion and new tools are available in English. The top pad-hiding toggle is removed; all 16 pads stay visible, with DOOM-specific destinations when that firmware is selected.
 
@@ -42,3 +42,7 @@ Next iterations should address one concrete issue observed across three sessions
 All 16 guides end with a concrete outcome, a listening check, an optional independent exercise, collapsed hints and one relevant next action. Ongoing next guides resume their saved step; completed ones lead to next-step planning. “Done for today” returns to NOW, and notes use the existing MY KIT next-step, SONG MAP and A/B panels. Creating or selecting a set keeps the requested panel; new sets use the guide’s firmware. Existing notes, arrangements and comparisons are preserved.
 
 The final print in 8-BAR PATTERN can be skipped without counting it as performed; all required steps still need confirmation. Progress and backup formats remain compatible. DOOM version information collapses on completion to keep the next action visible on a phone. The simplified R8 NOW stays in place. Roland’s DUPLICATE and single-pattern/chain BOUNCE instructions were checked against the official 5.50 manual on 10 October 2026; the focused corrections are translated into English. See [R9 source review](docs/R9_SOURCE_REVIEW.md). Browser checks cover all endings in PL/EN, 320/390/768px layouts, larger controls, state preservation and offline completion. These are application checks; no physical-sampler test is claimed.
+
+## 0.9.1 · DOOM OS 0.7 beta
+
+Updated from the user-supplied beta Quickstart (reviewed 27 October 2026): instruments and kits, parameter locks, arpeggiator and printing, bounce in place, pad EQ, waveform and sidechain. All 33 new controls are available in Polish and English, search, MY KIT and offline. Existing IDs and saved progress remain compatible. The guide also corrects undo limits, recording HOLD behavior, queued pattern changes and the stock-screen-only settings shortcut. The beta patcher link is updated; its build and Roland firmware requirement remain unverified. See [source review](docs/DOOM_OS.md).

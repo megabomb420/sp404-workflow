@@ -1,5 +1,20 @@
 # DOOM OS w SP Workflow
 
+## Aktualizacja 0.7 beta — 2026-10-27
+
+Źródło: dostarczony przez użytkownika plik `C:\temp\DOOM OS Quickstart.html`, zapisany ze strony https://klangfeldlabs.com/doom-os/beta/manual/. Nagłówek i stopka wskazują DOOM OS 0.7. SHA-256 pliku: `a2e4cd0523979b80fa71c86448a7929c7ac025bc11def399e833d35c9b6bc57f`. Oryginalnego HTML, czcionek i ilustracji nie publikujemy; aplikacja zawiera własne opracowanie PL/EN.
+
+Dodano 33 czynności (łącznie 111), sześć kategorii funkcji i pięć kontekstów ekranów. Nowości: bounce ścieżki / odsłuchu, instrumenty i kity, locki, ARP / PRINT ARP, EQ, waveform, sidechain i opcje startu / wyjścia. Zachowano istniejące ID, trzy workflow i stan użytkownika.
+
+Istotne korekty: 11 kroków undo i limit 512 nut/ruchów; zapisany pattern po starcie trzeba najpierw odtworzyć; przełączanie patternów oczekuje na ich koniec; REC wyłącza HOLD; ustawienia SHIFT + PAD 13 otwiera się na ekranach stockowych, nie wewnątrz DOOM; metronom ON / RECPLAY / OFF; EFX MOTION PLAY OFF wyłącza efekty obu busów.
+
+Manual wyraźnie ostrzega o nieodwracalnym usunięciu sampli przy OVERWRITE BANK i usunięciu instrumentu. PRINT ARP zastępuje nuty ścieżki. Limity locków i brak EQ w EXPORT/BACKUP urządzenia są opisane przy właściwych czynnościach. Kopia SP Workflow przechowuje notatki i postęp, nie dane firmware czy audio SP.
+
+Link patchera zaktualizowano do https://klangfeldlabs.com/doom-os/beta/patcher/. Samej strony patchera nie udało się odczytać: numer buildu i wymagana wersja Rolanda pozostają niepotwierdzone. Nie przenosimy oznaczenia 3824 / Roland 5.52 ze starej alphy na betę. Nie wykonano testu na fizycznym samplerze.
+
+## Historia integracji alphy
+
+
 Przegląd źródeł DOOM: 2026-10-08. Moduł `/doom-os` zawiera polskie i angielskie opracowanie czynności do używania przy SP-404MKII. Nie zawiera firmware, patchera ani oryginalnych animacji.
 
 ## Źródła
