@@ -41,7 +41,7 @@ const controls: Record<string, [string, string]> = {
   'piano-pitch': ['SET A NOTE’S PITCH', 'In piano roll, hold the step pad and choose a pitch with another pad. PAD 5 gives the sample’s original pitch.'],
   'piano-track': ['CHANGE PIANO ROLL TRACK', 'In piano roll, change the track. In the grid, this combination changes the bar.'],
   rehearse: ['REHEARSAL → RECORDING', 'The first REC enters REHEARSAL: pads play without recording. The second REC records; EXIT ends recording.'],
-  'rec-mode': ['SINGLE / MULTI / CHROMATIC', 'Switch mode during rehearsal or recording. Alternatively, press RECORD SETTING twice and select REC in the pattern panel.'],
+  'rec-mode': ['SINGLE / MULTI / CHROMATIC / 16 VEL', 'Switch mode during rehearsal or recording. Alternatively, press RECORD SETTING twice and select REC in the pattern panel.'],
   'new-notes': ['NEW-NOTE SETTINGS', 'Set quantise, swing, velocity and length for new notes. PATTERN EDIT without SHIFT processes existing notes.'],
   hold: ['PLAY SAMPLES INSTEAD OF STEPS', 'Switch pads from step editing to sample playing. Press HOLD again to restore steps.'],
   fixed: ['FIXED VELOCITY', 'Toggle fixed velocity while playing.'],

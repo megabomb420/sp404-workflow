@@ -18,7 +18,7 @@ export function SourcesPage() {
 
   return (
     <div className="page">
-      <section className="sbody"><h2 className="sbody__h u-label">DOOM OS · 0.7 BETA</h2><p>{locale === 'en' ? 'The guide follows the 0.7 beta Quickstart supplied by the user, reviewed on 2026-10-27. The patcher build and Roland compatibility have not been independently confirmed. Documentation review does not imply a physical-sampler test.' : 'Przewodnik oparto na dostarczonym przez użytkownika Quickstart 0.7 beta, sprawdzonym 2026-10-27. Build patchera i zgodność z wersją Rolanda nie zostały niezależnie potwierdzone. Przegląd dokumentacji nie oznacza testu na fizycznym samplerze.'}</p><SourceTag source={doomSource} kind="verified" /><p><Link to="/doom-os?view=install">DOOM OS · {locale === 'en' ? 'versions and sources' : 'wersje i źródła'} →</Link></p></section>
+      <section className="sbody"><h2 className="sbody__h u-label">DOOM OS · 0.7.1</h2><p>{locale === 'en' ? 'The guide follows the 0.7 Quickstart and 0.7.1 release notes, reviewed on 2026-10-29. The author lists build E7F5 for Roland 5.52. Documentation review does not imply a physical-sampler test.' : 'Przewodnik oparto na Quickstart 0.7 i informacjach o wydaniu 0.7.1, sprawdzonych 2026-10-29. Autor podaje build E7F5 dla Roland 5.52. Przegląd dokumentacji nie oznacza testu na fizycznym samplerze.'}</p><SourceTag source={doomSource} kind="verified" /><p><Link to="/doom-os?view=install">DOOM OS · {locale === 'en' ? 'versions and sources' : 'wersje i źródła'} →</Link></p></section>
       <section className="sbody">
         <h2 className="sbody__h u-label">{t.sources.base}</h2>
         <p>{t.sources.p1(MANUAL_VERSION)}</p>

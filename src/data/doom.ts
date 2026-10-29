@@ -2,16 +2,16 @@ import { doom07Additions, doom07Topics, doom07Updates } from './doom07'
 import type { Shortcut, Source, Workflow, WorkflowStep } from './types'
 
 export const DOOM = {
-  version: '0.7 beta', build: '—',
-  manualVersion: '0.7', reviewed: '2026-10-27',
-  manualUrl: 'https://klangfeldlabs.com/doom-os/beta/manual/',
+  version: '0.7.1', build: 'E7F5',
+  manualVersion: '0.7', reviewed: '2026-10-29',
+  manualUrl: 'https://klangfeldlabs.com/doom-os/manual/',
   siteUrl: 'https://klangfeldlabs.com/doom-os/',
-  patcherUrl: 'https://klangfeldlabs.com/doom-os/beta/patcher/',
+  patcherUrl: 'https://klangfeldlabs.com/doom-os/patcher/',
   repoUrl: 'https://github.com/klangfeld-labs/doom-os',
   changelogUrl: 'https://github.com/klangfeld-labs/doom-os/blob/main/CHANGELOG.md',
 } as const
 
-export const doomSource: Source = { manual: 'DOOM0.7', section: 'Quickstart', url: DOOM.manualUrl, reviewedAt: DOOM.reviewed, firmwareVersion: 'DOOM OS 0.7 beta · Quickstart' }
+export const doomSource: Source = { manual: 'DOOM0.7', section: 'Quickstart', url: DOOM.manualUrl, reviewedAt: DOOM.reviewed, firmwareVersion: 'DOOM OS 0.7.1 · Quickstart 0.7' }
 
 export const doomTopics = [
   { id: 'basics', label: 'START', description: 'Wejście, patterny, tempo, zapis i pomoc.' },
@@ -81,7 +81,7 @@ export const doomShortcuts: DoomShortcut[] = [
   control('piano', 'piano-pitch', 'NADAJ NUCIE WYSOKOŚĆ', ['PAD kroku', 'PAD jako klawisz'], 'W piano roll trzymaj pad kroku i wybierz wysokość innym padem. PAD 5 daje oryginalny pitch sampla.'),
   control('piano', 'piano-track', 'INNA ŚCIEŻKA W PIANO ROLL', ['SHIFT', 'obróć VALUE'], 'W piano roll zmień ścieżkę. W siatce ta kombinacja służy do zmiany taktu.'),
   control('recording', 'rehearse', 'PRÓBA → NAGRYWANIE', ['REC'], 'Pierwsze REC włącza REHEARSAL: pady grają bez zapisu. Drugie REC nagrywa; EXIT kończy nagrywanie.'),
-  control('recording', 'rec-mode', 'SINGLE / MULTI / CHROMATIC', ['SHIFT', 'REC'], 'Podczas próby lub nagrywania przełącz tryb. Alternatywnie użyj panelu patternu: RECORD SETTING dwa razy → REC.'),
+  control('recording', 'rec-mode', 'SINGLE / MULTI / CHROMATIC / 16 VEL', ['SHIFT', 'REC'], 'Podczas próby lub nagrywania przełącz tryb. Alternatywnie użyj panelu patternu: RECORD SETTING dwa razy → REC.'),
   control('recording', 'new-notes', 'USTAWIENIA NOWYCH NUT', ['SHIFT', 'PATTERN EDIT'], 'Ustaw quantise, swing, velocity i długość dla nowych nut. PATTERN EDIT bez SHIFT służy do obróbki już istniejących nut.'),
   control('recording', 'hold', 'GRAJ SAMPLE ZAMIAST KROKÓW', ['HOLD'], 'Przełącz pady z edycji kroków na granie sampli. Drugie HOLD przywraca kroki.'),
   control('recording', 'fixed', 'FIXED VELOCITY', ['SHIFT', 'PAD 1'], 'Włącz albo wyłącz stałe velocity podczas grania.'),
@@ -167,7 +167,7 @@ export const doomWorkflows: Workflow[] = [
     steps: [
       step('pads', 'PRZEŁĄCZ PADY NA GRANIE', 'Naciśnij HOLD, jeśli pady nadal edytują kroki.', 'Pady odtwarzają sample.', ['HOLD']),
       step('rehearse', 'PRZEĆWICZ PARTIĘ', 'Naciśnij REC raz i zagraj frazę.', 'Ekran pokazuje REHEARSAL; partia jeszcze się nie zapisuje.', ['REC']),
-      step('mode', 'WYBIERZ TRYB', 'Podczas próby użyj SHIFT + REC, aby wybrać SINGLE, MULTI lub CHROMATIC odpowiednio do partii.', 'Ekran pokazuje wybrany tryb nagrywania.', ['SHIFT', 'REC']),
+      step('mode', 'WYBIERZ TRYB', 'Podczas próby użyj SHIFT + REC, aby wybrać SINGLE, MULTI, CHROMATIC lub 16 VEL odpowiednio do partii.', 'Ekran pokazuje wybrany tryb nagrywania.', ['SHIFT', 'REC']),
       step('record', 'NAGRAJ PARTIĘ', 'Naciśnij REC ponownie i zagraj przygotowaną frazę.', 'Nagrywanie zapisuje grane nuty do patternu.', ['REC']),
       step('stop', 'ZAKOŃCZ I ODSŁUCHAJ', 'Naciśnij EXIT, aby zakończyć nagrywanie. Sprawdź kroki w siatce i odsłuchaj pattern przez PATTERN SELECT.', 'Nagrywanie jest zakończone, a pattern zawiera zagrane nuty.', ['EXIT']),
     ],

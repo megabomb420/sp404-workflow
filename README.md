@@ -12,7 +12,7 @@ Look for the amber **0.9.1** badge on the LCD.
 
 The 0.9 visual polish adds an inset pad tray, clearer pad labels and numbering, softer LCD texture, a segmented firmware selector, a visible active navigation marker, and consistent panel and button depth. Shortcut descriptions are easier to read, and onboarding previews the same pad materials. The expanded 16-pad layout and existing workflows remain in place; all fonts and visual details work offline.
 
-The companion includes the DOOM OS guide (111 controls and 3 workflows), a Roland/DOOM instruction filter, screen context with knob mappings, custom ordered MY KIT sets, Groove Lab with synthetic audio, three method comparisons, larger controls, optional screen wake lock, and backup/restore including language.
+The companion includes the DOOM OS guide (112 controls and 3 workflows), a Roland/DOOM instruction filter, screen context with knob mappings, custom ordered MY KIT sets, Groove Lab with synthetic audio, three method comparisons, larger controls, optional screen wake lock, and backup/restore including language.
 
 R5 adds guided DOOM troubleshooting that returns to the same workflow step, MY KIT session notes (project, bank/pad, BPM and free text), official Roland listening demonstrations for effects, resampling and sidechain, and practice reviews scheduled after 1/3/7/14/30 days (10 minutes after a missed answer). Reviews appear inside the app; no external notification service is used. Notes and review dates are included in backups. The full DOOM companion and new tools are available in English. The top pad-hiding toggle is removed; all 16 pads stay visible, with DOOM-specific destinations when that firmware is selected.
 
@@ -46,3 +46,7 @@ The final print in 8-BAR PATTERN can be skipped without counting it as performed
 ## 0.9.1 · DOOM OS 0.7 beta
 
 Updated from the user-supplied beta Quickstart (reviewed 27 October 2026): instruments and kits, parameter locks, arpeggiator and printing, bounce in place, pad EQ, waveform and sidechain. All 33 new controls are available in Polish and English, search, MY KIT and offline. Existing IDs and saved progress remain compatible. The guide also corrects undo limits, recording HOLD behavior, queued pattern changes and the stock-screen-only settings shortcut. The beta patcher link is updated; its build and Roland firmware requirement remain unverified. See [source review](docs/DOOM_OS.md).
+
+## DOOM OS 0.7.1
+
+The companion reflects the public 0.7.1 release (E7F5, Roland 5.52), including destination selection for bounce, instrument preview, mixer pad controls, 16 VEL recording and EQ for 16 pads. The Quickstart itself is labelled 0.7; its current contents and release notes were reviewed on 29 October 2026.

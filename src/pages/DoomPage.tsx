@@ -46,7 +46,7 @@ export function DoomPage() {
   }), [selected, topic, favorites, query, state.favorites.shortcuts, doomShortcuts])
 
   useEffect(() => {
-    setDisplay({ title: 'DOOM OS', sub: view === 'controls' ? c("sterowanie · osobny firmware") : view === 'install' ? c("wersja i instalacja") : 'instruments · arp · pattern', right: view === 'controls' ? String(list.length) : 'BETA' })
+    setDisplay({ title: 'DOOM OS', sub: view === 'controls' ? c("sterowanie · osobny firmware") : view === 'install' ? c("wersja i instalacja") : 'instruments · arp · pattern', right: view === 'controls' ? String(list.length) : '0.7.1' })
   }, [setDisplay, view, list.length, c])
 
   return (
@@ -66,7 +66,7 @@ export function DoomPage() {
 
       {view === 'start' && <>
         <section className="wfgroup" aria-labelledby="doom-beta-title">
-          <h2 id="doom-beta-title" className="wfgroup__cat u-mono">{locale === 'en' ? 'NEW IN 0.7 BETA' : 'NOWE W 0.7 BETA'}</h2>
+          <h2 id="doom-beta-title" className="wfgroup__cat u-mono">{locale === 'en' ? 'DOOM OS FEATURES' : 'FUNKCJE DOOM OS'}</h2>
           <div className="now-goals__grid">{localizeCompanion(doom07Topics, locale).map(item => <Link key={item.id} to={`/doom-os?view=controls&topic=${item.id}`} className="goal-card panel-surface"><span className="goal-card__title u-label">{item.label}</span><span className="goal-card__blurb">{item.description}</span></Link>)}</div>
         </section>
         <section className="doom-open panel-surface" aria-labelledby="doom-open-title">
@@ -126,13 +126,13 @@ export function DoomPage() {
       {view === 'install' && <>
         <section className="sbody">
           <h2 className="sbody__h u-label">{c("WERSJE I ZAKRES")}</h2>
-          <p>{locale === 'en' ? 'Controls follow the DOOM OS 0.7 beta Quickstart, reviewed on ' : 'Sterowanie według Quickstart DOOM OS 0.7 beta; przegląd: '}{DOOM.reviewed}.</p>
-          <p>{locale === 'en' ? 'The supplied manual confirms the features and controls. The beta patcher build and required Roland firmware were not independently verified; check the author’s patcher before installing. No physical-sampler test was performed.' : 'Dostarczony manual potwierdza funkcje i sterowanie. Numer buildu patchera beta i wymagana wersja Rolanda nie zostały niezależnie potwierdzone; sprawdź je w patcherze autora przed instalacją. Nie wykonano testu na fizycznym samplerze.'}</p>
+          <p>{locale === 'en' ? 'Controls follow the DOOM OS 0.7 Quickstart and 0.7.1 release notes, reviewed on ' : 'Sterowanie według Quickstart DOOM OS 0.7 i zmian w wydaniu 0.7.1; przegląd: '}{DOOM.reviewed}.</p>
+          <p>{locale === 'en' ? 'The Quickstart and release notes describe these features and controls. The author lists build E7F5 for Roland firmware 5.52. No physical-sampler test was performed.' : 'Quickstart i opis wydania przedstawiają funkcje i sterowanie. Autor podaje build E7F5 dla firmware Roland 5.52. Nie wykonano testu na fizycznym samplerze.'}</p>
           <p>{c("Patterny 5/4, 6/4 i 7/4 są w DOOM OS tylko do podglądu pierwszych 16 kroków taktu. Metrum nowego patternu ustaw w stockowym RECORD SETTING przed nagrywaniem.")}</p>
         </section>
         <section className="doom-install panel-surface">
           <h2 className="u-label">{c("INSTALACJA WEDŁUG AUTORA")}</h2>
-          <p>{locale === 'en' ? 'Use the beta patcher linked below and follow its current installation instructions. Back up your SP data first. SP Workflow provides the companion guide; it does not patch or install firmware.' : 'Otwórz poniższy patcher beta i postępuj według jego aktualnej instrukcji instalacji. Najpierw wykonaj kopię danych SP. SP Workflow udostępnia przewodnik; nie patchuje ani nie instaluje firmware.'}</p>
+          <p>{locale === 'en' ? 'Use the author’s patcher linked below and follow its current installation instructions. Back up your SP data first. SP Workflow provides the companion guide; it does not patch or install firmware.' : 'Otwórz poniższy patcher autora i postępuj według jego aktualnej instrukcji instalacji. Najpierw wykonaj kopię danych SP. SP Workflow udostępnia przewodnik; nie patchuje ani nie instaluje firmware.'}</p>
           <div className="chipbar"><a className="chip" href={DOOM.patcherUrl} target="_blank" rel="noreferrer">{c("PATCHER AUTORA ↗")}</a><a className="chip" href="https://www.roland.com/global/support/by_product/sp-404mk2/updates_drivers/" target="_blank" rel="noreferrer">FIRMWARE ROLAND ↗</a></div>
           <p><a href={DOOM.siteUrl} target="_blank" rel="noreferrer">{c("Aktualna instrukcja instalacji autora ↗")}</a></p>
         </section>

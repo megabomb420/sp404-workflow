@@ -86,7 +86,7 @@ PRZEĆWICZ PARTIĘ|REHEARSE THE PASSAGE
 Naciśnij REC raz i zagraj frazę.|Press REC once and play a phrase.
 Ekran pokazuje REHEARSAL; partia jeszcze się nie zapisuje.|The screen shows REHEARSAL; the passage is not being recorded yet.
 WYBIERZ TRYB|SELECT A MODE
-Podczas próby użyj SHIFT + REC, aby wybrać SINGLE, MULTI lub CHROMATIC odpowiednio do partii.|During rehearsal, use SHIFT + REC to select SINGLE, MULTI or CHROMATIC to suit the passage.
+Podczas próby użyj SHIFT + REC, aby wybrać SINGLE, MULTI, CHROMATIC lub 16 VEL odpowiednio do partii.|During rehearsal, use SHIFT + REC to select SINGLE, MULTI, CHROMATIC or 16 VEL to suit the passage.
 Ekran pokazuje wybrany tryb nagrywania.|The screen shows the selected recording mode.
 NAGRAJ PARTIĘ|RECORD THE PASSAGE
 Naciśnij REC ponownie i zagraj przygotowaną frazę.|Press REC again and play the prepared phrase.

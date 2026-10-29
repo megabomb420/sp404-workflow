@@ -1,5 +1,10 @@
 # DOOM OS w SP Workflow
 
+## Aktualizacja 0.7.1 — 2026-10-29
+
+Na podstawie [Quickstart](https://klangfeldlabs.com/doom-os/manual/) i [informacji autora o wydaniu](https://klangfeldlabs.com/doom-os/): wersja 0.7.1, build E7F5, firmware Roland 5.52. Nagłówek Quickstart zachowuje 0.7. Zaktualizowano bounce z wyborem pada, odsłuch i zmianę instrumentów, sterowanie padami miksera, limit EQ 16 padów oraz tryb nagrywania 16 VEL. Zachowano istniejące ID i dane użytkownika. Nie wykonano testu na fizycznym samplerze.
+
+
 ## Aktualizacja 0.7 beta — 2026-10-27
 
 Źródło: dostarczony przez użytkownika plik `C:\temp\DOOM OS Quickstart.html`, zapisany ze strony https://klangfeldlabs.com/doom-os/beta/manual/. Nagłówek i stopka wskazują DOOM OS 0.7. SHA-256 pliku: `a2e4cd0523979b80fa71c86448a7929c7ac025bc11def399e833d35c9b6bc57f`. Oryginalnego HTML, czcionek i ilustracji nie publikujemy; aplikacja zawiera własne opracowanie PL/EN.
