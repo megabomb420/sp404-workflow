@@ -53,7 +53,7 @@ export async function testDoomBeta(browser, base) {
       assert.ok(await page.locator('a[href="https://klangfeldlabs.com/doom-os/patcher/"]').count())
       assert.doesNotMatch(await page.locator('.sbody').innerText(), /3824/)
       await go('/doom-os?view=controls')
-      assert.equal(await page.locator('.scard').count(), 112)
+      assert.equal(await page.locator('.scard').count(), 114)
       await page.waitForFunction(() => !!navigator.serviceWorker.controller)
       await context.setOffline(true)
       await go('/doom-os?id=doom-eq-save')

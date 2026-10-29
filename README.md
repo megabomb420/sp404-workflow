@@ -12,7 +12,7 @@ Look for the amber **0.9.1** badge on the LCD.
 
 The 0.9 visual polish adds an inset pad tray, clearer pad labels and numbering, softer LCD texture, a segmented firmware selector, a visible active navigation marker, and consistent panel and button depth. Shortcut descriptions are easier to read, and onboarding previews the same pad materials. The expanded 16-pad layout and existing workflows remain in place; all fonts and visual details work offline.
 
-The companion includes the DOOM OS guide (112 controls and 3 workflows), a Roland/DOOM instruction filter, screen context with knob mappings, custom ordered MY KIT sets, Groove Lab with synthetic audio, three method comparisons, larger controls, optional screen wake lock, and backup/restore including language.
+The companion includes the DOOM OS guide (114 controls and 3 workflows), a Roland/DOOM instruction filter, screen context with knob mappings, custom ordered MY KIT sets, Groove Lab with synthetic audio, three method comparisons, larger controls, optional screen wake lock, and backup/restore including language.
 
 R5 adds guided DOOM troubleshooting that returns to the same workflow step, MY KIT session notes (project, bank/pad, BPM and free text), official Roland listening demonstrations for effects, resampling and sidechain, and practice reviews scheduled after 1/3/7/14/30 days (10 minutes after a missed answer). Reviews appear inside the app; no external notification service is used. Notes and review dates are included in backups. The full DOOM companion and new tools are available in English. The top pad-hiding toggle is removed; all 16 pads stay visible, with DOOM-specific destinations when that firmware is selected.
 
