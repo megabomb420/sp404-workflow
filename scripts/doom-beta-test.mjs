@@ -16,7 +16,7 @@ export async function testDoomBeta(browser, base) {
     const go = path => page.goto(base + path, { waitUntil: 'networkidle' })
     try {
       await go('/doom-os')
-      assert.match(await page.locator('.doom-head__version').textContent(), /0\.7\.1/)
+      assert.match(await page.locator('.doom-head__version').textContent(), /0\.7\.4/)
       await page.screenshot({ path: `artifacts/companion/doom07-home-${locale}.png` })
       for (const topic of ['bounce', 'instruments', 'locks', 'arp', 'eq', 'sidechain']) {
         await go('/doom-os')
@@ -24,6 +24,10 @@ export async function testDoomBeta(browser, base) {
         assert.ok(await page.locator('.scard').count() >= 3)
         if (locale === 'en') assert.doesNotMatch(await page.locator('.scardlist').innerText(), /[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/)
         if (topic === 'arp') await page.screenshot({ path: `artifacts/companion/doom07-arp-${locale}.png` })
+      }
+      for (const [id, expected] of [['doom-auto-clear-effect', /DEL.*FX/s], ['doom-auto-clear-all', /DEL.*MARK/s], ['doom-length', /1\/24.*1\/60/s], ['doom-select-note', /NDG/], ['doom-project-backup', /0\.7\.3/]]) {
+        await go(`/shortcuts?id=${id}`)
+        assert.match(await page.locator('.scard').textContent(), expected)
       }
       await go('/doom-os?id=doom-settings')
       assert.match(await page.locator('.scard').textContent(), /EXIT.*SHIFT.*13/s)
@@ -53,7 +57,7 @@ export async function testDoomBeta(browser, base) {
       assert.ok(await page.locator('a[href="https://klangfeldlabs.com/doom-os/patcher/"]').count())
       assert.doesNotMatch(await page.locator('.sbody').innerText(), /3824/)
       await go('/doom-os?view=controls')
-      assert.equal(await page.locator('.scard').count(), 114)
+      assert.equal(await page.locator('.scard').count(), 118)
       await page.waitForFunction(() => !!navigator.serviceWorker.controller)
       await context.setOffline(true)
       await go('/doom-os?id=doom-eq-save')
@@ -62,7 +66,7 @@ export async function testDoomBeta(browser, base) {
       assert.match(await page.locator('.scard').textContent(), /4096.*64.*126/s)
       assert.ok(await page.evaluate(() => JSON.parse(localStorage.getItem('spw.state.v1')).favorites.shortcuts.includes('doom-kit-load')))
       assert.deepEqual(errors, [])
-      console.log(`PASS DOOM 0.7.1 ${locale}: new categories, screens, search, favorites, limits and offline`)
+      console.log(`PASS DOOM 0.7.4 ${locale}: new categories, screens, search, favorites, limits and offline`)
     } finally { await context.close() }
   }
 }

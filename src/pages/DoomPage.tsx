@@ -46,7 +46,7 @@ export function DoomPage() {
   }), [selected, topic, favorites, query, state.favorites.shortcuts, doomShortcuts])
 
   useEffect(() => {
-    setDisplay({ title: 'DOOM OS', sub: view === 'controls' ? c("sterowanie · osobny firmware") : view === 'install' ? c("wersja i instalacja") : 'instruments · arp · pattern', right: view === 'controls' ? String(list.length) : '0.7.1' })
+    setDisplay({ title: 'DOOM OS', sub: view === 'controls' ? c("sterowanie · osobny firmware") : view === 'install' ? c("wersja i instalacja") : 'instruments · arp · pattern', right: view === 'controls' ? String(list.length) : '0.7.4' })
   }, [setDisplay, view, list.length, c])
 
   return (
@@ -126,8 +126,10 @@ export function DoomPage() {
       {view === 'install' && <>
         <section className="sbody">
           <h2 className="sbody__h u-label">{c("WERSJE I ZAKRES")}</h2>
-          <p>{locale === 'en' ? 'Controls follow the DOOM OS 0.7 Quickstart and 0.7.1 release notes, reviewed on ' : 'Sterowanie według Quickstart DOOM OS 0.7 i zmian w wydaniu 0.7.1; przegląd: '}{DOOM.reviewed}.</p>
-          <p>{locale === 'en' ? 'The Quickstart and release notes describe these features and controls. The author lists build E7F5 for Roland firmware 5.52. No physical-sampler test was performed.' : 'Quickstart i opis wydania przedstawiają funkcje i sterowanie. Autor podaje build E7F5 dla firmware Roland 5.52. Nie wykonano testu na fizycznym samplerze.'}</p>
+          <p>{locale === 'en' ? '0.7.4: DEL + FX clears one effect’s automation; DEL + MARK clears all FX automation. Note length uses 1/24-step increments, or 1/60 with SHIFT; NDG replaces MIC. These release notes take precedence over older Quickstart details.' : '0.7.4: DEL + FX usuwa automatykę jednego efektu; DEL + MARK wszystkich FX. Długość nuty zmienia się co 1/24 kroku lub 1/60 z SHIFT; NDG zastępuje MIC. Te zmiany wydania mają pierwszeństwo przed starszym opisem Quickstart.'}</p>
+          <p>{locale === 'en' ? 'Back up on 0.7.3 or later to preserve instruments, EQ and parameter locks. Downgrading to older DOOM OS is unsupported and does not preserve instruments or EQ, even with a backup.' : 'Wykonaj backup na 0.7.3 lub nowszym, aby zachować instrumenty, EQ i parameter locks. Powrót do starszego DOOM OS nie jest wspierany i nie zachowuje instrumentów ani EQ, nawet z backupem.'}</p>
+          <p>{locale === 'en' ? 'Controls follow the DOOM OS 0.7 Quickstart and 0.7.4 release notes, reviewed on ' : 'Sterowanie według Quickstart DOOM OS 0.7 i zmian w wydaniu 0.7.4; przegląd: '}{DOOM.reviewed}.</p>
+          <p>{locale === 'en' ? 'The Quickstart and release notes describe these features and controls. The author lists build 651C for Roland firmware 5.52. No physical-sampler test was performed.' : 'Quickstart i opis wydania przedstawiają funkcje i sterowanie. Autor podaje build 651C dla firmware Roland 5.52. Nie wykonano testu na fizycznym samplerze.'}</p>
           <p>{c("Patterny 5/4, 6/4 i 7/4 są w DOOM OS tylko do podglądu pierwszych 16 kroków taktu. Metrum nowego patternu ustaw w stockowym RECORD SETTING przed nagrywaniem.")}</p>
         </section>
         <section className="doom-install panel-surface">

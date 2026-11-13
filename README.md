@@ -47,6 +47,8 @@ The final print in 8-BAR PATTERN can be skipped without counting it as performed
 
 Updated from the user-supplied beta Quickstart (reviewed 27 October 2026): instruments and kits, parameter locks, arpeggiator and printing, bounce in place, pad EQ, waveform and sidechain. All 33 new controls are available in Polish and English, search, MY KIT and offline. Existing IDs and saved progress remain compatible. The guide also corrects undo limits, recording HOLD behavior, queued pattern changes and the stock-screen-only settings shortcut. The beta patcher link is updated; its build and Roland firmware requirement remain unverified. See [source review](docs/DOOM_OS.md).
 
-## DOOM OS 0.7.1
+## DOOM OS 0.7.4
 
-The companion reflects the public 0.7.1 release (E7F5, Roland 5.52), including destination selection for bounce, instrument preview, mixer pad controls, 16 VEL recording and EQ for 16 pads. The Quickstart itself is labelled 0.7; its current contents and release notes were reviewed on 29 October 2026.
+The companion reflects the public 0.7.4 release (651C, Roland 5.52), including destination selection for bounce, instrument preview, mixer pad controls, 16 VEL recording and EQ for 16 pads. The Quickstart itself is labelled 0.7; its current contents and release notes were reviewed on 13 November 2026.
+
+0.7.4 adds DEL + FX / DEL + MARK automation clearing, 1/24-step note lengths (1/60 with SHIFT), NDG labels and catch/direct knob behavior. Project backup guidance follows 0.7.3+.

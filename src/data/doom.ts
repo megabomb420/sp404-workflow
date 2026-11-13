@@ -2,16 +2,16 @@ import { doom07Additions, doom07Topics, doom07Updates } from './doom07'
 import type { Shortcut, Source, Workflow, WorkflowStep } from './types'
 
 export const DOOM = {
-  version: '0.7.1', build: 'E7F5',
-  manualVersion: '0.7', reviewed: '2026-10-29',
+  version: '0.7.4', build: '651C',
+  manualVersion: '0.7', reviewed: '2026-11-13',
   manualUrl: 'https://klangfeldlabs.com/doom-os/manual/',
   siteUrl: 'https://klangfeldlabs.com/doom-os/',
   patcherUrl: 'https://klangfeldlabs.com/doom-os/patcher/',
   repoUrl: 'https://github.com/klangfeld-labs/doom-os',
-  changelogUrl: 'https://github.com/klangfeld-labs/doom-os/blob/main/CHANGELOG.md',
+  changelogUrl: 'https://klangfeldlabs.com/doom-os/changelog/',
 } as const
 
-export const doomSource: Source = { manual: 'DOOM0.7', section: 'Quickstart', url: DOOM.manualUrl, reviewedAt: DOOM.reviewed, firmwareVersion: 'DOOM OS 0.7.1 · Quickstart 0.7' }
+export const doomSource: Source = { manual: 'DOOM0.7', section: 'Quickstart', url: DOOM.manualUrl, reviewedAt: DOOM.reviewed, firmwareVersion: 'DOOM OS 0.7.4 · Quickstart 0.7' }
 
 export const doomTopics = [
   { id: 'basics', label: 'START', description: 'Wejście, patterny, tempo, zapis i pomoc.' },
